@@ -1,0 +1,18 @@
+{
+  extends: ['github>netlify/renovate-config:default'],
+  ignorePresets: [':prHourlyLimit2'],
+  semanticCommits: true,
+  dependencyDashboard: true,
+  automerge: true,
+  packageRules: [
+    {
+      packageNames: [
+        // Those cannot be upgraded to requiring ES modules
+        'strip-ansi',
+      ],
+      major: {
+        enabled: false,
+      },
+    },
+  ],
+}

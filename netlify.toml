@@ -1,0 +1,19 @@
+##############################
+# Netlify configuration file #
+##############################
+
+# List of Build plugins
+[[plugins]]
+# Use the current plugin in builds for testing and debugging.
+# Local path to the plugin.
+package = "."
+  # Plugin configuration
+  #  [plugins.inputs]
+  #  foo = "bar"
+
+[build]
+# Dummy build command
+command = "echo onBuild"
+
+[build.environment]
+NODE_VERSION = "12.18.0"
