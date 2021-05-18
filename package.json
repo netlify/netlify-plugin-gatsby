@@ -1,6 +1,7 @@
 {
   "name": "netlify-plugin-gatsby",
   "version": "0.0.1",
+  "private": true,
   "description": "Netlify Build plugin - {{description}}",
   "main": "src/index.js",
   "files": [
