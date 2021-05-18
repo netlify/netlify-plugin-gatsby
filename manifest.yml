@@ -1,4 +1,4 @@
-name: 'netlify-plugin-{{name}}'
+name: 'netlify-plugin-gatsby'
 inputs: []
 # Example inputs:
 #  - name: example
