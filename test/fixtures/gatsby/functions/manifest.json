@@ -1,0 +1,136 @@
+[
+    {
+        "apiRoute": "a-directory/function",
+        "originalFilePath": "a-directory/function.js",
+        "relativeCompiledFilePath": "a-directory/function.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/a-directory/function.js"
+    },
+    {
+        "apiRoute": "a-directory",
+        "originalFilePath": "a-directory/index.js",
+        "relativeCompiledFilePath": "a-directory/index.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/a-directory/index.js"
+    },
+    {
+        "apiRoute": "cookie-me",
+        "originalFilePath": "cookie-me.ts",
+        "relativeCompiledFilePath": "cookie-me.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/cookie-me.js"
+    },
+    {
+        "apiRoute": "cors",
+        "originalFilePath": "cors.js",
+        "relativeCompiledFilePath": "cors.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/cors.js"
+    },
+    {
+        "apiRoute": "dir/[...]",
+        "originalFilePath": "dir/[...].js",
+        "relativeCompiledFilePath": "dir/[...].js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/dir/[...].js",
+        "matchPath": "dir/*"
+    },
+    {
+        "apiRoute": "dir/function",
+        "originalFilePath": "dir/function.js",
+        "relativeCompiledFilePath": "dir/function.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/dir/function.js"
+    },
+    {
+        "apiRoute": "env-variables",
+        "originalFilePath": "env-variables.js",
+        "relativeCompiledFilePath": "env-variables.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/env-variables.js"
+    },
+    {
+        "apiRoute": "error-send-function-twice",
+        "originalFilePath": "error-send-function-twice.js",
+        "relativeCompiledFilePath": "error-send-function-twice.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/error-send-function-twice.js"
+    },
+    {
+        "apiRoute": "hello-ts",
+        "originalFilePath": "hello-ts.ts",
+        "relativeCompiledFilePath": "hello-ts.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/hello-ts.js"
+    },
+    {
+        "apiRoute": "hello-world",
+        "originalFilePath": "hello-world.js",
+        "relativeCompiledFilePath": "hello-world.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/hello-world.js"
+    },
+    {
+        "apiRoute": "I-Am-Capitalized",
+        "originalFilePath": "I-Am-Capitalized.js",
+        "relativeCompiledFilePath": "I-Am-Capitalized.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/I-Am-Capitalized.js"
+    },
+    {
+        "apiRoute": "i-am-json",
+        "originalFilePath": "i-am-json.js",
+        "relativeCompiledFilePath": "i-am-json.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/i-am-json.js"
+    },
+    {
+        "apiRoute": "i-am-typescript",
+        "originalFilePath": "i-am-typescript.ts",
+        "relativeCompiledFilePath": "i-am-typescript.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/i-am-typescript.js"
+    },
+    {
+        "apiRoute": "parser",
+        "originalFilePath": "parser.js",
+        "relativeCompiledFilePath": "parser.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/parser.js"
+    },
+    {
+        "apiRoute": "redirect-me",
+        "originalFilePath": "redirect-me.ts",
+        "relativeCompiledFilePath": "redirect-me.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/redirect-me.js"
+    },
+    {
+        "apiRoute": "some whitespace",
+        "originalFilePath": "some whitespace.js",
+        "relativeCompiledFilePath": "some whitespace.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/some whitespace.js"
+    },
+    {
+        "apiRoute": "some-àè-french",
+        "originalFilePath": "some-àè-french.js",
+        "relativeCompiledFilePath": "some-àè-french.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/some-àè-french.js"
+    },
+    {
+        "apiRoute": "some-אודות",
+        "originalFilePath": "some-אודות.js",
+        "relativeCompiledFilePath": "some-אודות.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/some-אודות.js"
+    },
+    {
+        "apiRoute": "status",
+        "originalFilePath": "status.js",
+        "relativeCompiledFilePath": "status.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/status.js"
+    },
+    {
+        "apiRoute": "top-level",
+        "originalFilePath": "top-level.js",
+        "relativeCompiledFilePath": "top-level.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/top-level.js"
+    },
+    {
+        "apiRoute": "users/[userId]/[super]",
+        "originalFilePath": "users/[userId]/[super].js",
+        "relativeCompiledFilePath": "users/[userId]/[super].js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/users/[userId]/[super].js",
+        "matchPath": "users/:userId/:super"
+    },
+    {
+        "apiRoute": "with-äöü-umlaut",
+        "originalFilePath": "with-äöü-umlaut.js",
+        "relativeCompiledFilePath": "with-äöü-umlaut.js",
+        "absoluteCompiledFilePath": "/Users/lukeocodes/Projects/gatsby-functions-test/.cache/functions/with-äöü-umlaut.js"
+    }
+]
