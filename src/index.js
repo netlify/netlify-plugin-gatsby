@@ -1,11 +1,12 @@
-const path = require('path');
+const path = require('path')
 
 const getCacheDirs = (PUBLISH_DIR) => [
   PUBLISH_DIR,
   path.normalize(`${PUBLISH_DIR}/../.cache`),
-];
+]
+const imageServer = require('./image-server')
 
-// This is the main file for the Netlify Build plugin {{name}}.
+// This is the main file for the Netlify Build plugin gatsby.
 // Please read the comments to learn more about the Netlify Build plugin syntax.
 // Find more information in the Netlify documentation.
 
@@ -24,7 +25,7 @@ module.exports = {
     // For example:
     //
     //   [[plugins]]
-    //   package = "netlify-plugin-{{name}}"
+    //   package = "netlify-plugin-gatsby"
     //     [plugins.inputs]
     //     foo = "bar"
     inputs,
@@ -72,7 +73,7 @@ module.exports = {
       // Utility for dealing with modified, created, deleted files since a git commit.
       // See https://github.com/netlify/build/blob/master/packages/git-utils#readme
       git,
-       // Utility for handling Netlify Functions.
+      // Utility for handling Netlify Functions.
       // See https://github.com/netlify/build/tree/master/packages/functions-utils#readme
       functions,
     },
@@ -82,25 +83,24 @@ module.exports = {
       if (process.cwd() === PUBLISH_DIR) {
         build.failBuild(
           `Gatsby sites must publish the public directory, but your site’s publish directory is set to “${PUBLISH_DIR}”. Please set your publish directory to your Gatsby site’s public directory.`,
-        );
+        )
       }
 
-      const cacheDirs = getCacheDirs(PUBLISH_DIR);
+      const cacheDirs = getCacheDirs(PUBLISH_DIR)
 
       if (await cache.restore(cacheDirs)) {
-        console.log('Found a Gatsby cache. We’re about to go FAST. ⚡️');
+        console.log('Found a Gatsby cache. We’re about to go FAST. ⚡️')
       } else {
-        console.log('No Gatsby cache found. Building fresh.');
+        console.log('No Gatsby cache found. Building fresh.')
       }
 
       // check gatsby for gatsby-plugin-netlify - log warning WHEN NOT
-  
+
       // copying netlify wrapper functions into function dir
-  
+
       // copy compiled gatsby functions into function dir
-  
+
       // add redirect
-  
     } catch (error) {
       // Report a user error
       build.failBuild('Error message', { error })
@@ -110,6 +110,10 @@ module.exports = {
     console.log('Netlify configuration', netlifyConfig)
     console.log('Plugin configuration', inputs)
     console.log('Build directory', PUBLISH_DIR)
+
+    console.log('Starting image server')
+
+    const server = imageServer()
 
     // Display success information
     status.show({ summary: 'Success!' })
@@ -125,12 +129,12 @@ module.exports = {
 
   // After Build commands are executed
   onPostBuild({ constants: { PUBLISH_DIR }, utils: { cache } }) {
-    const cacheDirs = getCacheDirs(PUBLISH_DIR);
+    const cacheDirs = getCacheDirs(PUBLISH_DIR)
 
     if (await cache.save(cacheDirs)) {
-      console.log('Stored the Gatsby cache to speed up future builds.');
+      console.log('Stored the Gatsby cache to speed up future builds.')
     } else {
-      console.log('No Gatsby build found.');
+      console.log('No Gatsby build found.')
     }
   },
   /*
