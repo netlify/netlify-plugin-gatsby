@@ -1,3 +1,10 @@
+const path = require('path');
+
+const getCacheDirs = (PUBLISH_DIR) => [
+  PUBLISH_DIR,
+  path.normalize(`${PUBLISH_DIR}/../.cache`),
+];
+
 // This is the main file for the Netlify Build plugin {{name}}.
 // Please read the comments to learn more about the Netlify Build plugin syntax.
 // Find more information in the Netlify documentation.
@@ -71,8 +78,29 @@ module.exports = {
     },
   }) {
     try {
-      // Commands are printed in Netlify logs
-      await run('echo', ['Hello world!\n'])
+      // print a helpful message if the publish dir is misconfigured
+      if (process.cwd() === PUBLISH_DIR) {
+        build.failBuild(
+          `Gatsby sites must publish the public directory, but your site’s publish directory is set to “${PUBLISH_DIR}”. Please set your publish directory to your Gatsby site’s public directory.`,
+        );
+      }
+
+      const cacheDirs = getCacheDirs(PUBLISH_DIR);
+
+      if (await cache.restore(cacheDirs)) {
+        console.log('Found a Gatsby cache. We’re about to go FAST. ⚡️');
+      } else {
+        console.log('No Gatsby cache found. Building fresh.');
+      }
+
+      // check gatsby for gatsby-plugin-netlify - log warning WHEN NOT
+  
+      // copying netlify wrapper functions into function dir
+  
+      // copy compiled gatsby functions into function dir
+  
+      // add redirect
+  
     } catch (error) {
       // Report a user error
       build.failBuild('Error message', { error })
@@ -93,8 +121,19 @@ module.exports = {
   onPreBuild() {},
   // Build commands are executed
   onBuild() {},
+  */
+
   // After Build commands are executed
-  onPostBuild() {},
+  onPostBuild({ constants: { PUBLISH_DIR }, utils: { cache } }) {
+    const cacheDirs = getCacheDirs(PUBLISH_DIR);
+
+    if (await cache.save(cacheDirs)) {
+      console.log('Stored the Gatsby cache to speed up future builds.');
+    } else {
+      console.log('No Gatsby build found.');
+    }
+  },
+  /*
   // Runs on build success
   onSuccess() {},
   // Runs on build error
