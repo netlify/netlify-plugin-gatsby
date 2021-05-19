@@ -5,7 +5,7 @@ const getCacheDirs = (PUBLISH_DIR) => [
   path.normalize(`${PUBLISH_DIR}/../.cache`),
 ];
 
-// This is the main file for the Netlify Build plugin {{name}}.
+// This is the main file for the Netlify Build plugin gatsby.
 // Please read the comments to learn more about the Netlify Build plugin syntax.
 // Find more information in the Netlify documentation.
 
@@ -24,7 +24,7 @@ module.exports = {
     // For example:
     //
     //   [[plugins]]
-    //   package = "netlify-plugin-{{name}}"
+    //   package = "netlify-plugin-gatsby"
     //     [plugins.inputs]
     //     foo = "bar"
     inputs,
@@ -124,10 +124,10 @@ module.exports = {
   */
 
   // After Build commands are executed
-  onPostBuild({ constants: { PUBLISH_DIR }, utils: { cache } }) {
-    const cacheDirs = getCacheDirs(PUBLISH_DIR);
+  async onPostBuild({ constants, utils }) {
+    const cacheDirs = getCacheDirs(constants);
 
-    if (await cache.save(cacheDirs)) {
+    if (await utils.cache.save(cacheDirs)) {
       console.log('Stored the Gatsby cache to speed up future builds.');
     } else {
       console.log('No Gatsby build found.');
