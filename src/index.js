@@ -3,9 +3,11 @@
 const path = require('path');
 const fs = require('fs-extra');
 
+const normalizedCacheDir = (PUBLISH_DIR) => (path.normalize(`${PUBLISH_DIR}/../.cache`))
+
 const getCacheDirs = (PUBLISH_DIR) => [
   PUBLISH_DIR,
-  path.normalize(`${PUBLISH_DIR}/../.cache`),
+  normalizedCacheDir(PUBLISH_DIR),
 ];
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions';
@@ -36,7 +38,7 @@ module.exports = {
         console.warn('Add `gatsby-plugin-netlify` to `gatsby-config` if you would like to support Gatsby redirects. 🎉');
       }
   
-      // copying netlify wrapper functions into function dir
+      // copying netlify wrapper functions into functions directory
       await fs.copy(path.join(__dirname, 'templates/'), `${FUNCTIONS_SRC}/gatsby`, {
         // overwrite: false,
         // errorOnExist: true,
@@ -65,8 +67,12 @@ module.exports = {
     constants: { PUBLISH_DIR, FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC },
     utils,
   }) {
-      // cp .cache/functions to netlify/functions/gatsby/functions
-
+      // copying gatsby functions to functions directory
+      await fs.copy(path.join(normalizedCacheDir(PUBLISH_DIR), '/functions'), `${FUNCTIONS_SRC}/gatsby/functions`, {
+        // overwrite: false,
+        // errorOnExist: true,
+        overwrite: true,
+      })
   },
 
   // After Build commands are executed
