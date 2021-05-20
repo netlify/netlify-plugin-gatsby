@@ -10,6 +10,13 @@ const getCacheDirs = (PUBLISH_DIR) => [
   normalizedCacheDir(PUBLISH_DIR),
 ];
 
+const writeToFile = (file, string) => {
+    const logStream = fs.createWriteStream(file, { flags: 'a' });
+
+    logStream.write('# netlify-plugin-gatsby automated ignores\r\n');
+    logStream.end(`${FUNCTIONS_SRC}/gatsby\r\n`);
+}
+
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions';
 
 module.exports = {
@@ -40,49 +47,52 @@ module.exports = {
   
       // copying netlify wrapper functions into functions directory
       await fs.copy(path.join(__dirname, 'templates/'), `${FUNCTIONS_SRC}/gatsby`, {
-        // overwrite: false,
-        // errorOnExist: true,
-        overwrite: true,
+        overwrite: false,
+        errorOnExist: true,
       })
 
       // add gatsby functions to .gitignore
-      var logStream = fs.createWriteStream(path.resolve('.gitignore'), { flags: 'a' });
-      logStream.write('# netlify-plugin-gatsby automated ignores\r\n');
-      logStream.end(`${FUNCTIONS_SRC}/gatsby\r\n`);
-
-      // add redirect
-  
+      await fs.appendFile(path.resolve('.gitignore'), `# netlify-plugin-gatsby ignores\r\n${FUNCTIONS_SRC}/gatsby\r\n`);
     } catch (error) {
-      // Report a user error
       utils.build.failBuild('Error message', { error });
     }
-
-    // Display success information
-    utils.status.show({ summary: 'Success!' });
   },
 
   async onBuild({
-    netlifyConfig,
-    packageJson,
     constants: { PUBLISH_DIR, FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC },
     utils,
   }) {
+    try {
       // copying gatsby functions to functions directory
       await fs.copy(path.join(normalizedCacheDir(PUBLISH_DIR), '/functions'), `${FUNCTIONS_SRC}/gatsby/functions`, {
-        // overwrite: false,
-        // errorOnExist: true,
-        overwrite: true,
+        overwrite: false,
+        errorOnExist: true,
       })
+
+      // path to netlify's redirects file
+      const redirectsPath = path.resolve('_redirects')
+
+      // ensure we have a _redirects file
+      await fs.ensureFile(redirectsPath)
+
+      // add redirect to _redirects file
+      await fs.appendFile(redirectsPath, `# netlify-plugin-gatsby redirects\r\n/api/* /.netlify/functions/gatsby 200\r\n`);
+    } catch (error) {
+      utils.build.failBuild('Error message', { error });
+    }
   },
 
-  // After Build commands are executed
   async onPostBuild({ constants: { PUBLISH_DIR }, utils }) {
-    const cacheDirs = getCacheDirs(PUBLISH_DIR);
+    try {
+      const cacheDirs = getCacheDirs(PUBLISH_DIR);
 
-    if (await utils.cache.save(cacheDirs)) {
-      console.log('Stored the Gatsby cache to speed up future builds. 🔥');
-    } else {
-      console.log('No Gatsby build found.');
+      if (await utils.cache.save(cacheDirs)) {
+        console.log('Stored the Gatsby cache to speed up future builds. 🔥');
+      } else {
+        console.log('No Gatsby build found.');
+      }
+    } catch (error) {
+      utils.build.failBuild('Error message', { error });
     }
   },
 }
