@@ -233,6 +233,7 @@
     "from2": "^2.3.0",
     "from2-array": "^0.0.4",
     "fs-constants": "^1.0.0",
+    "fs-extra": "^10.0.0",
     "fs.realpath": "^1.0.0",
     "fsevents": "^2.3.2",
     "function-bind": "^1.1.1",
