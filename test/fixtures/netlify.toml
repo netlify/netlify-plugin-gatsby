@@ -1,2 +1,9 @@
+[build]
+command = "npm run build"
+publish = "public/"
+
+[build.environment]
+NODE_VERSION = "12.18.0"
+
 [[plugins]]
-  package = "../"
+package = "../."
