@@ -26,7 +26,7 @@
     "cookies": "^0.8.0",
     "gatsby": "^3.4.1",
     "multer": "^1.4.2",
-    "netlify-plugin-gatsby": "git+https://${GITHUB_TOKEN}:x-oauth-basic@github.com/lukeocodes/netlify-plugin-gatsby.git",
+    "netlify-plugin-gatsby": "git+https://github.com/lukeocodes/netlify-plugin-gatsby.git",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
