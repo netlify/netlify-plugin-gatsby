@@ -10,13 +10,6 @@ const getCacheDirs = (PUBLISH_DIR) => [
   normalizedCacheDir(PUBLISH_DIR),
 ];
 
-const writeToFile = (file, string) => {
-    const logStream = fs.createWriteStream(file, { flags: 'a' });
-
-    logStream.write('# netlify-plugin-gatsby automated ignores\r\n');
-    logStream.end(`${FUNCTIONS_SRC}/gatsby\r\n`);
-}
-
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions';
 
 module.exports = {
@@ -51,8 +44,14 @@ module.exports = {
         errorOnExist: true,
       })
 
-      // add gatsby functions to .gitignore
-      await fs.appendFile(path.resolve('.gitignore'), `# netlify-plugin-gatsby ignores\r\n${FUNCTIONS_SRC}/gatsby\r\n`);
+      // add gatsby functions to .gitignore if doesn't exist
+      const gitignorePath = path.resolve('.gitignore')
+      const gitignoreString = `\r\n# netlify-plugin-gatsby ignores\r\n${FUNCTIONS_SRC}/gatsby\r\n`
+      const gitignoreContents = await fs.readFile(gitignorePath);
+      
+      if (!gitignoreContents.includes(gitignoreString)) {
+        await fs.appendFile(path.resolve('.gitignore'), gitignoreString);
+      }
     } catch (error) {
       utils.build.failBuild('Error message', { error });
     }
@@ -69,14 +68,13 @@ module.exports = {
         errorOnExist: true,
       })
 
-      // path to netlify's redirects file
       const redirectsPath = path.resolve('_redirects')
 
       // ensure we have a _redirects file
       await fs.ensureFile(redirectsPath)
 
       // add redirect to _redirects file
-      await fs.appendFile(redirectsPath, `# netlify-plugin-gatsby redirects\r\n/api/* /.netlify/functions/gatsby 200\r\n`);
+      await fs.appendFile(redirectsPath, `\r\n# netlify-plugin-gatsby redirects\r\n/api/* /.netlify/functions/gatsby 200\r\n`);
     } catch (error) {
       utils.build.failBuild('Error message', { error });
     }
