@@ -11,5 +11,5 @@ node_modules
 /coverage
 /build
 .netlify
-package-lock.json
-yarn.lock
+/package-lock.json
+/yarn.lock
