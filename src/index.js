@@ -68,7 +68,7 @@ module.exports = {
         errorOnExist: true,
       })
 
-      const redirectsPath = path.resolve('_redirects')
+      const redirectsPath = path.resolve(`${PUBLISH_DIR}/_redirects`)
 
       // ensure we have a _redirects file
       await fs.ensureFile(redirectsPath)
