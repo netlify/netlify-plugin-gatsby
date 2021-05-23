@@ -7,3 +7,6 @@ public
 
 netlify/functions/gatsby/functions
 deployment.json
+
+# netlify-plugin-gatsby ignores
+netlify/functions/gatsby

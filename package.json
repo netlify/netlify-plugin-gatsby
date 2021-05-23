@@ -26,7 +26,7 @@
     "test": "test"
   },
   "engines": {
-    "node": ">=12.18.0"
+    "node": ">=14.17.0"
   },
   "scripts": {
     "build": "netlify-build",
