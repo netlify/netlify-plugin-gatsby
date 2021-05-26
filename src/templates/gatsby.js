@@ -8,7 +8,7 @@ exports.handler = async function handler(event, context) {
   try {
     // This is generated in the user's site
     // eslint-disable-next-line node/no-missing-require, node/no-unpublished-require
-    functions = require('../../../.cache/functions/manifest.json')
+    functions = require('./functions/manifest.json')
   } catch (e) {
     return {
       statusCode: 404,
