@@ -14,4 +14,3 @@ node_modules
 /yarn.lock
 .cache
 public
-test/fixtures/functions-without-gatsby-plugin/package-lock.json

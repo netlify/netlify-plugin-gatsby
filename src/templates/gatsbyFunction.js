@@ -1,6 +1,6 @@
 // @ts-check
 
-const { pathToRegexp } = require('path-to-regexp')
+const pathToRegexp = require('path-to-regexp')
 const bodyParser = require('co-body')
 const multer = require('multer')
 const parseForm = multer().none()
