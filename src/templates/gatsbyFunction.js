@@ -16,7 +16,7 @@ module.exports = async (req, res, functions) => {
       req.body = await bodyParser(req)
     }
   } catch (e) {
-    console.log('Error parsing body', req.body)
+    console.log('Error parsing body', e, req)
   }
 
   //  Strip "/api/" from path
