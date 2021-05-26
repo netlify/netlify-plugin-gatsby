@@ -13,8 +13,10 @@
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "preview": "netlify dev",
-    "test": "start-server-and-test preview 8888 test:jest",
+    "build:netlify": "NETLIFY_AUTH_TOKEN=fake netlify build",
+    "preview": "netlify dev --offline",
+    "test": "run-s build:netlify test:e2e",
+    "test:e2e": "start-server-and-test preview 8888 test:jest",
     "test:jest": "jest"
   },
   "dependencies": {
