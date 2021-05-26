@@ -26,7 +26,10 @@ module.exports = async (req, res, functions) => {
   // https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby/src/internal-plugins/functions/gatsby-node.ts
 
   // Check first for exact matches.
-  let functionObj = functions.find(({ apiRoute }) => apiRoute === pathFragment)
+  let functionObj = functions.find(
+    ({ apiRoute, functionRoute }) =>
+      (functionRoute || apiRoute) === pathFragment,
+  )
 
   if (!functionObj) {
     // Check if there's any matchPaths that match.
@@ -52,18 +55,14 @@ module.exports = async (req, res, functions) => {
   }
 
   if (functionObj) {
-    console.log(`Running ${functionObj.apiRoute}`)
+    console.log(`Running ${functionObj.functionRoute}`)
     const start = Date.now()
-    // In dev mode, load the function from the compiled output dir.
-    // In production, load the version copied into the function directory.
-    const pathToFunction =
-      process.env.NETLIFY_DEV === 'true'
-        ? functionObj.absoluteCompiledFilePath
-        : path.join(
-            __dirname,
-            'functions',
-            functionObj.relativeCompiledFilePath,
-          )
+
+    const pathToFunction = path.join(
+      __dirname,
+      'functions',
+      functionObj.relativeCompiledFilePath,
+    )
 
     try {
       delete require.cache[require.resolve(pathToFunction)]
@@ -79,14 +78,16 @@ module.exports = async (req, res, functions) => {
         res
           .status(500)
           .send(
-            `Error when executing function "${functionObj.originalFilePath}": "${e.message}"`,
+            `Error when executing function "${functionObj.originalRelativeFilePath}": "${e.message}"`,
           )
       }
     }
 
     const end = Date.now()
     console.log(
-      `Executed function "/api/${functionObj.apiRoute}" in ${end - start}ms`,
+      `Executed function "/api/${functionObj.functionRoute}" in ${
+        end - start
+      }ms`,
     )
   } else {
     res.status(404).send('Not found')
