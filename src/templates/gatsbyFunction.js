@@ -1,6 +1,6 @@
 // @ts-check
 
-const pathToRegexp = require('path-to-regexp')
+const pathToRegexp = require('path-to-regexp').default
 const bodyParser = require('co-body')
 const multer = require('multer')
 const parseForm = multer().none()
@@ -15,7 +15,9 @@ module.exports = async (req, res, functions) => {
     if (!req.body) {
       req.body = await bodyParser(req)
     }
-  } catch (e) {}
+  } catch (e) {
+    console.log('Error parsing body', req.body)
+  }
 
   //  Strip "/api/" from path
   const pathFragment = decodeURIComponent(req.url.substr(5))

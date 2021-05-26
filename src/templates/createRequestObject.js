@@ -1,5 +1,4 @@
 const Stream = require('stream')
-const queryString = require('querystring')
 const http = require('http')
 const cookie = require('cookie')
 
