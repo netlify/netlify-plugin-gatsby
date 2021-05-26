@@ -12,7 +12,7 @@ module.exports = async (req, res, functions) => {
 
   try {
     // If req.body is populated then it was multipart data
-    if (!req.body) {
+    if (!req.body && req.method !== 'GET' && req.method !== 'HEAD') {
       req.body = await bodyParser(req)
     }
   } catch (e) {
