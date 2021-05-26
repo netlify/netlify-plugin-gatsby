@@ -1,4 +1,4 @@
-const Stream = require("stream");
+const Stream = require('stream')
 
 // Mock a HTTP ServerResponse object that returns a Netlify Function-compatible
 // response via the onResEnd callback when res.end() is called.
@@ -9,31 +9,31 @@ const createResponseObject = ({ onResEnd }) => {
   const response = {
     isBase64Encoded: true,
     multiValueHeaders: {},
-  };
+  }
 
-  const res = new Stream();
-  Object.defineProperty(res, "statusCode", {
+  const res = new Stream()
+  Object.defineProperty(res, 'statusCode', {
     get() {
-      return response.statusCode;
+      return response.statusCode
     },
     set(statusCode) {
-      response.statusCode = statusCode;
+      response.statusCode = statusCode
     },
-  });
-  res.headers = {};
+  })
+  res.headers = {}
 
   res.writeHead = (status, headers) => {
-    response.statusCode = status;
-    if (headers) res.headers = Object.assign(res.headers, headers);
+    response.statusCode = status
+    if (headers) res.headers = Object.assign(res.headers, headers)
 
     // Return res object to allow for chaining
     // Fixes: https://github.com/netlify/next-on-netlify/pull/74
-    return res;
-  };
+    return res
+  }
 
   res.write = (chunk) => {
     if (!response.body) {
-      response.body = Buffer.from("");
+      response.body = Buffer.from('')
     }
 
     response.body = Buffer.concat([
@@ -41,86 +41,86 @@ const createResponseObject = ({ onResEnd }) => {
         ? response.body
         : Buffer.from(response.body),
       Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk),
-    ]);
-  };
+    ])
+  }
   res.setHeader = (name, value) => {
-    res.headers[name.toLowerCase()] = value;
-  };
+    res.headers[name.toLowerCase()] = value
+  }
   res.removeHeader = (name) => {
-    delete res.headers[name.toLowerCase()];
-  };
+    delete res.headers[name.toLowerCase()]
+  }
   res.getHeader = (name) => {
-    return res.headers[name.toLowerCase()];
-  };
+    return res.headers[name.toLowerCase()]
+  }
   res.getHeaders = () => {
-    return res.headers;
-  };
+    return res.headers
+  }
   res.hasHeader = (name) => {
-    return !!res.getHeader(name);
-  };
+    return !!res.getHeader(name)
+  }
   res.end = (text) => {
-    if (text) res.write(text);
+    if (text) res.write(text)
     if (!res.statusCode) {
-      res.statusCode = 200;
+      res.statusCode = 200
     }
 
     if (response.body) {
-      response.body = Buffer.from(response.body).toString("base64");
+      response.body = Buffer.from(response.body).toString('base64')
     }
-    response.multiValueHeaders = res.headers;
-    res.writeHead(response.statusCode);
+    response.multiValueHeaders = res.headers
+    res.writeHead(response.statusCode)
 
     // Convert all multiValueHeaders into arrays
     for (const key of Object.keys(response.multiValueHeaders)) {
       if (!Array.isArray(response.multiValueHeaders[key])) {
-        response.multiValueHeaders[key] = [response.multiValueHeaders[key]];
+        response.multiValueHeaders[key] = [response.multiValueHeaders[key]]
       }
     }
 
-    res.finished = true;
-    res.writableEnded = true;
+    res.finished = true
+    res.writableEnded = true
     // Call onResEnd handler with the response object
-    onResEnd(response);
-  };
+    onResEnd(response)
+  }
 
   // Gatsby Functions additions
 
   res.send = (data) => {
     if (res.finished) {
-      return res;
+      return res
     }
-    res.end(data);
-    return res;
-  };
+    res.end(data)
+    return res
+  }
 
   res.json = (data) => {
     if (res.finished) {
-      return res;
+      return res
     }
-    res.setHeader("content-type", "application/json");
-    res.send(JSON.stringify(data));
-    return res;
-  };
+    res.setHeader('content-type', 'application/json')
+    res.send(JSON.stringify(data))
+    return res
+  }
 
   res.status = (code) => {
-    const numericCode = parseInt(code);
+    const numericCode = parseInt(code)
     if (!isNaN(code)) {
-      response.statusCode = numericCode;
+      response.statusCode = numericCode
     }
-    return res;
-  };
+    return res
+  }
 
   res.redirect = (statusCode, url) => {
     if (!url) {
-      url = statusCode;
-      statusCode = 302;
+      url = statusCode
+      statusCode = 302
     }
-    res.writeHead(statusCode, { Location: url });
-    res.end();
-    return res;
-  };
+    res.writeHead(statusCode, { Location: url })
+    res.end()
+    return res
+  }
 
-  return res;
-};
+  return res
+}
 
-module.exports = createResponseObject;
+module.exports = createResponseObject
