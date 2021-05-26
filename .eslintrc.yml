@@ -2,6 +2,7 @@ plugins: [node, prettier]
 env:
   node: true
   es6: true
+  jest: true
 extends:
   - plugin:import/errors
   - plugin:import/warnings

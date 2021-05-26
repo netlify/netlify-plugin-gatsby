@@ -1,4 +1,3 @@
-// @ts-check
 const createRequestObject = require('./createRequestObject')
 const createResponseObject = require('./createResponseObject')
 const gatsbyFunction = require('./gatsbyFunction')

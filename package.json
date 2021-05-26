@@ -26,11 +26,12 @@
     "test": "test"
   },
   "engines": {
-    "node": ">=14.17.0"
+    "node": ">=12.13.0"
   },
   "scripts": {
     "build": "netlify-build",
-    "test": "npm run lint && npm run ava",
+    "test": "npm run lint && npm run test:e2e",
+    "test:e2e": "cd test && ./e2e-test.sh",
     "lint": "npm run eslint && npm run prettier",
     "eslint": "eslint --ignore-path .gitignore --fix --cache --format=codeframe --max-warnings=0 \"{src,init}/**/*.js\"",
     "prettier": "prettier --ignore-path .gitignore --write --loglevel warn \"{.github,src,init}/**/*.{js,md,yml,json}\" \"*.{js,md,yml,json}\"",
