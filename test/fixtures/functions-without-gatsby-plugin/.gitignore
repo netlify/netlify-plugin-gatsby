@@ -9,5 +9,6 @@ public
 netlify/functions/gatsby/functions
 deployment.json
 
-# netlify-plugin-gatsby ignores
+# netlify-plugin-gatsby ignores start
 netlify/functions/gatsby
+# netlify-plugin-gatsby ignores end
