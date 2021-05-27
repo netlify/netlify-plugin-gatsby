@@ -11,3 +11,6 @@ deployment.json
 
 # netlify-plugin-gatsby ignores
 netlify/functions/gatsby
+
+# netlify-plugin-gatsby ignores
+netlify/functions/gatsby

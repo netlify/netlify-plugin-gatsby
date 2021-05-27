@@ -54,10 +54,6 @@ module.exports = {
       await fs.copy(
         path.join(__dirname, 'templates/'),
         `${FUNCTIONS_SRC}/gatsby`,
-        {
-          overwrite: false,
-          errorOnExist: true,
-        },
       )
 
       // add gatsby functions to .gitignore if doesn't exist

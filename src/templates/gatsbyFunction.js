@@ -3,16 +3,23 @@
 const pathToRegexp = require('path-to-regexp')
 const bodyParser = require('co-body')
 const multer = require('multer')
-const parseForm = multer().none()
+const parseForm = multer().any()
 const path = require('path')
 
 module.exports = async (req, res, functions) => {
   // Multipart form data middleware. because co-body can't handle it
-  await new Promise((next) => parseForm(req, res, next))
+  console.log('before', req)
 
+  await new Promise((next) => parseForm(req, res, next))
+  console.log({ req })
   try {
     // If req.body is populated then it was multipart data
-    if (!req.body && req.method !== 'GET' && req.method !== 'HEAD') {
+    if (
+      !req.files &&
+      !req.body &&
+      req.method !== 'GET' &&
+      req.method !== 'HEAD'
+    ) {
       req.body = await bodyParser(req)
     }
   } catch (e) {

@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 const fetch = require(`node-fetch`)
-
+const FormData = require('form-data')
+const path = require('path')
+const { createReadStream, readFileSync } = require('fs')
 // Based on Gatsby Functions integration tests
 // Source: https://github.com/gatsbyjs/gatsby/blob/master/integration-tests/functions/test-helpers.js
 
@@ -155,8 +157,6 @@ exports.runTests = function runTests(env, host) {
       })
 
       test(`form data`, async () => {
-        const FormData = require('form-data')
-
         const form = new FormData()
         form.append('a', `form-data`)
         const result = await fetch(`${host}/api/parser`, {
@@ -178,23 +178,18 @@ exports.runTests = function runTests(env, host) {
         expect(result).toMatchSnapshot()
       })
 
-      // TODO enable when functions support uploading files.
-      // test(`file in multipart/form`, async () => {
-      // const { readFileSync } = require("fs")
+      fit(`file in multipart/form`, async () => {
+        const file = readFileSync(path.join(__dirname, './fixtures/test.txt'))
 
-      // const file = readFileSync(path.join(__dirname, "./fixtures/test.txt"))
+        const form = new FormData()
+        form.append('file', file)
+        const result = await fetch(`${host}/api/parser`, {
+          method: `POST`,
+          body: form,
+        }).then((res) => res.json())
 
-      // const form = new FormData()
-      // form.append("file", file)
-      // const result = await fetch(`${host}/api/parser`, {
-      // method: `POST`,
-      // body: form,
-      // }).then(res => res.json())
-
-      // console.log({ result })
-
-      // expect(result).toMatchSnapshot()
-      // })
+        expect(result).toMatchSnapshot()
+      })
 
       // test(`stream a file`, async () => {
       // const { createReadStream } = require("fs")
