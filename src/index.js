@@ -62,7 +62,7 @@ module.exports = {
 
       // add gatsby functions to .gitignore if doesn't exist
       const gitignorePath = path.resolve('.gitignore')
-      const gitignoreString = `\r\n# netlify-plugin-gatsby ignores\r\n${FUNCTIONS_SRC}/gatsby\r\n`
+      const gitignoreString = `\n# netlify-plugin-gatsby ignores\n${FUNCTIONS_SRC}/gatsby\n`
       const gitignoreContents = await fs.readFile(gitignorePath)
 
       if (!gitignoreContents.includes(gitignoreString)) {
