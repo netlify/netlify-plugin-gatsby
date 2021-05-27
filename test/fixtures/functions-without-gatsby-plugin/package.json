@@ -13,28 +13,27 @@
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "preview": "netlify dev",
-    "test:local": "start-server-and-test preview 8888 test:jest",
-    "deploy": "netlify deploy --json -m 'E2E test' > deployment.json",
-    "bundle": "netlify build",
+    "build:netlify": "NETLIFY_AUTH_TOKEN=fake netlify build",
+    "preview": "netlify dev --offline",
+    "test": "run-s build:netlify test:e2e",
+    "test:e2e": "start-server-and-test preview 8888 test:jest",
     "test:jest": "jest",
-    "test:netlify": "TEST_ENV=netlify run-s bundle deploy test:jest",
-    "test:all": "run-s test:local test:netlify"
+    "preinstall": "cd ../../../ && npm ci"
   },
   "dependencies": {
-    "co-body": "^6.1.0",
-    "cookies": "^0.8.0",
     "gatsby": "^3.4.1",
-    "multer": "^1.4.2",
-    "netlify-plugin-gatsby": "git+https://github.com/lukeocodes/netlify-plugin-gatsby.git",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
   "devDependencies": {
     "form-data": "^4.0.0",
     "jest": "^26.6.3",
+    "node-fetch": "^2.6.1",
     "npm-run-all": "^4.1.5",
     "start-server-and-test": "^1.12.2"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.13.0"
+  }
 }
