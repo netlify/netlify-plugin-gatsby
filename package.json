@@ -1,7 +1,6 @@
 {
   "name": "netlify-plugin-gatsby",
   "version": "0.0.1",
-  "private": true,
   "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
   "main": "src/index.js",
   "files": [
@@ -14,7 +13,9 @@
   ],
   "keywords": [
     "netlify-plugin",
-    "netlify"
+    "netlify",
+    "gatsby",
+    "gatsbyjs"
   ],
   "author": "Luke Oliff <luke@lukeoliff.com>",
   "license": "MIT",
