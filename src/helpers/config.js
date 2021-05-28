@@ -10,7 +10,7 @@ exports.spliceConfig = async function spliceConfig({
   await fs.ensureFile(fileName)
   const data = await fs.readFile(fileName, 'utf8')
   const [initial = '', rest = ''] = data.split(startMarker)
-  const [inner, final = ''] = rest.split(endMarker)
+  const [, final = ''] = rest.split(endMarker)
   const out = [
     initial,
     initial.endsWith(EOL) ? '' : EOL,
@@ -24,8 +24,6 @@ exports.spliceConfig = async function spliceConfig({
   ]
     .filter(Boolean)
     .join('')
-
-  console.log({ out, data, initial, rest, inner, final })
 
   return fs.writeFile(fileName, out)
 }
