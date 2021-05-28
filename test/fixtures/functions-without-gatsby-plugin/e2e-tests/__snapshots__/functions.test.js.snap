@@ -1,6 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Local functions can parse different ways of sending data file in multipart/form 1`] = `Object {}`;
+exports[`Local functions can parse different ways of sending data file in multipart/form 1`] = `
+Object {
+  "body": Object {
+    "something": "here",
+  },
+  "files": Array [
+    Object {
+      "buffer": Object {
+        "data": Array [
+          104,
+          105,
+        ],
+        "type": "Buffer",
+      },
+      "encoding": "7bit",
+      "fieldname": "file",
+      "mimetype": "text/plain",
+      "originalname": "test.txt",
+      "size": 2,
+    },
+  ],
+}
+`;
 
 exports[`Local functions can parse different ways of sending data form data 1`] = `
 Object {

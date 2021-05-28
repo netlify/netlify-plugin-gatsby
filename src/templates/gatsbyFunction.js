@@ -8,10 +8,8 @@ const path = require('path')
 
 module.exports = async (req, res, functions) => {
   // Multipart form data middleware. because co-body can't handle it
-  console.log('before', req)
 
   await new Promise((next) => parseForm(req, res, next))
-  console.log({ req })
   try {
     // If req.body is populated then it was multipart data
     if (

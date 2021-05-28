@@ -148,7 +148,11 @@ const IndexPage = () => {
         <li style={listItemStyles} key="file">
           <span>
             <span style={linkStyle}>Form parser</span>
-            <form action="/api/parser" method="POST">
+            <form
+              action="/api/parser"
+              method="POST"
+              enctype="multipart/form-data"
+            >
               <input type="hidden" name="hidden" value="hidden field" />
 
               <input type="file" name="myFile" />
