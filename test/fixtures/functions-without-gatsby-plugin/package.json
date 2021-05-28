@@ -18,7 +18,7 @@
     "test": "run-s build:netlify test:e2e",
     "test:e2e": "start-server-and-test preview 8888 test:jest",
     "test:jest": "jest",
-    "preinstall": "cd ../../../ && npm ci"
+    "postinstall": "cd ../../../ && npm ci"
   },
   "dependencies": {
     "gatsby": "^3.4.1",
