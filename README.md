@@ -10,12 +10,8 @@ plugin for your app.
 
 - [Installation and Configuration](#installation-and-configuration)
 - [CLI Usage](#cli-usage)
-- [Custom Netlify Functions](#custom-netlify-functions)
-- [Publish Directory](#publish-directory)
-- [Custom Netlify Redirects](#custom-netlify-redirects)
-- [Caveats](#caveats)
+- [Using Gatsby Functions](#using-gatsby-functions)
 - [Credits](#credits)
-- [Showcase](#showcase)
 
 ## Installation and Configuration
 
@@ -70,3 +66,27 @@ workflow to manage git tracking plugin-generated files:
 It's important to note that the CLI may mix your project's source code and
 plugin-generated files; this is why we recommend committing all project source
 files before running CLI builds.
+
+## Using Gatsby Functions
+
+This plugin will convert all
+[Gatsby Functions](https://www.gatsbyjs.com/docs/how-to/functions/) in the
+project to run as
+[Netlify functions](https://docs.netlify.com/functions/overview/). This should
+be invisible: you can write the Gatsby Functions in the same way as you usually
+would. The API is the same, and if you use this plugin then it will deploy to
+Netlify functions without needing any extra configuration.
+
+When the site is built, this plugin will create a wrapper Netlify function in
+`/netlify/functions/gatsby`, and then deploy that alongside the Gatsby
+functions. If you run this locally with the Netlify CLI, you will see it create
+these files. It will add an entry to your `.gitignore` to ignore the
+`/netlify/functions/gatsby` directory.
+
+### Local development
+
+When developing Gatsby Functions it is usually easier to use the built-in
+`gatsby develop` functions server. However if you want to try the Netlify
+functions wrapper it will run via `netlify dev`. However you should be sure to
+run `netlify build` first, so that the wrappers are generated and the functions
+copied across.
