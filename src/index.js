@@ -53,12 +53,8 @@ module.exports = {
 
       // copying netlify wrapper functions into functions directory
       await fs.copy(
-        path.join(__dirname, 'templates/'),
-        `${FUNCTIONS_SRC}/gatsby`,
-        {
-          overwrite: false,
-          errorOnExist: true,
-        },
+        path.join(__dirname, 'templates'),
+        path.join(FUNCTIONS_SRC, 'gatsby'),
       )
 
       // add gatsby functions to .gitignore if doesn't exist
@@ -83,11 +79,7 @@ module.exports = {
       // copying gatsby functions to functions directory
       await fs.copy(
         path.join(normalizedCacheDir(PUBLISH_DIR), '/functions'),
-        `${FUNCTIONS_SRC}/gatsby/functions`,
-        {
-          overwrite: false,
-          errorOnExist: true,
-        },
+        path.join(FUNCTIONS_SRC, 'gatsby', 'functions'),
       )
 
       const redirectsPath = path.resolve(`${PUBLISH_DIR}/_redirects`)
