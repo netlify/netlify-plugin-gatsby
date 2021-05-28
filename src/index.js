@@ -15,10 +15,7 @@ const getCacheDirs = (PUBLISH_DIR) => [
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
 
 module.exports = {
-  async onPreBuild({
-    constants: { PUBLISH_DIR, FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC },
-    utils,
-  }) {
+  async onPreBuild({ constants: { PUBLISH_DIR }, utils }) {
     try {
       // print a helpful message if the publish dir is misconfigured
       if (process.cwd() === PUBLISH_DIR) {
@@ -50,22 +47,6 @@ module.exports = {
           'Add `gatsby-plugin-netlify` to `gatsby-config` if you would like to support Gatsby redirects. 🎉',
         )
       }
-
-      // copying netlify wrapper functions into functions directory
-      await fs.copy(
-        path.join(__dirname, 'templates'),
-        path.join(FUNCTIONS_SRC, 'gatsby'),
-      )
-
-      // add gatsby functions to .gitignore if doesn't exist
-      const gitignorePath = path.resolve('.gitignore')
-
-      await spliceConfig({
-        startMarker: '# @netlify/plugin-gatsby ignores start',
-        endMarker: '# @netlify/plugin-gatsby ignores end',
-        contents: `${FUNCTIONS_SRC}/gatsby`,
-        fileName: gitignorePath,
-      })
     } catch (error) {
       utils.build.failBuild('Error message', { error })
     }
@@ -77,8 +58,22 @@ module.exports = {
   }) {
     try {
       // copying gatsby functions to functions directory
+      const compiledFunctions = path.join(
+        normalizedCacheDir(PUBLISH_DIR),
+        '/functions',
+      )
+      if (!fs.existsSync(compiledFunctions)) {
+        return
+      }
+
+      // copying netlify wrapper functions into functions directory
       await fs.copy(
-        path.join(normalizedCacheDir(PUBLISH_DIR), '/functions'),
+        path.join(__dirname, 'templates'),
+        path.join(FUNCTIONS_SRC, 'gatsby'),
+      )
+
+      await fs.copy(
+        compiledFunctions,
         path.join(FUNCTIONS_SRC, 'gatsby', 'functions'),
       )
 
@@ -89,6 +84,16 @@ module.exports = {
         endMarker: '# @netlify/plugin-gatsby redirects end',
         contents: '/api/* /.netlify/functions/gatsby 200',
         fileName: redirectsPath,
+      })
+
+      // add gatsby functions to .gitignore if doesn't exist
+      const gitignorePath = path.resolve('.gitignore')
+
+      await spliceConfig({
+        startMarker: '# @netlify/plugin-gatsby ignores start',
+        endMarker: '# @netlify/plugin-gatsby ignores end',
+        contents: `${FUNCTIONS_SRC}/gatsby`,
+        fileName: gitignorePath,
       })
     } catch (error) {
       utils.build.failBuild('Error message', { error })
