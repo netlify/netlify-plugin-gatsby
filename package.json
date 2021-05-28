@@ -1,5 +1,5 @@
 {
-  "name": "netlify-plugin-gatsby",
+  "name": "@netlify/plugin-gatsby",
   "version": "0.0.1",
   "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
   "main": "src/index.js",
@@ -21,7 +21,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "lukeocodes/netlify-plugin-gatsby"
+    "url": "https://github.com/netlify/netlify-plugin-gatsby"
   },
   "directories": {
     "test": "test"

@@ -61,8 +61,8 @@ module.exports = {
       const gitignorePath = path.resolve('.gitignore')
 
       await spliceConfig({
-        startMarker: '# netlify-plugin-gatsby ignores start',
-        endMarker: '# netlify-plugin-gatsby ignores end',
+        startMarker: '# @netlify/plugin-gatsby ignores start',
+        endMarker: '# @netlify/plugin-gatsby ignores end',
         contents: `${FUNCTIONS_SRC}/gatsby`,
         fileName: gitignorePath,
       })
@@ -85,8 +85,8 @@ module.exports = {
       const redirectsPath = path.resolve(`${PUBLISH_DIR}/_redirects`)
 
       await spliceConfig({
-        startMarker: '# netlify-plugin-gatsby redirects start',
-        endMarker: '# netlify-plugin-gatsby redirects end',
+        startMarker: '# @netlify/plugin-gatsby redirects start',
+        endMarker: '# @netlify/plugin-gatsby redirects end',
         contents: '/api/* /.netlify/functions/gatsby 200',
         fileName: redirectsPath,
       })
