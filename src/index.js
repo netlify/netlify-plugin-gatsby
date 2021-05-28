@@ -2,6 +2,7 @@
 
 const path = require('path')
 const fs = require('fs-extra')
+const { spliceConfig } = require('./helpers/config')
 
 const normalizedCacheDir = (PUBLISH_DIR) =>
   path.normalize(`${PUBLISH_DIR}/../.cache`)
@@ -52,18 +53,19 @@ module.exports = {
 
       // copying netlify wrapper functions into functions directory
       await fs.copy(
-        path.join(__dirname, 'templates/'),
-        `${FUNCTIONS_SRC}/gatsby`,
+        path.join(__dirname, 'templates'),
+        path.join(FUNCTIONS_SRC, 'gatsby'),
       )
 
       // add gatsby functions to .gitignore if doesn't exist
       const gitignorePath = path.resolve('.gitignore')
-      const gitignoreString = `\r\n# netlify-plugin-gatsby ignores\r\n${FUNCTIONS_SRC}/gatsby\r\n`
-      const gitignoreContents = await fs.readFile(gitignorePath)
 
-      if (!gitignoreContents.includes(gitignoreString)) {
-        await fs.appendFile(path.resolve('.gitignore'), gitignoreString)
-      }
+      await spliceConfig({
+        startMarker: '# netlify-plugin-gatsby ignores start',
+        endMarker: '# netlify-plugin-gatsby ignores end',
+        contents: `${FUNCTIONS_SRC}/gatsby`,
+        fileName: gitignorePath,
+      })
     } catch (error) {
       utils.build.failBuild('Error message', { error })
     }
@@ -77,23 +79,17 @@ module.exports = {
       // copying gatsby functions to functions directory
       await fs.copy(
         path.join(normalizedCacheDir(PUBLISH_DIR), '/functions'),
-        `${FUNCTIONS_SRC}/gatsby/functions`,
-        {
-          overwrite: false,
-          errorOnExist: true,
-        },
+        path.join(FUNCTIONS_SRC, 'gatsby', 'functions'),
       )
 
       const redirectsPath = path.resolve(`${PUBLISH_DIR}/_redirects`)
 
-      // ensure we have a _redirects file
-      await fs.ensureFile(redirectsPath)
-
-      // add redirect to _redirects file
-      await fs.appendFile(
-        redirectsPath,
-        `\r\n# netlify-plugin-gatsby redirects\r\n/api/* /.netlify/functions/gatsby 200\r\n`,
-      )
+      await spliceConfig({
+        startMarker: '# netlify-plugin-gatsby redirects start',
+        endMarker: '# netlify-plugin-gatsby redirects end',
+        contents: '/api/* /.netlify/functions/gatsby 200',
+        fileName: redirectsPath,
+      })
     } catch (error) {
       utils.build.failBuild('Error message', { error })
     }
