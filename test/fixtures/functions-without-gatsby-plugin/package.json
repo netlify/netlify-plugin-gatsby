@@ -17,11 +17,10 @@
     "preview": "netlify dev --offline",
     "test": "run-s build:netlify test:e2e",
     "test:e2e": "start-server-and-test preview 8888 test:jest",
-    "test:jest": "jest",
-    "postinstall": "cd ../../../ && npm ci"
+    "test:jest": "jest"
   },
   "dependencies": {
-    "gatsby": "^3.4.1",
+    "gatsby": "next",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
