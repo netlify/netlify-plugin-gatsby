@@ -20,6 +20,7 @@
     "test:jest": "jest"
   },
   "dependencies": {
+    "@netlify/plugin-gatsby": "file:../../..",
     "gatsby": "next",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
