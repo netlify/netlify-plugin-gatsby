@@ -13,7 +13,7 @@
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "test": "netlify build"
+    "test": "NETLIFY_AUTH_TOKEN=fake netlify build"
   },
   "license": "0BSD",
   "dependencies": {
