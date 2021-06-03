@@ -2,7 +2,7 @@
 const fetch = require(`node-fetch`)
 const FormData = require('form-data')
 const path = require('path')
-const { createReadStream, readFileSync } = require('fs')
+const { readFileSync } = require('fs')
 // Based on Gatsby Functions integration tests
 // Source: https://github.com/gatsbyjs/gatsby/blob/master/integration-tests/functions/test-helpers.js
 

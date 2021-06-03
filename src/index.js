@@ -14,8 +14,15 @@ const getCacheDirs = (PUBLISH_DIR) => [
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
 
+const hasPlugin = (plugins, pluginName) =>
+  plugins.some((plugin) =>
+    typeof plugin === 'string'
+      ? plugin === pluginName
+      : plugin.resolve === pluginName,
+  )
+
 module.exports = {
-  async onPreBuild({ constants: { PUBLISH_DIR }, utils }) {
+  async onPreBuild({ constants: { PUBLISH_DIR }, utils, netlifyConfig }) {
     try {
       // print a helpful message if the publish dir is misconfigured
       if (process.cwd() === PUBLISH_DIR) {
@@ -36,15 +43,29 @@ module.exports = {
       const pluginName = 'gatsby-plugin-netlify'
       const gatsbyConfig = require(path.join(process.cwd(), 'gatsby-config'))
 
+      if (!hasPlugin(gatsbyConfig.plugins, pluginName)) {
+        console.warn(
+          'Add `gatsby-plugin-netlify` to `gatsby-config` if you would like to support Gatsby redirects. 🎉',
+        )
+      }
+
+      if (hasPlugin(gatsbyConfig.plugins, 'gatsby-plugin-netlify-cache')) {
+        console.error(
+          "The plugin 'gatsby-plugin-netlify-cache' is not compatible with the Gatsby build plugin",
+        )
+        console.error(
+          'Please uninstall gatsby-plugin-netlify-cache and remove it from your gatsby-config.js',
+        )
+        utils.build.failBuild('Incompatible Gatsby plugin installed')
+      }
+
       if (
-        !gatsbyConfig.plugins.some((plugin) =>
-          typeof plugin === 'string'
-            ? plugin === pluginName
-            : plugin.resolve === pluginName,
+        netlifyConfig.plugins.some(
+          (plugin) => plugin.package === 'netlify-plugin-gatsby-cache',
         )
       ) {
         console.warn(
-          'Add `gatsby-plugin-netlify` to `gatsby-config` if you would like to support Gatsby redirects. 🎉',
+          "The plugin 'netlify-plugin-gatsby-cache' is no longer required and should be removed.",
         )
       }
     } catch (error) {
