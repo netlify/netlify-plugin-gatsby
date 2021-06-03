@@ -17,11 +17,13 @@
   },
   "license": "0BSD",
   "dependencies": {
-    "gatsby": "next",
+    "gatsby": "latest",
+    "gatsby-plugin-netlify-cache": "^1.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
   "devDependencies": {
+    "@netlify/build": "latest",
     "jest": "^27.0.4"
   }
 }
