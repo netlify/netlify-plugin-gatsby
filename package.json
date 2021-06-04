@@ -1,66 +1,25 @@
 {
-  "name": "@netlify/plugin-gatsby",
-  "version": "0.0.2",
-  "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
-  "main": "src/index.js",
-  "files": [
-    "src/**/*.js",
-    "src/**/*.json",
-    "src/**/*.sh",
-    "src/**/*.html",
-    "src/**/*.ejs",
-    "manifest.yml"
-  ],
-  "keywords": [
-    "netlify-plugin",
-    "netlify",
-    "gatsby",
-    "gatsbyjs"
-  ],
-  "author": "Luke Oliff <luke@lukeoliff.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/netlify/netlify-plugin-gatsby"
-  },
+  "name": "netlify-plugin-gatsby",
+  "version": "1.0.0",
+  "description": "Netlify Build plugin gatsby - Run Gatsby seamlessly on Netlify.",
   "directories": {
     "test": "test"
   },
-  "engines": {
-    "node": ">=12.13.0"
-  },
   "scripts": {
-    "build": "netlify-build",
-    "test": "npm run lint && npm run test:e2e",
-    "test:e2e": "cd test && ./e2e-test.sh",
-    "lint": "npm run eslint && npm run prettier",
-    "eslint": "eslint --ignore-path .gitignore --fix --cache --format=codeframe --max-warnings=0 \"{src,init}/**/*.js\"",
-    "prettier": "prettier --ignore-path .gitignore --write --loglevel warn \"{.github,src,init}/**/*.{js,md,yml,json}\" \"*.{js,md,yml,json}\"",
-    "ava": "cross-env FORCE_COLOR=1 ava --verbose",
-    "release": "release-it"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "@netlify/functions": "^0.7.2",
-    "co-body": "^6.1.0",
-    "cookie": "^0.4.1",
-    "download": "^8.0.0",
-    "fs-extra": "^10.0.0",
-    "multer": "^1.4.2",
-    "path-to-regexp": "^0.1.7",
-    "tempy": "^0.3.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netlify/netlify-plugin-gatsby.git"
   },
-  "devDependencies": {
-    "@netlify/build": "^11.29.2",
-    "ava": "^3.13.0",
-    "cross-env": "^7.0.2",
-    "eslint": "^7.10.0",
-    "eslint-config-prettier": "^8.0.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "execa": "^5.0.0",
-    "netlify-cli": "^3.31.16",
-    "prettier": "^2.1.2",
-    "release-it": "^14.0.3"
-  }
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/netlify/netlify-plugin-gatsby/issues"
+  },
+  "workspaces": [
+    "./plugin",
+    "./demo"
+  ],
+  "homepage": "https://github.com/netlify/netlify-plugin-gatsby#readme"
 }
