@@ -50,7 +50,7 @@
     "tempy": "^0.3.0"
   },
   "devDependencies": {
-    "@netlify/build": "^11.32.3",
+    "@netlify/build": "^11.32.5",
     "ava": "^3.13.0",
     "cross-env": "^7.0.2",
     "eslint": "^7.10.0",
