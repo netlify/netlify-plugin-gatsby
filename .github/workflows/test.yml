@@ -28,4 +28,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
           check-latest: '*'
       - run: npm ci
+      - run: cd plugin && npm ci
       - run: npm test
