@@ -1,6 +1,4 @@
-![Netlify Build plugin Gatsby](netlify-gatsby-plugin.png)
-
-Run Gatsby seamlessly on Netlify.
+![Netlify Build plugin Gatsby – Run Gatsby seamlessly on Netlify](netlify-gatsby-plugin.png)
 
 # Essential Gatsby Plugin
 
