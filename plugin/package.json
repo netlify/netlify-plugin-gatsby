@@ -1,0 +1,45 @@
+{
+  "name": "@netlify/plugin-gatsby",
+  "version": "0.0.2",
+  "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
+  "main": "src/index.js",
+  "files": [
+    "src/**/*.js",
+    "src/**/*.json",
+    "src/**/*.sh",
+    "src/**/*.html",
+    "src/**/*.ejs",
+    "manifest.yml"
+  ],
+  "keywords": [
+    "netlify-plugin",
+    "netlify",
+    "gatsby",
+    "gatsbyjs"
+  ],
+  "author": "Luke Oliff <luke@lukeoliff.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/netlify/netlify-plugin-gatsby"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "engines": {
+    "node": ">=12.13.0"
+  },
+  "scripts": {
+    "release": "release-it"
+  },
+  "dependencies": {
+    "@netlify/functions": "^0.7.2",
+    "co-body": "^6.1.0",
+    "cookie": "^0.4.1",
+    "download": "^8.0.0",
+    "fs-extra": "^10.0.0",
+    "multer": "^1.4.2",
+    "path-to-regexp": "^0.1.7",
+    "tempy": "^0.3.0"
+  }
+}
