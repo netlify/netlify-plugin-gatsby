@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           check-latest: '*'
-      - rum: npm install -g netlify-cli
+      - run: npm install -g netlify-cli
       - run: npm ci
       - run: cd plugin && npm ci
       - run: npm test
