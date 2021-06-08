@@ -5,6 +5,8 @@ const bodyParser = require('co-body')
 const multer = require('multer')
 const parseForm = multer().any()
 const path = require('path')
+const { existsSync, readdirSync } = require('fs')
+const { dirname } = require('path')
 
 module.exports = async (req, res, functions) => {
   // Multipart form data middleware. because co-body can't handle it
@@ -63,11 +65,31 @@ module.exports = async (req, res, functions) => {
     console.log(`Running ${functionObj.functionRoute}`)
     const start = Date.now()
 
-    const pathToFunction = path.join(
-      __dirname,
-      'functions',
-      functionObj.relativeCompiledFilePath,
-    )
+    const pathToFunction = process.env.NETLIFY_DEV
+      ? path.join(__dirname, 'functions', functionObj.relativeCompiledFilePath)
+      : path.resolve(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          '.cache',
+          'functions',
+          functionObj.relativeCompiledFilePath,
+        )
+
+    console.log(process.cwd())
+    console.log(process.env)
+    console.log({ pathToFunction })
+
+    if (!existsSync(pathToFunction)) {
+      let data = ['3', __dirname, readdirSync(__dirname)]
+      let dir = dirname(__dirname)
+      while (dir !== '/') {
+        data.push(dir, readdirSync(dir))
+        dir = dirname(dir)
+      }
+      return res.status(200).json(data)
+    }
 
     try {
       delete require.cache[require.resolve(pathToFunction)]
