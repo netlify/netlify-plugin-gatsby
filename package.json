@@ -17,9 +17,5 @@
   "bugs": {
     "url": "https://github.com/netlify/netlify-plugin-gatsby/issues"
   },
-  "workspaces": [
-    "./plugin",
-    "./demo"
-  ],
   "homepage": "https://github.com/netlify/netlify-plugin-gatsby#readme"
 }

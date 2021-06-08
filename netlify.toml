@@ -1,6 +1,5 @@
 [build]
-# Dummy build command
-command = "npm run build --workspace=demo"
+base="demo/"
 
 [build.environment]
 NODE_VERSION = "12.13.0"
