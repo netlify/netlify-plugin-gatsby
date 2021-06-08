@@ -3,7 +3,7 @@ command = "npm run build"
 publish = "public/"
 
 [[plugins]]
-package = "../../../plugin"
+package = "../../.."
 
 [[plugins]]
 package = 'netlify-plugin-gatsby-cache'
