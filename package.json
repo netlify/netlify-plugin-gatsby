@@ -6,7 +6,12 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run lint && npm run test:e2e",
+    "test:e2e": "cd test && ./e2e-test.sh",
+    "lint": "npm run eslint && npm run prettier",
+    "eslint": "eslint --ignore-path .gitignore --fix --cache --format=codeframe --max-warnings=0 \"plugin/{src,init}/**/*.js\"",
+    "prettier": "prettier --ignore-path .gitignore --write --loglevel warn \"plugin/{.github,src,init}/**/*.{js,md,yml,json}\" \"*.{js,md,yml,json}\"",
+    "ava": "cross-env FORCE_COLOR=1 ava --verbose"
   },
   "repository": {
     "type": "git",
