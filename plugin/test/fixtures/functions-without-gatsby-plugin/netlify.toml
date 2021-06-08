@@ -4,7 +4,3 @@ publish = "public/"
 
 [[plugins]]
 package = "../../.."
-
-[functions.gatsby]
-node_bundler = "esbuild"
-included_files = [".cache/functions/*"]

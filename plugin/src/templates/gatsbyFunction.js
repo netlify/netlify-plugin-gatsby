@@ -5,8 +5,7 @@ const bodyParser = require('co-body')
 const multer = require('multer')
 const parseForm = multer().any()
 const path = require('path')
-const { existsSync, readdirSync } = require('fs')
-const { dirname } = require('path')
+const { existsSync } = require('fs')
 
 module.exports = async (req, res, functions) => {
   // Multipart form data middleware. because co-body can't handle it
@@ -77,18 +76,20 @@ module.exports = async (req, res, functions) => {
           functionObj.relativeCompiledFilePath,
         )
 
-    console.log(process.cwd())
-    console.log(process.env)
-    console.log({ pathToFunction })
-
     if (!existsSync(pathToFunction)) {
-      let data = ['3', __dirname, readdirSync(__dirname)]
-      let dir = dirname(__dirname)
-      while (dir !== '/') {
-        data.push(dir, readdirSync(dir))
-        dir = dirname(dir)
-      }
-      return res.status(200).json(data)
+      // let data = [
+      //   dirname(pathToFunction),
+      //   readdirSync(dirname(pathToFunction)),
+      //   __dirname,
+      //   readdirSync(__dirname),
+      // ]
+      // let dir = dirname(__dirname)
+      // while (dir !== '/') {
+      //   data.push(dir, readdirSync(dir))
+      //   dir = dirname(dir)
+      // }
+      // return res.status(200).json(data)
+      return res.status(500).send(`Could not find function ${pathToFunction}`)
     }
 
     try {
