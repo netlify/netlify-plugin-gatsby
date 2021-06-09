@@ -130,7 +130,10 @@ module.exports = {
       const cacheDirs = getCacheDirs(PUBLISH_DIR)
 
       if (await utils.cache.save(cacheDirs)) {
-        console.log('Stored the Gatsby cache to speed up future builds. 🔥')
+        utils.status.show({
+          title: 'Essential Gatsby Build Plugin ran successfully',
+          summary: 'Stored the Gatsby cache to speed up future builds. 🔥',
+        })
       } else {
         console.log('No Gatsby build found.')
       }
