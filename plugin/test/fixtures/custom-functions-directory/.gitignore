@@ -1,0 +1,14 @@
+node_modules/
+.cache/
+public
+
+# Local Netlify folder
+.netlify/cache
+.netlify/functions
+
+deployment.json
+
+package-lock.json
+# @netlify/plugin-gatsby ignores start
+serverless-functions/gatsby
+# @netlify/plugin-gatsby ignores end
