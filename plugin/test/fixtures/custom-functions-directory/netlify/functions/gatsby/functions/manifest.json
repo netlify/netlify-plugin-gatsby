@@ -1,0 +1,180 @@
+[
+    {
+        "functionRoute": "a-directory/function",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/a-directory/function.js",
+        "originalRelativeFilePath": "a-directory/function.js",
+        "relativeCompiledFilePath": "a-directory/function.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/a-directory/function.js"
+    },
+    {
+        "functionRoute": "a-directory",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/a-directory/index.js",
+        "originalRelativeFilePath": "a-directory/index.js",
+        "relativeCompiledFilePath": "a-directory/index.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/a-directory/index.js"
+    },
+    {
+        "functionRoute": "cookie-me",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/cookie-me.ts",
+        "originalRelativeFilePath": "cookie-me.ts",
+        "relativeCompiledFilePath": "cookie-me.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/cookie-me.js"
+    },
+    {
+        "functionRoute": "cors",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/cors.js",
+        "originalRelativeFilePath": "cors.js",
+        "relativeCompiledFilePath": "cors.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/cors.js"
+    },
+    {
+        "functionRoute": "dir/[...]",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/dir/[...].js",
+        "originalRelativeFilePath": "dir/[...].js",
+        "relativeCompiledFilePath": "dir/[...].js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/dir/[...].js",
+        "matchPath": "dir/*"
+    },
+    {
+        "functionRoute": "dir/function",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/dir/function.js",
+        "originalRelativeFilePath": "dir/function.js",
+        "relativeCompiledFilePath": "dir/function.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/dir/function.js"
+    },
+    {
+        "functionRoute": "env-variables",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/env-variables.js",
+        "originalRelativeFilePath": "env-variables.js",
+        "relativeCompiledFilePath": "env-variables.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/env-variables.js"
+    },
+    {
+        "functionRoute": "error-send-function-twice",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/error-send-function-twice.js",
+        "originalRelativeFilePath": "error-send-function-twice.js",
+        "relativeCompiledFilePath": "error-send-function-twice.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/error-send-function-twice.js"
+    },
+    {
+        "functionRoute": "hello-ts",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/hello-ts.ts",
+        "originalRelativeFilePath": "hello-ts.ts",
+        "relativeCompiledFilePath": "hello-ts.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/hello-ts.js"
+    },
+    {
+        "functionRoute": "hello-world",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/hello-world.js",
+        "originalRelativeFilePath": "hello-world.js",
+        "relativeCompiledFilePath": "hello-world.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/hello-world.js"
+    },
+    {
+        "functionRoute": "I-Am-Capitalized",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/I-Am-Capitalized.js",
+        "originalRelativeFilePath": "I-Am-Capitalized.js",
+        "relativeCompiledFilePath": "I-Am-Capitalized.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/I-Am-Capitalized.js"
+    },
+    {
+        "functionRoute": "i-am-json",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/i-am-json.js",
+        "originalRelativeFilePath": "i-am-json.js",
+        "relativeCompiledFilePath": "i-am-json.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/i-am-json.js"
+    },
+    {
+        "functionRoute": "i-am-typescript",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/i-am-typescript.ts",
+        "originalRelativeFilePath": "i-am-typescript.ts",
+        "relativeCompiledFilePath": "i-am-typescript.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/i-am-typescript.js"
+    },
+    {
+        "functionRoute": "parser",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/parser.js",
+        "originalRelativeFilePath": "parser.js",
+        "relativeCompiledFilePath": "parser.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/parser.js"
+    },
+    {
+        "functionRoute": "redirect-me",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/redirect-me.ts",
+        "originalRelativeFilePath": "redirect-me.ts",
+        "relativeCompiledFilePath": "redirect-me.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/redirect-me.js"
+    },
+    {
+        "functionRoute": "some whitespace",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/some whitespace.js",
+        "originalRelativeFilePath": "some whitespace.js",
+        "relativeCompiledFilePath": "some whitespace.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/some whitespace.js"
+    },
+    {
+        "functionRoute": "some-àè-french",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/some-àè-french.js",
+        "originalRelativeFilePath": "some-àè-french.js",
+        "relativeCompiledFilePath": "some-àè-french.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/some-àè-french.js"
+    },
+    {
+        "functionRoute": "some-אודות",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/some-אודות.js",
+        "originalRelativeFilePath": "some-אודות.js",
+        "relativeCompiledFilePath": "some-אודות.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/some-אודות.js"
+    },
+    {
+        "functionRoute": "status",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/status.js",
+        "originalRelativeFilePath": "status.js",
+        "relativeCompiledFilePath": "status.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/status.js"
+    },
+    {
+        "functionRoute": "top-level",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/top-level.js",
+        "originalRelativeFilePath": "top-level.js",
+        "relativeCompiledFilePath": "top-level.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/top-level.js"
+    },
+    {
+        "functionRoute": "users/[userId]/[super]",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/users/[userId]/[super].js",
+        "originalRelativeFilePath": "users/[userId]/[super].js",
+        "relativeCompiledFilePath": "users/[userId]/[super].js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/users/[userId]/[super].js",
+        "matchPath": "users/:userId/:super"
+    },
+    {
+        "functionRoute": "with-äöü-umlaut",
+        "pluginName": "default-site-plugin",
+        "originalAbsoluteFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/src/api/with-äöü-umlaut.js",
+        "originalRelativeFilePath": "with-äöü-umlaut.js",
+        "relativeCompiledFilePath": "with-äöü-umlaut.js",
+        "absoluteCompiledFilePath": "/Users/matt/Repos/netlify-plugin-gatsby/plugin/test/fixtures/functions-without-gatsby-plugin/.cache/functions/with-äöü-umlaut.js"
+    }
+]
