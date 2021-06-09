@@ -15,6 +15,7 @@ const getCacheDirs = (PUBLISH_DIR) => [
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
 
 const hasPlugin = (plugins, pluginName) =>
+  plugins &&
   plugins.some((plugin) =>
     typeof plugin === 'string'
       ? plugin === pluginName
@@ -41,11 +42,14 @@ module.exports = {
 
       // warn if gatsby-plugin-netlify is missing
       const pluginName = 'gatsby-plugin-netlify'
-      const gatsbyConfig = require(path.join(process.cwd(), 'gatsby-config'))
+      const gatsbyConfigFile = path.resolve(process.cwd(), 'gatsby-config.js')
+      const gatsbyConfig = fs.existsSync(gatsbyConfigFile)
+        ? require(gatsbyConfigFile)
+        : {}
 
       if (!hasPlugin(gatsbyConfig.plugins, pluginName)) {
         console.warn(
-          'Add `gatsby-plugin-netlify` to `gatsby-config` if you would like to support Gatsby redirects. 🎉',
+          'Add `gatsby-plugin-netlify` to `gatsby-config.js` if you would like to support Gatsby redirects. 🎉',
         )
       }
 
