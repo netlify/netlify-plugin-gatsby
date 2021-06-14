@@ -1,8 +1,13 @@
 const createRequestObject = require('./createRequestObject')
 const createResponseObject = require('./createResponseObject')
 const gatsbyFunction = require('./gatsbyFunction')
+const { proxyRequest } = require('./functions')
 
 exports.handler = async function handler(event, context) {
+  if (process.env.NETLIFY_DEV) {
+    return proxyRequest(event)
+  }
+
   const req = createRequestObject({ event, context })
   let functions
   try {
@@ -21,8 +26,8 @@ exports.handler = async function handler(event, context) {
     try {
       gatsbyFunction(req, res, functions)
     } catch (e) {
-      console.error(e)
-      return { statusCode: 500 }
+      console.error(`Error executing ${event.path}`, e)
+      onResEnd({ statusCode: 500 })
     }
   })
 }
