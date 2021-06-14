@@ -101,7 +101,7 @@ exports.runTests = function runTests(env, host) {
         const res = await fetch(`${host}/api/i-am-json`)
         const result = await res.json()
 
-        const { date, ...headers } = Object.fromEntries(res.headers)
+        const { date, etag, ...headers } = Object.fromEntries(res.headers)
         expect(result).toMatchSnapshot('result')
         expect(headers).toMatchSnapshot('headers')
       })
@@ -109,7 +109,7 @@ exports.runTests = function runTests(env, host) {
         const res = await fetch(`${host}/api/i-am-typescript`)
         const result = await res.text()
 
-        const { date, ...headers } = Object.fromEntries(res.headers)
+        const { date, etag, ...headers } = Object.fromEntries(res.headers)
         expect(result).toMatchSnapshot('result')
         expect(headers).toMatchSnapshot('headers')
       })

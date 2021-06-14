@@ -56,9 +56,11 @@ Object {
 
 exports[`Local response formats returns json correctly: headers 1`] = `
 Object {
+  "access-control-allow-origin": "*",
   "connection": "close",
-  "content-type": "application/json",
-  "transfer-encoding": "chunked",
+  "content-length": "16",
+  "content-type": "application/json; charset=utf-8",
+  "vary": "Accept-Encoding",
   "x-powered-by": "Express",
 }
 `;
@@ -71,8 +73,11 @@ Object {
 
 exports[`Local response formats returns text correctly: headers 1`] = `
 Object {
+  "access-control-allow-origin": "*",
   "connection": "close",
-  "transfer-encoding": "chunked",
+  "content-length": "15",
+  "content-type": "text/html; charset=utf-8",
+  "vary": "Accept-Encoding",
   "x-powered-by": "Express",
 }
 `;
