@@ -6,7 +6,7 @@ This build plugin is a utility for supporting Gatsby on Netlify. To support
 build caching and Gatsby functions on Netlify, you will need to install this
 plugin for your app.
 
-> **Note:** Essential Gatsby includes functionality from the [Gatsby cache build plugin](https://github.com/jlengstorf/netlify-plugin-gatsby-cache). If you already have the Gatsby cache plugin installed, you should [remove it](https://docs.netlify.com/configure-builds/build-plugins/#remove-a-plugin) before installing this plugin.
+> **Note:** Essential Gatsby includes functionality from the [Gatsby cache build plugin](https://github.com/jlengstorf/netlify-plugin-gatsby-cache). If you already have the Gatsby Cache plugin installed, you should [remove it](https://docs.netlify.com/configure-builds/build-plugins/#remove-a-plugin) before installing this plugin.
 
 ## Table of Contents
 
