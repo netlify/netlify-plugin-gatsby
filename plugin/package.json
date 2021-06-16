@@ -30,7 +30,8 @@
     "node": ">=12.13.0"
   },
   "scripts": {
-    "release": "release-it"
+    "release": "release-it",
+    "prepublishOnly": "cp ../README.md ."
   },
   "dependencies": {
     "@netlify/functions": "^0.7.2",
