@@ -22,9 +22,21 @@ const hasPlugin = (plugins, pluginName) =>
       : plugin.resolve === pluginName,
   )
 
+const loadGatsbyFile = function (utils) {
+  const gatsbyConfigFile = path.resolve(process.cwd(), 'gatsby-config.js')
+  if (!fs.existsSync(gatsbyConfigFile)) {
+    return {}
+  }
+
+  try {
+    return require(gatsbyConfigFile)
+  } catch (error) {
+    utils.build.failBuild('Could not load gatsby-config.js', { error })
+  }
+}
+
 module.exports = {
   async onPreBuild({ constants: { PUBLISH_DIR }, utils, netlifyConfig }) {
-    try {
       // print a helpful message if the publish dir is misconfigured
       if (process.cwd() === PUBLISH_DIR) {
         utils.build.failBuild(
@@ -42,10 +54,7 @@ module.exports = {
 
       // warn if gatsby-plugin-netlify is missing
       const pluginName = 'gatsby-plugin-netlify'
-      const gatsbyConfigFile = path.resolve(process.cwd(), 'gatsby-config.js')
-      const gatsbyConfig = fs.existsSync(gatsbyConfigFile)
-        ? require(gatsbyConfigFile)
-        : {}
+      const gatsbyConfig = loadGatsbyFile(utils)
 
       if (!hasPlugin(gatsbyConfig.plugins, pluginName)) {
         console.warn(
@@ -72,16 +81,11 @@ module.exports = {
           "The plugin 'netlify-plugin-gatsby-cache' is no longer required and should be removed.",
         )
       }
-    } catch (error) {
-      utils.build.failBuild('Error message', { error })
-    }
   },
 
   async onBuild({
     constants: { PUBLISH_DIR, FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC },
-    utils,
   }) {
-    try {
       // copying gatsby functions to functions directory
       const compiledFunctions = path.join(
         normalizedCacheDir(PUBLISH_DIR),
@@ -120,13 +124,9 @@ module.exports = {
         contents: `${FUNCTIONS_SRC}/gatsby`,
         fileName: gitignorePath,
       })
-    } catch (error) {
-      utils.build.failBuild('Error message', { error })
-    }
   },
 
   async onPostBuild({ constants: { PUBLISH_DIR }, utils }) {
-    try {
       const cacheDirs = getCacheDirs(PUBLISH_DIR)
 
       if (await utils.cache.save(cacheDirs)) {
@@ -137,8 +137,5 @@ module.exports = {
       } else {
         console.log('No Gatsby build found.')
       }
-    } catch (error) {
-      utils.build.failBuild('Error message', { error })
-    }
   },
 }
