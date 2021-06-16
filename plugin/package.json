@@ -1,6 +1,6 @@
 {
   "name": "@netlify/plugin-gatsby",
-  "version": "0.0.3",
+  "version": "1.0.1",
   "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
   "main": "src/index.js",
   "files": [
