@@ -3,9 +3,7 @@ node_modules/
 public
 
 # Local Netlify folder
-.netlify/cache
-.netlify/functions
-
+.netlify
 netlify/functions/gatsby/functions
 deployment.json
 
