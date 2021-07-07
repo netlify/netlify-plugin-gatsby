@@ -1,6 +1,5 @@
 node_modules/
 .cache/
 public
-.netlify/cache
-.netlify/functions
+.netlify
 package-lock.json

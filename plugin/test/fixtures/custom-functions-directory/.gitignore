@@ -3,8 +3,7 @@ node_modules/
 public
 
 # Local Netlify folder
-.netlify/cache
-.netlify/functions
+.netlify
 
 deployment.json
 
