@@ -16,10 +16,12 @@ const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
 
 const hasPlugin = (plugins, pluginName) =>
   plugins &&
-  plugins.some((plugin) =>
-    typeof plugin === 'string'
-      ? plugin === pluginName
-      : plugin.resolve === pluginName,
+  plugins.some(
+    (plugin) =>
+      plugin &&
+      (typeof plugin === 'string'
+        ? plugin === pluginName
+        : plugin.resolve === pluginName),
   )
 
 const loadGatsbyFile = function (utils) {
@@ -38,7 +40,7 @@ const loadGatsbyFile = function (utils) {
 module.exports = {
   async onPreBuild({ constants: { PUBLISH_DIR }, utils, netlifyConfig }) {
     // print a helpful message if the publish dir is misconfigured
-    if (process.cwd() === PUBLISH_DIR) {
+    if (!PUBLISH_DIR || process.cwd() === PUBLISH_DIR) {
       utils.build.failBuild(
         `Gatsby sites must publish the public directory, but your site’s publish directory is set to “${PUBLISH_DIR}”. Please set your publish directory to your Gatsby site’s public directory.`,
       )
@@ -58,7 +60,7 @@ module.exports = {
 
     if (!hasPlugin(gatsbyConfig.plugins, pluginName)) {
       console.warn(
-        'Add `gatsby-plugin-netlify` to `gatsby-config.js` if you would like to support Gatsby redirects. 🎉',
+        'Install `gatsby-plugin-netlify` if you would like to support Gatsby redirects. https://www.gatsbyjs.com/plugins/gatsby-plugin-netlify/',
       )
     }
 
@@ -74,7 +76,7 @@ module.exports = {
 
     if (
       netlifyConfig.plugins.some(
-        (plugin) => plugin.package === 'netlify-plugin-gatsby-cache',
+        (plugin) => plugin && plugin.package === 'netlify-plugin-gatsby-cache',
       )
     ) {
       console.warn(
