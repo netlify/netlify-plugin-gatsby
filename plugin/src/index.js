@@ -86,7 +86,11 @@ module.exports = {
   },
 
   async onBuild({
-    constants: { PUBLISH_DIR, FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC },
+    constants: {
+      PUBLISH_DIR,
+      FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC,
+      INTERNAL_FUNCTIONS_SRC,
+    },
   }) {
     // copying gatsby functions to functions directory
     const compiledFunctions = path.join(
@@ -97,10 +101,14 @@ module.exports = {
       return
     }
 
+    const functionsSrcDir = INTERNAL_FUNCTIONS_SRC
+      ? INTERNAL_FUNCTIONS_SRC
+      : FUNCTIONS_SRC
+
     // copying netlify wrapper functions into functions directory
     await fs.copy(
       path.join(__dirname, 'templates'),
-      path.join(FUNCTIONS_SRC, 'gatsby'),
+      path.join(functionsSrcDir, 'gatsby'),
     )
 
     await fs.copy(
@@ -117,15 +125,17 @@ module.exports = {
       fileName: redirectsPath,
     })
 
-    // add gatsby functions to .gitignore if doesn't exist
-    const gitignorePath = path.resolve('.gitignore')
+    if (!INTERNAL_FUNCTIONS_SRC) {
+      // add gatsby functions to .gitignore if doesn't exist
+      const gitignorePath = path.resolve('.gitignore')
 
-    await spliceConfig({
-      startMarker: '# @netlify/plugin-gatsby ignores start',
-      endMarker: '# @netlify/plugin-gatsby ignores end',
-      contents: `${FUNCTIONS_SRC}/gatsby`,
-      fileName: gitignorePath,
-    })
+      await spliceConfig({
+        startMarker: '# @netlify/plugin-gatsby ignores start',
+        endMarker: '# @netlify/plugin-gatsby ignores end',
+        contents: `${FUNCTIONS_SRC}/gatsby`,
+        fileName: gitignorePath,
+      })
+    }
   },
 
   async onPostBuild({ constants: { PUBLISH_DIR }, utils }) {
