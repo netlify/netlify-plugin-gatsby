@@ -4,8 +4,6 @@ const pathToRegexp = require('path-to-regexp')
 const bodyParser = require('co-body')
 const multer = require('multer')
 const parseForm = multer().any()
-const path = require('path')
-const { existsSync } = require('fs')
 
 module.exports = async (req, res, functions) => {
   // Multipart form data middleware. because co-body can't handle it
@@ -63,34 +61,7 @@ module.exports = async (req, res, functions) => {
   if (functionObj) {
     console.log(`Running ${functionObj.functionRoute}`)
     const start = Date.now()
-
-    const pathToFunction = process.env.NETLIFY_DEV
-      ? path.join(__dirname, 'functions', functionObj.relativeCompiledFilePath)
-      : path.resolve(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          '.cache',
-          'functions',
-          functionObj.relativeCompiledFilePath,
-        )
-
-    if (!existsSync(pathToFunction)) {
-      // let data = [
-      //   dirname(pathToFunction),
-      //   readdirSync(dirname(pathToFunction)),
-      //   __dirname,
-      //   readdirSync(__dirname),
-      // ]
-      // let dir = dirname(__dirname)
-      // while (dir !== '/') {
-      //   data.push(dir, readdirSync(dir))
-      //   dir = dirname(dir)
-      // }
-      // return res.status(200).json(data)
-      return res.status(500).send(`Could not find function ${pathToFunction}`)
-    }
+    const pathToFunction = `./functions/${functionObj.relativeCompiledFilePath}`
 
     try {
       delete require.cache[require.resolve(pathToFunction)]

@@ -10,7 +10,7 @@ node_modules
 !.github/
 /coverage
 /build
-/.netlify
+.netlify
 /yarn.lock
 .cache
 public
