@@ -90,8 +90,8 @@ module.exports = {
       FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC,
       INTERNAL_FUNCTIONS_SRC,
     },
+    netlifyConfig,
   }) {
-    // copying gatsby functions to functions directory
     const compiledFunctions = path.join(
       normalizedCacheDir(PUBLISH_DIR),
       '/functions',
@@ -104,10 +104,10 @@ module.exports = {
       ? INTERNAL_FUNCTIONS_SRC
       : FUNCTIONS_SRC
 
-    // copying netlify wrapper functions into functions directory
+    // copying Netlify wrapper function into functions directory
     await fs.copy(
       path.join(__dirname, 'templates'),
-      path.join(functionsSrcDir, 'gatsby'),
+      path.join(functionsSrcDir, '__gatsby-functions'),
     )
 
     if (
@@ -122,28 +122,34 @@ Detected the function "${path.join(
 The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     }
 
+    // copying Gatsby functions to functions directory
+
     await fs.copy(
       compiledFunctions,
-      path.join(functionsSrcDir, 'gatsby', 'functions'),
+      path.join(functionsSrcDir, '__gatsby-functions', 'functions'),
     )
+
+    netlifyConfig.functions['__gatsby-functions'] = {
+      included_files: [`${functionsSrcDir}/__gatsby-functions/functions/**`],
+    }
 
     const redirectsPath = path.resolve(`${PUBLISH_DIR}/_redirects`)
 
     await spliceConfig({
       startMarker: '# @netlify/plugin-gatsby redirects start',
       endMarker: '# @netlify/plugin-gatsby redirects end',
-      contents: '/api/* /.netlify/functions/gatsby 200',
+      contents: '/api/* /.netlify/functions/__gatsby-functions 200',
       fileName: redirectsPath,
     })
 
     if (!INTERNAL_FUNCTIONS_SRC) {
-      // add gatsby functions to .gitignore if doesn't exist
+      // add Gatsby functions to .gitignore if needed
       const gitignorePath = path.resolve('.gitignore')
 
       await spliceConfig({
         startMarker: '# @netlify/plugin-gatsby ignores start',
         endMarker: '# @netlify/plugin-gatsby ignores end',
-        contents: `${FUNCTIONS_SRC}/gatsby`,
+        contents: `${FUNCTIONS_SRC}/__gatsby-functions`,
         fileName: gitignorePath,
       })
     }

@@ -1,9 +1,9 @@
-const createRequestObject = require('./createRequestObject')
-const createResponseObject = require('./createResponseObject')
-const gatsbyFunction = require('./gatsbyFunction')
-const { proxyRequest } = require('./functions')
+import createRequestObject from './createRequestObject'
+import createResponseObject from './createResponseObject'
+import gatsbyFunction from './gatsbyFunction'
+import { proxyRequest } from './functions'
 
-exports.handler = async function handler(event, context) {
+export async function handler(event, context) {
   if (process.env.NETLIFY_DEV) {
     return proxyRequest(event)
   }

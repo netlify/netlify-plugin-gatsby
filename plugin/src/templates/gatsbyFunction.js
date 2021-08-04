@@ -4,7 +4,6 @@ const pathToRegexp = require('path-to-regexp')
 const bodyParser = require('co-body')
 const multer = require('multer')
 const parseForm = multer().any()
-const path = require('path')
 
 module.exports = async (req, res, functions) => {
   // Multipart form data middleware. because co-body can't handle it
@@ -62,12 +61,7 @@ module.exports = async (req, res, functions) => {
   if (functionObj) {
     console.log(`Running ${functionObj.functionRoute}`)
     const start = Date.now()
-
-    const pathToFunction = path.join(
-      __dirname,
-      'functions',
-      functionObj.relativeCompiledFilePath,
-    )
+    const pathToFunction = `./functions/${functionObj.relativeCompiledFilePath}`
 
     try {
       delete require.cache[require.resolve(pathToFunction)]
