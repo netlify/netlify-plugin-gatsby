@@ -4,8 +4,11 @@ const pathToRegexp = require('path-to-regexp')
 const bodyParser = require('co-body')
 const multer = require('multer')
 const parseForm = multer().any()
+const path = require('path')
+const { existsSync } = require('fs')
+const { proxyRequest } = require('./functions')
 
-module.exports = async (req, res, functions) => {
+module.exports = async (req, res, event) => {
   // Multipart form data middleware. because co-body can't handle it
 
   await new Promise((next) => parseForm(req, res, next))
@@ -25,6 +28,17 @@ module.exports = async (req, res, functions) => {
 
   //  Strip "/api/" from path
   const pathFragment = decodeURIComponent(req.url.substr(5))
+
+  let functions
+  try {
+    // @ts-ignore This is generated in the user's site
+    functions = require('../../../.cache/functions/manifest.json') // eslint-disable-line node/no-missing-require, node/no-unpublished-require
+  } catch (e) {
+    return {
+      statusCode: 404,
+      body: 'Could not load function manifest',
+    }
+  }
 
   // Find the matching function, given a path. Based on Gatsby Functions dev server implementation
   // https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby/src/internal-plugins/functions/gatsby-node.ts
@@ -61,7 +75,26 @@ module.exports = async (req, res, functions) => {
   if (functionObj) {
     console.log(`Running ${functionObj.functionRoute}`)
     const start = Date.now()
-    const pathToFunction = `./functions/${functionObj.relativeCompiledFilePath}`
+
+    const pathToFunction = process.env.NETLIFY_DEV
+      ? functionObj.absoluteCompiledFilePath
+      : path.join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          '.cache',
+          'functions',
+          functionObj.relativeCompiledFilePath,
+        )
+
+    if (process.env.NETLIFY_DEV && !existsSync(pathToFunction)) {
+      // Functions are lazily-compiled, so we proxy the first request to the gatsby develop server
+      console.log(
+        'No compiled function found. Proxying to gatsby develop server',
+      )
+      return proxyRequest(event, res)
+    }
 
     try {
       delete require.cache[require.resolve(pathToFunction)]

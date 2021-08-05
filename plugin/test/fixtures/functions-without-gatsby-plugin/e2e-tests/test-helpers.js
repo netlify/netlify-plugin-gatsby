@@ -7,32 +7,40 @@ const { readFileSync } = require('fs')
 // Source: https://github.com/gatsbyjs/gatsby/blob/master/integration-tests/functions/test-helpers.js
 
 exports.runTests = function runTests(env, host) {
+  async function fetchTwice(url, options) {
+    const result = await fetch(url, options)
+    if (!result.headers.has('x-forwarded-host')) {
+      return result
+    }
+    return fetch(url, options)
+  }
+
   describe(env, () => {
     describe(`routing`, () => {
       test(`top-level API`, async () => {
-        const result = await fetch(`${host}/api/top-level`).then((res) =>
+        const result = await fetchTwice(`${host}/api/top-level`).then((res) =>
           res.text(),
         )
 
         expect(result).toMatchSnapshot()
       })
       test(`secondary-level API`, async () => {
-        const result = await fetch(`${host}/api/a-directory/function`).then(
-          (res) => res.text(),
-        )
+        const result = await fetchTwice(
+          `${host}/api/a-directory/function`,
+        ).then((res) => res.text())
 
         expect(result).toMatchSnapshot()
       })
       test(`secondary-level API with index.js`, async () => {
-        const result = await fetch(`${host}/api/a-directory`).then((res) =>
+        const result = await fetchTwice(`${host}/api/a-directory`).then((res) =>
           res.text(),
         )
 
         expect(result).toMatchSnapshot()
       })
       test(`secondary-level API`, async () => {
-        const result = await fetch(`${host}/api/dir/function`).then((res) =>
-          res.text(),
+        const result = await fetchTwice(`${host}/api/dir/function`).then(
+          (res) => res.text(),
         )
 
         expect(result).toMatchSnapshot()
@@ -47,7 +55,7 @@ exports.runTests = function runTests(env, host) {
         ]
 
         for (const route of routes) {
-          const result = await fetch(route).then((res) => res.text())
+          const result = await fetchTwice(route).then((res) => res.text())
 
           expect(result).toMatchSnapshot()
         }
@@ -60,7 +68,7 @@ exports.runTests = function runTests(env, host) {
         ]
 
         for (const route of routes) {
-          const result = await fetch(route).then((res) => res.json())
+          const result = await fetchTwice(route).then((res) => res.json())
 
           expect(result).toMatchSnapshot()
         }
@@ -69,8 +77,8 @@ exports.runTests = function runTests(env, host) {
 
     describe(`environment variables`, () => {
       test(`can use inside functions`, async () => {
-        const result = await fetch(`${host}/api/env-variables`).then((res) =>
-          res.text(),
+        const result = await fetchTwice(`${host}/api/env-variables`).then(
+          (res) => res.text(),
         )
 
         expect(result).toEqual(`word`)
@@ -79,8 +87,8 @@ exports.runTests = function runTests(env, host) {
 
     describe(`typescript`, () => {
       test(`typescript functions work`, async () => {
-        const result = await fetch(`${host}/api/i-am-typescript`).then((res) =>
-          res.text(),
+        const result = await fetchTwice(`${host}/api/i-am-typescript`).then(
+          (res) => res.text(),
         )
 
         expect(result).toMatchSnapshot()
@@ -90,7 +98,7 @@ exports.runTests = function runTests(env, host) {
     describe(`function errors don't crash the server`, () => {
       // This test mainly just shows that the server doesn't crash.
       test(`normal`, async () => {
-        const result = await fetch(`${host}/api/error-send-function-twice`)
+        const result = await fetchTwice(`${host}/api/error-send-function-twice`)
 
         expect(result.status).toEqual(200)
       })
@@ -98,7 +106,7 @@ exports.runTests = function runTests(env, host) {
 
     describe(`response formats`, () => {
       test(`returns json correctly`, async () => {
-        const res = await fetch(`${host}/api/i-am-json`)
+        const res = await fetchTwice(`${host}/api/i-am-json`)
         const result = await res.json()
 
         const { date, etag, ...headers } = Object.fromEntries(res.headers)
@@ -106,7 +114,7 @@ exports.runTests = function runTests(env, host) {
         expect(headers).toMatchSnapshot('headers')
       })
       test(`returns text correctly`, async () => {
-        const res = await fetch(`${host}/api/i-am-typescript`)
+        const res = await fetchTwice(`${host}/api/i-am-typescript`)
         const result = await res.text()
 
         const { date, etag, ...headers } = Object.fromEntries(res.headers)
@@ -117,19 +125,19 @@ exports.runTests = function runTests(env, host) {
 
     describe(`functions can send custom statuses`, () => {
       test(`can return 200 status`, async () => {
-        const res = await fetch(`${host}/api/status`)
+        const res = await fetchTwice(`${host}/api/status`)
 
         expect(res.status).toEqual(200)
       })
 
       test(`can return 404 status`, async () => {
-        const res = await fetch(`${host}/api/status?code=404`)
+        const res = await fetchTwice(`${host}/api/status?code=404`)
 
         expect(res.status).toEqual(404)
       })
 
       test(`can return 500 status`, async () => {
-        const res = await fetch(`${host}/api/status?code=500`)
+        const res = await fetchTwice(`${host}/api/status?code=500`)
 
         expect(res.status).toEqual(500)
       })
@@ -137,7 +145,7 @@ exports.runTests = function runTests(env, host) {
 
     describe(`functions can parse different ways of sending data`, () => {
       test(`query string`, async () => {
-        const result = await fetch(`${host}/api/parser?amIReal=true`).then(
+        const result = await fetchTwice(`${host}/api/parser?amIReal=true`).then(
           (res) => res.json(),
         )
 
@@ -148,7 +156,7 @@ exports.runTests = function runTests(env, host) {
         const { URLSearchParams } = require('url')
         const params = new URLSearchParams()
         params.append('a', `form parameters`)
-        const result = await fetch(`${host}/api/parser`, {
+        const result = await fetchTwice(`${host}/api/parser`, {
           method: `POST`,
           body: params,
         }).then((res) => res.json())
@@ -159,7 +167,7 @@ exports.runTests = function runTests(env, host) {
       test(`form data`, async () => {
         const form = new FormData()
         form.append('a', `form-data`)
-        const result = await fetch(`${host}/api/parser`, {
+        const result = await fetchTwice(`${host}/api/parser`, {
           method: `POST`,
           body: form,
         }).then((res) => res.json())
@@ -169,7 +177,7 @@ exports.runTests = function runTests(env, host) {
 
       test(`json body`, async () => {
         const body = { a: `json` }
-        const result = await fetch(`${host}/api/parser`, {
+        const result = await fetchTwice(`${host}/api/parser`, {
           method: `POST`,
           body: JSON.stringify(body),
           headers: { 'Content-Type': 'application/json' },
@@ -187,7 +195,7 @@ exports.runTests = function runTests(env, host) {
           contentType: 'text/plain',
         })
         form.append('something', 'here')
-        const result = await fetch(`${host}/api/parser`, {
+        const result = await fetchTwice(`${host}/api/parser`, {
           method: `POST`,
           body: form,
           headers: form.getHeaders(),
@@ -199,7 +207,7 @@ exports.runTests = function runTests(env, host) {
 
     describe(`functions get parsed cookies`, () => {
       test(`cookie`, async () => {
-        const result = await fetch(`${host}/api/cookie-me`, {
+        const result = await fetchTwice(`${host}/api/cookie-me`, {
           headers: { cookie: `foo=blue;` },
         }).then((res) => res.json())
 
@@ -209,7 +217,7 @@ exports.runTests = function runTests(env, host) {
 
     describe(`functions can redirect`, () => {
       test(`normal`, async () => {
-        const result = await fetch(`${host}/api/redirect-me`)
+        const result = await fetchTwice(`${host}/api/redirect-me`)
 
         expect(result.url).toEqual(host + `/`)
       })
@@ -217,7 +225,7 @@ exports.runTests = function runTests(env, host) {
 
     describe(`functions can have custom middleware`, () => {
       test(`normal`, async () => {
-        const result = await fetch(`${host}/api/cors`)
+        const result = await fetchTwice(`${host}/api/cors`)
 
         const headers = Object.fromEntries(result.headers)
         expect(headers[`access-control-allow-origin`]).toEqual(`*`)

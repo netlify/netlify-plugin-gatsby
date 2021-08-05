@@ -14,3 +14,4 @@ node_modules
 /yarn.lock
 .cache
 public
+.DS_Store
