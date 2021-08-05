@@ -22,28 +22,28 @@ exports.runTests = function runTests(env, host) {
           res.text(),
         )
 
-        expect(result).toMatchSnapshot()
+        expect(result).toEqual('I am at the top-level')
       })
       test(`secondary-level API`, async () => {
         const result = await fetchTwice(
           `${host}/api/a-directory/function`,
         ).then((res) => res.text())
 
-        expect(result).toMatchSnapshot()
+        expect(result).toEqual('I am at a secondary-level')
       })
       test(`secondary-level API with index.js`, async () => {
         const result = await fetchTwice(`${host}/api/a-directory`).then((res) =>
           res.text(),
         )
 
-        expect(result).toMatchSnapshot()
+        expect(result).toEqual('I am an index.js in a sub-directory!')
       })
       test(`secondary-level API`, async () => {
         const result = await fetchTwice(`${host}/api/dir/function`).then(
           (res) => res.text(),
         )
 
-        expect(result).toMatchSnapshot()
+        expect(result).toEqual('I am another sub-directory function')
       })
       test(`routes with special characters`, async () => {
         const routes = [
@@ -91,7 +91,7 @@ exports.runTests = function runTests(env, host) {
           (res) => res.text(),
         )
 
-        expect(result).toMatchSnapshot()
+        expect(result).toEqual('I am typescript')
       })
     })
 
@@ -109,17 +109,19 @@ exports.runTests = function runTests(env, host) {
         const res = await fetchTwice(`${host}/api/i-am-json`)
         const result = await res.json()
 
-        const { date, etag, ...headers } = Object.fromEntries(res.headers)
-        expect(result).toMatchSnapshot('result')
-        expect(headers).toMatchSnapshot('headers')
+        expect(result).toEqual({
+          amIJSON: true,
+        })
+        expect(res.headers.get('content-type')).toEqual('application/json')
       })
       test(`returns text correctly`, async () => {
-        const res = await fetchTwice(`${host}/api/i-am-typescript`)
+        const res = await fetchTwice(`${host}/api/i-am-text`)
         const result = await res.text()
 
-        const { date, etag, ...headers } = Object.fromEntries(res.headers)
-        expect(result).toMatchSnapshot('result')
-        expect(headers).toMatchSnapshot('headers')
+        expect(result).toEqual('I am text')
+        expect(res.headers.get('content-type')).toEqual(
+          'text/plain; charset=utf-8',
+        )
       })
     })
 
@@ -149,7 +151,9 @@ exports.runTests = function runTests(env, host) {
           (res) => res.json(),
         )
 
-        expect(result).toMatchSnapshot()
+        expect(result).toEqual({
+          amIReal: 'true',
+        })
       })
 
       test(`form parameters`, async () => {
@@ -161,7 +165,9 @@ exports.runTests = function runTests(env, host) {
           body: params,
         }).then((res) => res.json())
 
-        expect(result).toMatchSnapshot()
+        expect(result).toEqual({
+          a: 'form parameters',
+        })
       })
 
       test(`form data`, async () => {
@@ -172,7 +178,9 @@ exports.runTests = function runTests(env, host) {
           body: form,
         }).then((res) => res.json())
 
-        expect(result).toMatchSnapshot()
+        expect(result).toEqual({
+          a: 'form-data',
+        })
       })
 
       test(`json body`, async () => {
@@ -183,7 +191,9 @@ exports.runTests = function runTests(env, host) {
           headers: { 'Content-Type': 'application/json' },
         }).then((res) => res.json())
 
-        expect(result).toMatchSnapshot()
+        expect(result).toEqual({
+          a: 'json',
+        })
       })
 
       it(`file in multipart/form`, async () => {
@@ -211,7 +221,9 @@ exports.runTests = function runTests(env, host) {
           headers: { cookie: `foo=blue;` },
         }).then((res) => res.json())
 
-        expect(result).toMatchSnapshot()
+        expect(result).toEqual({
+          foo: 'blue',
+        })
       })
     })
 
