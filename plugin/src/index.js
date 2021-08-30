@@ -122,15 +122,8 @@ Detected the function "${path.join(
 The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     }
 
-    // copying Gatsby functions to functions directory
-
-    await fs.copy(
-      compiledFunctions,
-      path.join(functionsSrcDir, '__gatsby-functions', 'functions'),
-    )
-
     netlifyConfig.functions['__gatsby-functions'] = {
-      included_files: [`${functionsSrcDir}/__gatsby-functions/functions/**`],
+      included_files: [path.join(compiledFunctions, '**')],
     }
 
     const redirectsPath = path.resolve(`${PUBLISH_DIR}/_redirects`)
@@ -153,6 +146,12 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
         fileName: gitignorePath,
       })
     }
+    await spliceConfig({
+      startMarker: '# @netlify/plugin-gatsby start',
+      endMarker: '# @netlify/plugin-gatsby end',
+      contents: `GATSBY_PRECOMPILE_DEVELOP_FUNCTIONS=true`,
+      fileName: path.resolve(path.join(PUBLISH_DIR, '..', '.env.development')),
+    })
   },
 
   async onPostBuild({ constants: { PUBLISH_DIR }, utils }) {

@@ -20,7 +20,7 @@ const createResponseObject = ({ onResEnd }) => {
       response.statusCode = statusCode
     },
   })
-  res.headers = {}
+  res.headers = { 'content-type': 'text/plain; charset=utf-8' }
 
   res.writeHead = (status, headers) => {
     response.statusCode = status

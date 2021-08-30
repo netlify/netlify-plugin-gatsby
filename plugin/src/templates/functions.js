@@ -7,9 +7,8 @@ const { default: fetch, Headers } = require('node-fetch')
  * serving them ourselves.
  *
  * @param {import("@netlify/functions").HandlerEvent} event
- * @returns {Promise<import("@netlify/functions").HandlerResponse>}
  */
-exports.proxyRequest = async function (event) {
+exports.proxyRequest = async function (event, res) {
   // todo: get this from config
   const port = `8000`
 
@@ -33,35 +32,25 @@ exports.proxyRequest = async function (event) {
     body: event.body,
     redirect: 'manual',
   })
+  ;[...response.headers.entries()].forEach(([name, value]) =>
+    res.setHeader(name, value),
+  )
+  res.setHeader('x-forwarded-host', url.host)
 
-  const responseHeaders = new Headers(response.headers)
+  res.statusCode = response.status
 
   if (response.status === 302) {
-    let location = responseHeaders.get('location') || ''
+    let location = response.headers.get('location') || ''
     // Local redirects will have the gatsby develop port, not the ntl dev one so we replace them
     if (location.startsWith(`http://localhost:${port}`)) {
       location = location.replace(
         `http://localhost:${port}`,
         `http://${event.headers.host}`,
       )
-      responseHeaders.set('location', location)
+      res.redirect(location)
     }
   }
 
-  let body = ''
-
-  if (response.body) {
-    body = Buffer.from(await response.arrayBuffer()).toString('base64')
-  }
-
-  // We will already have decoded the fetch response, so these won't be accurate
-  responseHeaders.delete('content-encoding')
-  responseHeaders.delete('transfer-encoding')
-
-  return {
-    statusCode: response.status,
-    isBase64Encoded: body !== '',
-    body,
-    multiValueHeaders: responseHeaders.raw(),
-  }
+  res.write(await response.buffer())
+  res.send()
 }
