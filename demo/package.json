@@ -17,7 +17,10 @@
     "preview": "netlify dev --offline",
     "test": "run-s build:netlify test:e2e",
     "test:e2e": "start-server-and-test preview 8888 test:jest",
-    "test:jest": "jest"
+    "test:jest": "jest",
+    "plugin:install": "cd ../plugin/ && npm install",
+    "plugin:build": "cd ../plugin/ && npm run build",
+    "postinstall": "run-s plugin:install plugin:build"
   },
   "dependencies": {
     "gatsby": "^3.12.1",

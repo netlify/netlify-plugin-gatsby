@@ -29,5 +29,5 @@ jobs:
           check-latest: '*'
       - run: npm install -g netlify-cli
       - run: npm ci
-      - run: cd plugin && npm ci
+      - run: cd plugin && npm ci && npm run build
       - run: npm test
