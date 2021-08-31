@@ -2,13 +2,12 @@
   "name": "@netlify/plugin-gatsby",
   "version": "1.0.3",
   "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
-  "main": "src/index.js",
+  "source": "src/index.js",
+  "main": "lib/main.js",
+  "module": "lib/module.js",
   "files": [
-    "src/**/*.js",
-    "src/**/*.json",
-    "src/**/*.sh",
-    "src/**/*.html",
-    "src/**/*.ejs",
+    "src/templates/**",
+    "lib/**/*",
     "manifest.yml"
   ],
   "keywords": [
@@ -34,7 +33,12 @@
   },
   "scripts": {
     "release": "release-it",
-    "prepublishOnly": "cp ../README.md ."
+    "prepublishOnly": "npm-run-all -l -s clean -p copy-readme build",
+    "copy-readme": "cp ../README.md .",
+    "clean": "rimraf lib",
+    "watch": "parcel watch",
+    "build": "parcel build",
+    "start": "npm run watch"
   },
   "dependencies": {
     "@netlify/functions": "^0.7.2",
@@ -48,6 +52,9 @@
     "tempy": "^1.0.0"
   },
   "devDependencies": {
-    "release-it": "^14.8.0"
+    "npm-run-all": "^4.1.5",
+    "parcel": "^2.0.0-rc.0",
+    "release-it": "^14.8.0",
+    "rimraf": "^3.0.2"
   }
 }

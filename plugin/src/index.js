@@ -106,7 +106,7 @@ module.exports = {
 
     // copying Netlify wrapper function into functions directory
     await fs.copy(
-      path.join(__dirname, 'templates'),
+      path.join(__dirname, '..', 'src', 'templates'),
       path.join(functionsSrcDir, '__gatsby-functions'),
     )
 
