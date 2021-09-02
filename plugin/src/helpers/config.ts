@@ -1,11 +1,16 @@
-const fs = require('fs-extra')
-const { EOL } = require('os')
+import fs from 'fs-extra'
+import { EOL } from 'os'
 
-exports.spliceConfig = async function spliceConfig({
+export async function spliceConfig({
   startMarker,
   endMarker,
   contents,
   fileName,
+}: {
+  startMarker: string
+  endMarker: string
+  contents: string
+  fileName: string
 }) {
   await fs.ensureFile(fileName)
   const data = await fs.readFile(fileName, 'utf8')

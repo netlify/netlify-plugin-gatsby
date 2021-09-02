@@ -1,11 +1,10 @@
-import * as React from "react";
-import { graphql, Link } from "gatsby";
-import { Layout } from "../layout/default";
-import { containerCss } from "./post.module.css";
+import * as React from 'react'
+import { graphql, Link } from 'gatsby'
+import { Layout } from '../layout/default'
+import { containerCss } from './post.module.css'
 
-export default function BlogPostTemplate({ data, pageContext }) {
-  console.log(JSON.stringify(data, null, 2));
-  const post = data.markdownRemark;
+export default function BlogPostTemplate({ data }) {
+  const post = data.markdownRemark
 
   return (
     <Layout>
@@ -18,8 +17,6 @@ export default function BlogPostTemplate({ data, pageContext }) {
           <h1 itemProp="headline">{post.frontmatter.title}</h1>
           <p>{post.frontmatter.date}</p>
         </header>
-        <Link to={`/blog/${pageContext.slug}`}>SSG version</Link>
-
         <section
           dangerouslySetInnerHTML={{ __html: post.html }}
           itemProp="articleBody"
@@ -27,17 +24,17 @@ export default function BlogPostTemplate({ data, pageContext }) {
         <hr />
       </article>
     </Layout>
-  );
+  )
 }
 
 /**
  * Example of DSR per path using fs Routes
  */
-export function config({ params }) {
-  return {
-    defer: params.slug !== "hello-world",
-  };
-}
+// export function config({ params }) {
+//   return {
+//     defer: params.slug !== 'hello-world',
+//   }
+// }
 
 /**
  * Example of DSR for all routes
@@ -64,4 +61,4 @@ export const query = graphql`
       # slug
     }
   }
-`;
+`
