@@ -1,6 +1,6 @@
-import createRequestObject from './createRequestObject'
-import createResponseObject from './createResponseObject'
-import gatsbyFunction from './gatsbyFunction'
+import { createRequestObject } from './createRequestObject'
+import { createResponseObject } from './createResponseObject'
+import { gatsbyFunction } from './gatsbyFunction'
 
 export async function handler(event, context) {
   const req = createRequestObject({ event, context })

@@ -1,17 +1,32 @@
-const Stream = require('stream')
+import { HandlerResponse } from '@netlify/functions'
+import Stream from 'stream'
+import type { GatsbyFunctionResponse } from 'gatsby'
+import type { OutgoingHttpHeaders } from 'http'
+export interface AugmentedGatsbyFunctionResponse<T = any>
+  extends GatsbyFunctionResponse<T> {
+  headers: OutgoingHttpHeaders
+  writableEnded: boolean
+  multiValueHeaders: string | number | boolean
+}
+
+interface IntermediateHandlerResponse
+  extends Partial<Omit<HandlerResponse, 'body'>> {
+  body?: string | Buffer
+  multiValueHeaders?: Record<string, Array<string | string | boolean>>
+}
 
 // Mock a HTTP ServerResponse object that returns a Netlify Function-compatible
 // response via the onResEnd callback when res.end() is called.
 // Based on API Gateway Lambda Compat
 // Source: https://github.com/serverless-nextjs/serverless-next.js/blob/master/packages/compat-layers/apigw-lambda-compat/lib/compatLayer.js
 
-const createResponseObject = ({ onResEnd }) => {
-  const response = {
+export function createResponseObject({ onResEnd }) {
+  const response: IntermediateHandlerResponse = {
     isBase64Encoded: true,
     multiValueHeaders: {},
   }
 
-  const res = new Stream()
+  const res = new Stream() as AugmentedGatsbyFunctionResponse
   Object.defineProperty(res, 'statusCode', {
     get() {
       return response.statusCode
@@ -31,7 +46,7 @@ const createResponseObject = ({ onResEnd }) => {
     return res
   }
 
-  res.write = (chunk) => {
+  res.write = (chunk): boolean => {
     if (!response.body) {
       response.body = Buffer.from('')
     }
@@ -42,9 +57,11 @@ const createResponseObject = ({ onResEnd }) => {
         : Buffer.from(response.body),
       Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk),
     ])
+    return true
   }
-  res.setHeader = (name, value) => {
+  res.setHeader = (name, value: string | number | string[]) => {
     res.headers[name.toLowerCase()] = value
+    return res
   }
   res.removeHeader = (name) => {
     delete res.headers[name.toLowerCase()]
@@ -67,13 +84,18 @@ const createResponseObject = ({ onResEnd }) => {
     if (response.body) {
       response.body = Buffer.from(response.body).toString('base64')
     }
+    // @ts-ignore TODO Sort out converting this
     response.multiValueHeaders = res.headers
     res.writeHead(response.statusCode)
 
     // Convert all multiValueHeaders into arrays
     for (const key of Object.keys(response.multiValueHeaders)) {
-      if (!Array.isArray(response.multiValueHeaders[key])) {
-        response.multiValueHeaders[key] = [response.multiValueHeaders[key]]
+      const header = response.multiValueHeaders[key] as unknown as
+        | string
+        | boolean
+        | Array<string | string | number | boolean>
+      if (!Array.isArray(header)) {
+        response.multiValueHeaders[key] = [header]
       }
     }
 
@@ -102,25 +124,23 @@ const createResponseObject = ({ onResEnd }) => {
     return res
   }
 
-  res.status = (code) => {
-    const numericCode = parseInt(code)
-    if (!isNaN(code)) {
+  res.status = (code: number | string) => {
+    const numericCode = parseInt(code as string, 10)
+    if (!isNaN(numericCode)) {
       response.statusCode = numericCode
     }
     return res
   }
 
-  res.redirect = (statusCode, url) => {
-    if (!url) {
+  res.redirect = (statusCode: number | string, url?: string) => {
+    if (!url && typeof statusCode === 'string') {
       url = statusCode
       statusCode = 302
     }
-    res.writeHead(statusCode, { Location: url })
+    res.writeHead(statusCode as number, { Location: url })
     res.end()
     return res
   }
 
   return res
 }
-
-module.exports = createResponseObject

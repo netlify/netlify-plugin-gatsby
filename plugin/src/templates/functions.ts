@@ -1,14 +1,10 @@
-// @ts-check
-
-const { default: fetch, Headers } = require('node-fetch')
-
+import { default as fetch, Headers } from 'node-fetch'
+import { HandlerEvent } from '@netlify/functions'
 /**
  * During `netlify dev` we proxy requests to the `gatsby develop` server instead of
  * serving them ourselves.
- *
- * @param {import("@netlify/functions").HandlerEvent} event
  */
-exports.proxyRequest = async function (event, res) {
+export async function proxyRequest(event: HandlerEvent, res) {
   // todo: get this from config
   const port = `8000`
 

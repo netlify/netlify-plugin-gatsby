@@ -1,14 +1,35 @@
-const Stream = require('stream')
-const http = require('http')
-const cookie = require('cookie')
+import { GatsbyFunctionRequest } from 'gatsby'
+import { HandlerEvent, HandlerContext } from '@netlify/functions'
+import Stream from 'stream'
+import type { Socket } from 'net'
+import http from 'http'
+import cookie from 'cookie'
+
+interface NetlifyFunctionParams {
+  event: HandlerEvent
+  context: HandlerContext
+}
+
+export interface AugmentedGatsbyFunctionRequest extends GatsbyFunctionRequest {
+  multiValueQuery?: HandlerEvent['multiValueQueryStringParameters']
+  netlifyFunctionParams?: NetlifyFunctionParams
+  getHeader: (name: string) => string | string[]
+  getHeaders: () => http.IncomingHttpHeaders
+  originalUrl: string
+  connection: Socket
+  files?: Express.Multer.File[]
+}
 
 // Mock a HTTP IncomingMessage object from the Netlify Function event parameters
 // Based on API Gateway Lambda Compat
 // Source: https://github.com/serverless-nextjs/serverless-next.js/blob/master/packages/compat-layers/apigw-lambda-compat/lib/compatLayer.js
 
-const createRequestObject = ({ event, context }) => {
+export function createRequestObject({
+  event,
+  context,
+}: NetlifyFunctionParams): AugmentedGatsbyFunctionRequest {
   const {
-    requestContext = {},
+    rawUrl = {},
     path = '',
     multiValueQueryStringParameters,
     queryStringParameters,
@@ -19,12 +40,12 @@ const createRequestObject = ({ event, context }) => {
   } = event
 
   const newStream = new Stream.Readable()
-  const req = Object.assign(newStream, http.IncomingMessage.prototype)
-  req.url =
-    (requestContext.path || path || '').replace(
-      new RegExp('^/' + requestContext.stage),
-      '',
-    ) || '/'
+  const req = Object.assign(
+    newStream,
+    http.IncomingMessage.prototype,
+  ) as Partial<AugmentedGatsbyFunctionRequest>
+  req.url = path
+  req.originalUrl = req.url
 
   req.query = queryStringParameters
   req.multiValueQuery = multiValueQueryStringParameters
@@ -64,7 +85,7 @@ const createRequestObject = ({ event, context }) => {
     req.cookies = cookie.parse(cookies)
   }
 
-  req.connection = {}
+  // req.connection = {}
 
   if (body) {
     req.push(body, isBase64Encoded ? 'base64' : undefined)
@@ -72,7 +93,5 @@ const createRequestObject = ({ event, context }) => {
 
   req.push(null)
 
-  return req
+  return req as AugmentedGatsbyFunctionRequest
 }
-
-module.exports = createRequestObject

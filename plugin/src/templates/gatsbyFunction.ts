@@ -1,16 +1,23 @@
-// @ts-check
+import pathToRegexp from 'path-to-regexp'
+import bodyParser from 'co-body'
+import multer from 'multer'
+import path from 'path'
+import { existsSync } from 'fs'
+import { proxyRequest } from './functions'
+import { AugmentedGatsbyFunctionResponse } from './createResponseObject'
+import { AugmentedGatsbyFunctionRequest } from './createRequestObject'
+import { HandlerEvent } from '@netlify/functions'
 
-const pathToRegexp = require('path-to-regexp')
-const bodyParser = require('co-body')
-const multer = require('multer')
 const parseForm = multer().any()
-const path = require('path')
-const { existsSync } = require('fs')
-const { proxyRequest } = require('./functions')
 
-module.exports = async (req, res, event) => {
+export async function gatsbyFunction(
+  req: AugmentedGatsbyFunctionRequest,
+  res: AugmentedGatsbyFunctionResponse<any>,
+  event: HandlerEvent,
+) {
   // Multipart form data middleware. because co-body can't handle it
 
+  // @ts-ignore As we're using a fake Express handler we need to ignore the type
   await new Promise((next) => parseForm(req, res, next))
   try {
     // If req.body is populated then it was multipart data
@@ -20,7 +27,7 @@ module.exports = async (req, res, event) => {
       req.method !== 'GET' &&
       req.method !== 'HEAD'
     ) {
-      req.body = await bodyParser(req)
+      req.body = await bodyParser(req as unknown as Request)
     }
   } catch (e) {
     console.log('Error parsing body', e, req)
@@ -56,7 +63,7 @@ module.exports = async (req, res, event) => {
       let exp
       const keys = []
       if (f.matchPath) {
-        exp = pathToRegexp(f.matchPath, keys)
+        exp = pathToRegexp(f.matchPath, keys, {})
       }
       if (exp && exp.exec(pathFragment) !== null) {
         functionObj = f
