@@ -80,5 +80,7 @@ const render = async (eventPath: string): Promise<HandlerResponse> => {
 }
 
 exports.handler = builder(async function handler(event, context) {
+  console.log('version', process.version)
+  console.log('env', process.env)
   return render(event.path)
 })
