@@ -14,6 +14,7 @@ import {
   getPagePathFromPageDataPath,
   getGraphQLEngine,
 } from './utils'
+import { readFile } from 'fs-extra'
 
 prepareFilesystem()
 
@@ -70,11 +71,14 @@ const render = async (eventPath: string): Promise<HandlerResponse> => {
     }
   }
 
+  const body = await readFile(join(CACHE_DIR, '404.html'), 'utf8')
+
   return {
     statusCode: 404,
-    body: `Page not found`,
+    body,
     headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
+      Tag: etag(body),
+      'Content-Type': 'text/html; charset=utf-8',
     },
   }
 }
