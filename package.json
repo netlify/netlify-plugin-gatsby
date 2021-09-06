@@ -9,8 +9,8 @@
     "test": "npm run lint && npm run test:e2e",
     "test:e2e": "cd plugin/test && ./e2e-test.sh",
     "lint": "npm run eslint && npm run prettier",
-    "eslint": "eslint --ignore-path .gitignore --fix --cache --format=codeframe --max-warnings=0 \"plugin/{src,init}/**/*.js\"",
-    "prettier": "prettier --ignore-path .gitignore --write --loglevel warn \"plugin/{.github,src,init}/**/*.{js,md,yml,json}\" \"*.{js,md,yml,json}\"",
+    "eslint": "eslint --ignore-path .gitignore --fix --cache --format=codeframe --max-warnings=0 \"plugin/{src,init}/**/*.{j,t}s\"",
+    "prettier": "prettier --ignore-path .gitignore --write --loglevel warn \"plugin/{.github,src,init}/**/*.{js,ts,md,yml,json}\" \"*.{js,ts,md,yml,json}\"",
     "ava": "cross-env FORCE_COLOR=1 ava --verbose"
   },
   "repository": {
@@ -34,5 +34,6 @@
     "eslint-plugin-prettier": "^3.1.4",
     "execa": "^5.0.0",
     "prettier": "^2.1.2"
-  }
+  },
+  "private": true
 }
