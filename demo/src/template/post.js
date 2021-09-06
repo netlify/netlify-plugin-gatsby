@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { graphql, Link } from 'gatsby'
+import { graphql } from 'gatsby'
 import { Layout } from '../layout/default'
 import { containerCss } from './post.module.css'
 
