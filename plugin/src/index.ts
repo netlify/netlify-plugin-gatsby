@@ -77,6 +77,12 @@ export async function onPreBuild({
     }
   }
 
+  if (process.env.AWS_LAMBDA_JS_RUNTIME !== 'nodejs14.x') {
+    utils.build.failBuild(
+      `The Gatsby build plugin requires AWS Lambda to be configured to use NodeJS 14.x. Please set "AWS_LAMBDA_JS_RUNTIME" to 'nodejs14.x' in the site UI (not netlify.toml). See https://docs.netlify.com/functions/build-with-javascript/#runtime-settings`,
+    )
+  }
+
   const cacheDirs = getCacheDirs(PUBLISH_DIR)
 
   if (await utils.cache.restore(cacheDirs)) {
@@ -114,7 +120,6 @@ export async function onPreBuild({
       "The plugin 'netlify-plugin-gatsby-cache' is no longer required and should be removed.",
     )
   }
-  process.env.AWS_LAMBDA_JS_RUNTIME = 'nodejs14.x'
 }
 
 export async function onBuild({
