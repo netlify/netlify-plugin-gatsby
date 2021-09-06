@@ -1,6 +1,7 @@
 import path, { dirname, join } from 'path'
 import fs from 'fs-extra'
 import os from 'os'
+import { gt } from 'semver'
 import { spliceConfig } from './helpers/config'
 const normalizedCacheDir = (PUBLISH_DIR) =>
   path.normalize(`${PUBLISH_DIR}/../.cache`)
@@ -29,6 +30,8 @@ function fixedPagePath(pagePath) {
 }
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
+
+const MAX_BUILD_IMAGE_VERSION = '16.04'
 
 const hasPlugin = (plugins, pluginName) =>
   plugins &&
@@ -65,9 +68,14 @@ export async function onPreBuild({
     )
   }
   console.log(process.env)
-  if (os.platform() === 'linux') {
-    const { stdout } = await utils.run(`lsb_release`, ['-sr'])
-    console.log({ stdout })
+  // Only run in CI
+  if (process.env.NETLIFY) {
+    const { stdout: ubuntuVersion } = await utils.run(`lsb_release`, ['-sr'])
+    if (gt(ubuntuVersion, MAX_BUILD_IMAGE_VERSION)) {
+      utils.build.failBuild(
+        `The Gatsby build plugin does not current support building on Ubuntu ${ubuntuVersion}. Please change your build image to "Ubuntu Xenial". See https://docs.netlify.com/configure-builds/get-started/#build-image-selection`,
+      )
+    }
   }
 
   const cacheDirs = getCacheDirs(PUBLISH_DIR)
