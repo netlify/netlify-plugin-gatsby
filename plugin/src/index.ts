@@ -1,5 +1,6 @@
 import path, { dirname, join } from 'path'
 import fs from 'fs-extra'
+import os from 'os'
 import { spliceConfig } from './helpers/config'
 const normalizedCacheDir = (PUBLISH_DIR) =>
   path.normalize(`${PUBLISH_DIR}/../.cache`)
@@ -63,7 +64,8 @@ export async function onPreBuild({
       `Gatsby sites must publish the public directory, but your site’s publish directory is set to “${PUBLISH_DIR}”. Please set your publish directory to your Gatsby site’s public directory.`,
     )
   }
-
+  console.log('RELEASE', os.release())
+  console.log('VERSION', os.version())
   const cacheDirs = getCacheDirs(PUBLISH_DIR)
 
   if (await utils.cache.restore(cacheDirs)) {
