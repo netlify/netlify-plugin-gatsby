@@ -146,7 +146,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   netlifyConfig.functions['__api'] = {
     included_files: [path.posix.join(compiledFunctions, '**')],
-    external_node_modules: ['msgpackr-extract'],
+    external_node_modules: ['msgpackr-extract', 'lmdb-store'],
   }
 
   netlifyConfig.functions['__dsr'] = {
@@ -155,7 +155,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
       path.posix.join(CACHE_DIR, 'query-engine', '**'),
       path.posix.join(CACHE_DIR, 'page-ssr', '**'),
     ],
-    external_node_modules: ['msgpackr-extract'],
+    external_node_modules: ['msgpackr-extract', 'lmdb-store'],
   }
 
   await spliceConfig({
