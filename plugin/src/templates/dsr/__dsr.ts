@@ -71,7 +71,7 @@ const render = async (eventPath: string): Promise<HandlerResponse> => {
     }
   }
 
-  const body = await readFile(join(CACHE_DIR, '404.html'), 'utf8')
+  const body = await readFile(join(process.cwd(), 'public', '404.html'), 'utf8')
 
   return {
     statusCode: 404,
