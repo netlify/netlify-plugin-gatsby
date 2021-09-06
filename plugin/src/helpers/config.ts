@@ -17,7 +17,7 @@ export async function spliceConfig({
   const [initial = '', rest = ''] = data.split(startMarker)
   const [, final = ''] = rest.split(endMarker)
   const out = [
-    initial,
+    initial === EOL ? '' : initial,
     initial.endsWith(EOL) ? '' : EOL,
     startMarker,
     EOL,
@@ -25,7 +25,7 @@ export async function spliceConfig({
     EOL,
     endMarker,
     final.startsWith(EOL) ? '' : EOL,
-    final,
+    final === EOL ? '' : final,
   ]
     .filter(Boolean)
     .join('')

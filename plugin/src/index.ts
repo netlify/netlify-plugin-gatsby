@@ -185,17 +185,25 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
         .filter(Boolean)
         .join('/')
     }
-    redirects.push(`${route} /.netlify/functions/__api 200`)
+    netlifyConfig.redirects.push({
+      from: route,
+      to: '/.netlify/functions/__api',
+      status: 200,
+    })
   }
-  redirects.push(
-    `/api/* /.netlify/functions/__api 200`,
-    `/* /.netlify/functions/__dsr 200`,
-  )
+
+  // Editing _redirects to it works with ntl dev
   spliceConfig({
     startMarker: '# @netlify/plugin-gatsby redirects start',
     endMarker: '# @netlify/plugin-gatsby redirects end',
-    contents: redirects.join('\n'),
+    contents: '/api/* /.netlify/functions/__api 200',
     fileName: join(netlifyConfig.build.publish, '_redirects'),
+  })
+
+  netlifyConfig.redirects.push({
+    from: '/*',
+    to: '/.netlify/functions/__dsr',
+    status: 200,
   })
 }
 
