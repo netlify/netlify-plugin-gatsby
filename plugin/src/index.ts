@@ -67,8 +67,8 @@ export async function onPreBuild({
   }
   // Only run in CI
   if (process.env.NETLIFY) {
+    console.log('Checking build image version...')
     const { stdout: ubuntuVersion } = await utils.run(`lsb_release`, ['-sr'])
-    console.log(`Building with Ubuntu ${ubuntuVersion}`)
     const [major] = ubuntuVersion.split('.')
     if (parseInt(major, 10) > MAX_BUILD_IMAGE_VERSION) {
       utils.build.failBuild(
@@ -131,7 +131,6 @@ export async function onBuild({
   netlifyConfig,
 }) {
   const CACHE_DIR = normalizedCacheDir(PUBLISH_DIR)
-  const GATSBY_DIR = dirname(PUBLISH_DIR)
   const compiledFunctions = path.join(CACHE_DIR, '/functions')
   if (!fs.existsSync(compiledFunctions)) {
     return
@@ -192,7 +191,6 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     join(root, '.cache', 'functions', 'manifest.json'),
   )
 
-  const redirects = []
   for (const func of functions) {
     if (!func.functionRoute.startsWith('_ssr')) {
       continue
