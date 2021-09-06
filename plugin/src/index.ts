@@ -64,8 +64,12 @@ export async function onPreBuild({
       `Gatsby sites must publish the public directory, but your site’s publish directory is set to “${PUBLISH_DIR}”. Please set your publish directory to your Gatsby site’s public directory.`,
     )
   }
-  console.log('RELEASE', os.release())
-  console.log('VERSION', os.version())
+  console.log(process.env)
+  if (os.platform() === 'linux') {
+    const { stdout } = await utils.run(`lsb_release`, ['-sr'])
+    console.log({ stdout })
+  }
+
   const cacheDirs = getCacheDirs(PUBLISH_DIR)
 
   if (await utils.cache.restore(cacheDirs)) {
