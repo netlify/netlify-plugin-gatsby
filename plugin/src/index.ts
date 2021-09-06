@@ -67,10 +67,10 @@ export async function onPreBuild({
       `Gatsby sites must publish the public directory, but your site’s publish directory is set to “${PUBLISH_DIR}”. Please set your publish directory to your Gatsby site’s public directory.`,
     )
   }
-  console.log(process.env)
   // Only run in CI
   if (process.env.NETLIFY) {
     const { stdout: ubuntuVersion } = await utils.run(`lsb_release`, ['-sr'])
+    console.log(`Building with Ubuntu ${ubuntuVersion}`)
     if (gt(ubuntuVersion, MAX_BUILD_IMAGE_VERSION)) {
       utils.build.failBuild(
         `The Gatsby build plugin does not current support building on Ubuntu ${ubuntuVersion}. Please change your build image to "Ubuntu Xenial". See https://docs.netlify.com/configure-builds/get-started/#build-image-selection`,
@@ -115,6 +115,7 @@ export async function onPreBuild({
       "The plugin 'netlify-plugin-gatsby-cache' is no longer required and should be removed.",
     )
   }
+  netlifyConfig.environment.AWS_LAMBDA_JS_RUNTIME = 'nodejs14.x.'
 }
 
 export async function onBuild({
