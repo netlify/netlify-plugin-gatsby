@@ -10,7 +10,7 @@
   "scripts": {
     "develop": "HOST=0.0.0.0 gatsby develop",
     "start": "HOST=0.0.0.0 gatsby develop",
-    "build": "gatsby build",
+    "build": "gatsby -v && gatsby build && ls -l .cache",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "build:netlify": "netlify build --offline",
