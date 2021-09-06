@@ -8,5 +8,4 @@ public
 
 netlify/functions/gatsby/functions
 deployment.json
-.npmrc
 package-lock.json
