@@ -114,7 +114,7 @@ export async function onPreBuild({
       "The plugin 'netlify-plugin-gatsby-cache' is no longer required and should be removed.",
     )
   }
-  netlifyConfig.environment.AWS_LAMBDA_JS_RUNTIME = 'nodejs14.x.'
+  netlifyConfig.build.environment.AWS_LAMBDA_JS_RUNTIME = 'nodejs14.x.'
 }
 
 export async function onBuild({
