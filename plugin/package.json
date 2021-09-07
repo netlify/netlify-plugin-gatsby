@@ -38,7 +38,8 @@
     "clean": "rimraf lib",
     "watch": "parcel watch",
     "build": "parcel build",
-    "start": "npm run watch"
+    "start": "npm run watch",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@netlify/functions": "^0.7.2",
