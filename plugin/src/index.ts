@@ -75,12 +75,11 @@ export async function onPreBuild({
         `The Gatsby build plugin does not current support building on Ubuntu ${ubuntuVersion}. Please change your build image to "Ubuntu Xenial". See https://docs.netlify.com/configure-builds/get-started/#build-image-selection`,
       )
     }
-  }
-
-  if (process.env.AWS_LAMBDA_JS_RUNTIME !== 'nodejs14.x') {
-    utils.build.failBuild(
-      `The Gatsby build plugin requires AWS Lambda to be configured to use NodeJS 14.x. Please set "AWS_LAMBDA_JS_RUNTIME" to 'nodejs14.x' in the site UI (not netlify.toml). See https://docs.netlify.com/functions/build-with-javascript/#runtime-settings`,
-    )
+    if (process.env.AWS_LAMBDA_JS_RUNTIME !== 'nodejs14.x') {
+      utils.build.failBuild(
+        `The Gatsby build plugin requires AWS Lambda to be configured to use NodeJS 14.x. Please set "AWS_LAMBDA_JS_RUNTIME" to 'nodejs14.x' in the site UI (not netlify.toml). See https://docs.netlify.com/functions/build-with-javascript/#runtime-settings`,
+      )
+    }
   }
 
   const cacheDirs = getCacheDirs(PUBLISH_DIR)
