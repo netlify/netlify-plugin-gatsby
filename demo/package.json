@@ -20,7 +20,7 @@
     "test:jest": "jest",
     "plugin:install": "cd ../plugin/ && npm install",
     "plugin:build": "cd ../plugin/ && npm run build",
-    "postinstall": "run-s plugin:install plugin:build"
+    "prepare": "run-s plugin:install plugin:build"
   },
   "dependencies": {
     "@sindresorhus/slugify": "^1.1.2",
