@@ -1,6 +1,7 @@
 import fs from 'fs'
 import os from 'os'
 import { join } from 'path'
+import process from 'process'
 
 import { existsSync, copySync, emptyDirSync } from 'fs-extra'
 // eslint-disable-next-line node/no-unpublished-import
@@ -57,6 +58,8 @@ export function getPagePathFromPageDataPath(
     /^\/?page-data\/(.+)\/page-data.json$/gm,
   )
 
+  // Not sure why Gatsby does this!
+  // eslint-disable-next-line no-unreachable-loop
   for (const [, requestedPagePath] of matches) {
     return reverseFixedPagePath(requestedPagePath)
   }
@@ -67,7 +70,8 @@ export function getPagePathFromPageDataPath(
 /**
  * Loads the bundled GraphQL engine from the Gatsby cache directory
  */
-export function getGraphQLEngine() {
+export function getGraphQLEngine(): GraphQLEngine {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
   const { GraphQLEngine: GQE } = require(join(CACHE_DIR, 'query-engine')) as {
     GraphQLEngine: typeof GraphQLEngine
   }

@@ -1,9 +1,12 @@
-import { join } from 'path'
-import os from 'os'
-import { existsSync, copySync, emptyDirSync } from 'fs-extra'
-import { link } from 'linkfs'
 import fs from 'fs'
+import os from 'os'
+import { join } from 'path'
+import process from 'process'
+
+import { existsSync, copySync, emptyDirSync } from 'fs-extra'
+// eslint-disable-next-line node/no-unpublished-import
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
+import { link } from 'linkfs'
 
 // Bundled with the function, but readonly
 export const CACHE_DIR = join(process.cwd(), `.cache`)
@@ -31,6 +34,7 @@ export function prepareFilesystem() {
     }
   }
   // Gatsby uses this instead of fs if present
+  // eslint-disable-next-line no-underscore-dangle
   global._fsWrapper = lfs
   emptyDirSync(TEMP_CACHE_DIR)
   const dir = 'data'
@@ -54,6 +58,8 @@ export function getPagePathFromPageDataPath(
     /^\/?page-data\/(.+)\/page-data.json$/gm,
   )
 
+  // Not sure why Gatsby does this!
+  // eslint-disable-next-line no-unreachable-loop
   for (const [, requestedPagePath] of matches) {
     return reverseFixedPagePath(requestedPagePath)
   }
@@ -64,7 +70,8 @@ export function getPagePathFromPageDataPath(
 /**
  * Loads the bundled GraphQL engine from the Gatsby cache directory
  */
-export function getGraphQLEngine() {
+export function getGraphQLEngine(): GraphQLEngine {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
   const { GraphQLEngine: GQE } = require(join(CACHE_DIR, 'query-engine')) as {
     GraphQLEngine: typeof GraphQLEngine
   }
