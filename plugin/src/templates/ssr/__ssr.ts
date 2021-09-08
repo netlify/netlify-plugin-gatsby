@@ -1,21 +1,37 @@
 /**
- * Handler for DSR routes
+ * Handler for SSR routes
  */
 
 import { join } from 'path'
 import process from 'process'
+import type { GatsbyFunctionRequest } from 'gatsby'
 
-import { builder, Handler } from '@netlify/functions'
+import { Handler } from '@netlify/functions'
 import etag from 'etag'
 // eslint-disable-next-line import/order
 import { readFile } from 'fs-extra'
+
 /* eslint-disable  node/no-unpublished-import */
+import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
 import type {
   getData as getDataType,
   renderHTML as renderHTMLType,
   renderPageData as renderPageDataType,
 } from 'gatsby/cache-dir/page-ssr'
-import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
+/* eslint-enable  node/no-unpublished-import */
+
+type SSRReq = Pick<
+  GatsbyFunctionRequest,
+  'query' | 'method' | 'url' | 'headers'
+>
+
+type PageSSR = {
+  getData: (
+    args: Parameters<typeof getDataType>[0] & { req: SSRReq },
+  ) => ReturnType<typeof getDataType>
+  renderHTML: typeof renderHTMLType
+  renderPageData: typeof renderPageDataType
+}
 
 import {
   prepareFilesystem,
@@ -23,13 +39,6 @@ import {
   getPagePathFromPageDataPath,
   getGraphQLEngine,
 } from './utils'
-/* eslint-enable  node/no-unpublished-import */
-
-type PageSSR = {
-  getData: typeof getDataType
-  renderHTML: typeof renderHTMLType
-  renderPageData: typeof renderPageDataType
-}
 
 prepareFilesystem()
 
@@ -43,8 +52,8 @@ const { getData, renderHTML, renderPageData }: PageSSR = require(join(
 const DATA_SUFFIX = '/page-data.json'
 const DATA_PREFIX = '/page-data/'
 
-// eslint-disable-next-line complexity
-export const handler: Handler = builder(async function handler(event) {
+// eslint-disable-next-line func-style, complexity
+export const handler: Handler = async function handler(event) {
   const eventPath = event.path
   const isPageData =
     eventPath.endsWith(DATA_SUFFIX) && eventPath.startsWith(DATA_PREFIX)
@@ -59,10 +68,18 @@ export const handler: Handler = builder(async function handler(event) {
   const page: IGatsbyPage & { mode?: string } =
     graphqlEngine.findPageByPath(pathName)
 
-  if (page && page.mode === `DSR`) {
+  if (page && page.mode === `SSR`) {
+    const req: SSRReq = {
+      query: event.queryStringParameters,
+      method: event.httpMethod,
+      url: event.path,
+      headers: event.headers,
+    }
+
     const data = await getData({
       pathName,
       graphqlEngine,
+      req,
     })
 
     if (isPageData) {
@@ -99,4 +116,4 @@ export const handler: Handler = builder(async function handler(event) {
       'Content-Type': 'text/html; charset=utf-8',
     },
   }
-})
+}

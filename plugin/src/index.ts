@@ -1,6 +1,11 @@
+/* eslint-disable max-lines, complexity, max-statements, no-param-reassign */
 import path, { dirname, join } from 'path'
+import process from 'process'
+
 import fs from 'fs-extra'
+
 import { spliceConfig } from './helpers/config'
+
 const normalizedCacheDir = (PUBLISH_DIR) =>
   path.normalize(`${PUBLISH_DIR}/../.cache`)
 
@@ -9,22 +14,21 @@ const getCacheDirs = (PUBLISH_DIR) => [
   normalizedCacheDir(PUBLISH_DIR),
 ]
 
+// eslint-disable-next-line no-template-curly-in-string
 const lmdbCacheString = 'process.cwd(), `.cache/${cacheDbFile}`'
+// eslint-disable-next-line no-template-curly-in-string
 const replacement = "require('os').tmpdir(), 'gatsby', `.cache/${cacheDbFile}`"
 
 async function patchFile(baseDir) {
   const bundleFile = join(baseDir, '.cache', 'query-engine', 'index.js')
+  // eslint-disable-next-line node/no-sync
   if (!fs.existsSync(bundleFile)) {
     return
   }
   const bundle = await fs.readFile(bundleFile, 'utf8')
 
   //  I'm so, so sorry
-  fs.writeFileSync(bundleFile, bundle.replace(lmdbCacheString, replacement))
-}
-
-function fixedPagePath(pagePath) {
-  return pagePath === `/` ? `index` : pagePath
+  await fs.writeFile(bundleFile, bundle.replace(lmdbCacheString, replacement))
 }
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
@@ -41,13 +45,15 @@ const hasPlugin = (plugins, pluginName) =>
         : plugin.resolve === pluginName),
   )
 
-const loadGatsbyFile = function (utils) {
+function loadGatsbyFile(utils) {
   const gatsbyConfigFile = path.resolve(process.cwd(), 'gatsby-config.js')
+  // eslint-disable-next-line node/no-sync
   if (!fs.existsSync(gatsbyConfigFile)) {
     return {}
   }
 
   try {
+    // eslint-disable-next-line node/global-require
     return require(gatsbyConfigFile)
   } catch (error) {
     utils.build.failBuild('Could not load gatsby-config.js', { error })
@@ -58,7 +64,7 @@ export async function onPreBuild({
   constants: { PUBLISH_DIR },
   utils,
   netlifyConfig,
-}) {
+}): Promise<void> {
   // print a helpful message if the publish dir is misconfigured
   if (!PUBLISH_DIR || process.cwd() === PUBLISH_DIR) {
     utils.build.failBuild(
@@ -70,7 +76,7 @@ export async function onPreBuild({
     console.log('Checking build image version...')
     const { stdout: ubuntuVersion } = await utils.run(`lsb_release`, ['-sr'])
     const [major] = ubuntuVersion.split('.')
-    if (parseInt(major, 10) > MAX_BUILD_IMAGE_VERSION) {
+    if (Number.parseInt(major) > MAX_BUILD_IMAGE_VERSION) {
       utils.build.failBuild(
         `The Gatsby build plugin does not current support building on Ubuntu ${ubuntuVersion}. Please change your build image to "Ubuntu Xenial". See https://docs.netlify.com/configure-builds/get-started/#build-image-selection`,
       )
@@ -131,26 +137,27 @@ export async function onBuild({
 }) {
   const CACHE_DIR = normalizedCacheDir(PUBLISH_DIR)
   const compiledFunctions = path.join(CACHE_DIR, '/functions')
+  // eslint-disable-next-line node/no-sync
   if (!fs.existsSync(compiledFunctions)) {
     return
   }
 
-  const functionsSrcDir = INTERNAL_FUNCTIONS_SRC
-    ? INTERNAL_FUNCTIONS_SRC
-    : FUNCTIONS_SRC
+  const functionsSrcDir = INTERNAL_FUNCTIONS_SRC || FUNCTIONS_SRC
 
   // copying Netlify wrapper function into functions directory
-  await fs.copy(
-    path.join(__dirname, '..', 'src', 'templates', 'api'),
-    path.join(functionsSrcDir, '__api'),
-  )
-  await fs.copy(
-    path.join(__dirname, '..', 'src', 'templates', 'dsr'),
-    path.join(functionsSrcDir, '__dsr'),
+
+  await Promise.all(
+    ['api', 'dsr', 'ssr'].map((func) =>
+      fs.copy(
+        path.join(__dirname, '..', 'src', 'templates', func),
+        path.join(functionsSrcDir, `__${func}`),
+      ),
+    ),
   )
 
   if (
     INTERNAL_FUNCTIONS_SRC &&
+    // eslint-disable-next-line node/no-sync
     fs.existsSync(path.join(FUNCTIONS_SRC, 'gatsby'))
   ) {
     console.log(`
@@ -161,12 +168,13 @@ Detected the function "${path.join(
 The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   }
 
-  netlifyConfig.functions['__api'] = {
+  /* eslint-disable no-underscore-dangle */
+  netlifyConfig.functions.__api = {
     included_files: [path.posix.join(compiledFunctions, '**')],
     external_node_modules: ['msgpackr-extract'],
   }
 
-  netlifyConfig.functions['__dsr'] = {
+  netlifyConfig.functions.__dsr = {
     included_files: [
       path.posix.resolve(process.cwd(), 'public', '404.html'),
       path.posix.join(CACHE_DIR, 'data', '**'),
@@ -175,6 +183,10 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     ],
     external_node_modules: ['msgpackr-extract'],
   }
+
+  netlifyConfig.functions.__ssr = { ...netlifyConfig.functions.__dsr }
+
+  /* eslint-enable no-underscore-dangle */
 
   await spliceConfig({
     startMarker: '# @netlify/plugin-gatsby start',
@@ -187,27 +199,6 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   const root = dirname(netlifyConfig.build.publish)
   await patchFile(root)
-  const functions = await fs.readJson(
-    join(root, '.cache', 'functions', 'manifest.json'),
-  )
-
-  for (const func of functions) {
-    if (!func.functionRoute.startsWith('_ssr')) {
-      continue
-    }
-    let route = func.matchPath || func.functionRoute
-    route = route.replace('_ssr/', '/')
-    if (route.startsWith('/page-data')) {
-      route = [...fixedPagePath(route).split('/'), 'page-data.json']
-        .filter(Boolean)
-        .join('/')
-    }
-    netlifyConfig.redirects.push({
-      from: route,
-      to: '/.netlify/functions/__api',
-      status: 200,
-    })
-  }
 
   // Editing _redirects to it works with ntl dev
   spliceConfig({
@@ -224,7 +215,10 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   })
 }
 
-export async function onPostBuild({ constants: { PUBLISH_DIR }, utils }) {
+export async function onPostBuild({
+  constants: { PUBLISH_DIR },
+  utils,
+}): Promise<void> {
   const cacheDirs = getCacheDirs(PUBLISH_DIR)
 
   if (await utils.cache.save(cacheDirs)) {
@@ -236,3 +230,4 @@ export async function onPostBuild({ constants: { PUBLISH_DIR }, utils }) {
     console.log('No Gatsby build found.')
   }
 }
+/* eslint-enable max-lines, complexity, max-statements, no-param-reassign */
