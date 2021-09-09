@@ -1,5 +1,7 @@
 import path from 'path'
 
+import { readdirSync } from 'fs-extra'
+
 function getCacheDirs(publish) {
   return [publish, normalizedCacheDir(publish)]
 }
@@ -25,6 +27,10 @@ export async function restoreCache({ publish, utils }): Promise<void> {
   } else {
     console.log('No Gatsby cache found. Building fresh.')
   }
+  cacheDirs.forEach((dir) => {
+    const dirInfo = readdirSync(dir)
+    console.log(dir, dirInfo)
+  })
 }
 
 export function normalizedCacheDir(publish: string): string {
