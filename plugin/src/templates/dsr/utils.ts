@@ -3,7 +3,7 @@ import os from 'os'
 import { join } from 'path'
 import process from 'process'
 
-import { existsSync, emptyDirSync, copy } from 'fs-extra'
+import { existsSync, copySync } from 'fs-extra'
 // eslint-disable-next-line node/no-unpublished-import
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
@@ -16,8 +16,7 @@ export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
 
 const start = Date.now()
 const logs = []
-
-let fsPromise: Promise<void>
+let fileSystemHasBeenPrepared = false
 
 export function logtime(msg: string): void {
   const now = Date.now()
@@ -32,16 +31,15 @@ export function getLogs(): string {
 /**
  * Hacks to deal with the fact that functions execute on a readonly filesystem
  */
-export function prepareFilesystem(): Promise<void> {
-  if (fsPromise) {
-    return fsPromise
-  }
-  fsPromise = doPrepareFilesystem()
-  return fsPromise
-}
 
-async function doPrepareFilesystem(): Promise<void> {
+// eslint-disable-next-line max-statements
+export function prepareFilesystem(): void {
   logtime(`prepareFilesystem start`)
+  if (fileSystemHasBeenPrepared) {
+    logtime(`filesystem already prepared`)
+    return
+  }
+  fileSystemHasBeenPrepared = true
   const rewrites = [
     [join(CACHE_DIR, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
     [join(CACHE_DIR, 'caches-lmdb'), join(TEMP_CACHE_DIR, 'caches-lmdb')],
@@ -62,11 +60,11 @@ async function doPrepareFilesystem(): Promise<void> {
   const dir = 'data'
   if (existsSync(join(TEMP_CACHE_DIR, dir))) {
     console.log('directory already exists')
-  } else {
-    logtime(`Start copying ${dir}`)
-    await copy(join(CACHE_DIR, dir), join(TEMP_CACHE_DIR, dir))
-    logtime(`End copying ${dir}`)
+    return
   }
+  logtime(`Start copying ${dir}`)
+  copySync(join(CACHE_DIR, dir), join(TEMP_CACHE_DIR, dir))
+  logtime(`End copying ${dir}`)
 }
 
 // Inlined from gatsby-core-utils
@@ -95,8 +93,6 @@ export function getPagePathFromPageDataPath(
  * Loads the bundled GraphQL engine from the Gatsby cache directory
  */
 export function getGraphQLEngine(): GraphQLEngine {
-  prepareFilesystem()
-
   // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
   const { GraphQLEngine: GQE } = require(join(CACHE_DIR, 'query-engine')) as {
     GraphQLEngine: typeof GraphQLEngine

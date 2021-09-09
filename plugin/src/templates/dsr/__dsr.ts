@@ -22,8 +22,11 @@ import {
   getGraphQLEngine,
   logtime,
   getLogs,
+  prepareFilesystem,
 } from './utils'
 /* eslint-enable  node/no-unpublished-import */
+
+prepareFilesystem()
 
 type PageSSR = {
   getData: typeof getDataType
