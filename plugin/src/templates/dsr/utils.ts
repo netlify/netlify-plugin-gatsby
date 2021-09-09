@@ -15,17 +15,21 @@ export const CACHE_DIR = join(process.cwd(), `.cache`)
 export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
 
 const start = Date.now()
-const logs = []
+let logs = []
 let fileSystemHasBeenPrepared = false
 
 export function logtime(msg: string): void {
   const now = Date.now()
   const elapsed = now - start
-  logs.push(`${msg} ${elapsed}ms`)
+  const logmsg = `${msg} ${elapsed}ms`
+  console.log(logmsg)
+  logs.push(logmsg)
 }
 
 export function getLogs(): string {
-  return logs.join('\n')
+  const result = logs.join('\n')
+  logs = []
+  return result
 }
 
 /**
