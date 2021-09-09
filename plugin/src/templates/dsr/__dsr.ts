@@ -46,8 +46,9 @@ const DATA_PREFIX = '/page-data/'
 
 // eslint-disable-next-line complexity, max-statements
 export const handler: Handler = builder(async function handler(event) {
+  const start = Date.now()
   const eventPath = event.path
-  logtime(`handler: start ${eventPath}`)
+  logtime(`handler: start ${eventPath}`, start)
 
   const isPageData =
     eventPath.endsWith(DATA_SUFFIX) && eventPath.startsWith(DATA_PREFIX)
@@ -55,20 +56,21 @@ export const handler: Handler = builder(async function handler(event) {
   const pathName = isPageData
     ? getPagePathFromPageDataPath(eventPath)
     : eventPath
-  logtime(`handler: getGraphQLEngine start ${eventPath}`)
+  logtime(`handler: getGraphQLEngine start ${eventPath}`, start)
   const graphqlEngine = getGraphQLEngine()
-  logtime(`handler: getGraphQLEngine end ${eventPath}`)
+  logtime(`handler: getGraphQLEngine end ${eventPath}`, start)
   // Gatsby doesn't currently export this type. Hopefully fixed by v4 release
   const page: IGatsbyPage & { mode?: string } =
     graphqlEngine.findPageByPath(pathName)
+  logtime(`handler: findPageByPath end ${eventPath}`, start)
 
   if (page && page.mode === `DSR`) {
-    logtime(`handler: getData start ${eventPath}`)
+    logtime(`handler: getData start ${eventPath}`, start)
     const data = await getData({
       pathName,
       graphqlEngine,
     })
-    logtime(`handler: getData end ${eventPath}`)
+    logtime(`handler: getData end ${eventPath}`, start)
 
     if (isPageData) {
       const body = JSON.stringify({

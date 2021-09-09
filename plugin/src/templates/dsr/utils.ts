@@ -14,11 +14,10 @@ export const CACHE_DIR = join(process.cwd(), `.cache`)
 // Alias in the temp directory so it's writable
 export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
 
-const start = Date.now()
 let logs = []
 let fileSystemHasBeenPrepared = false
 
-export function logtime(msg: string): void {
+export function logtime(msg: string, start: number): void {
   const now = Date.now()
   const elapsed = now - start
   const logmsg = `${msg} ${elapsed}ms`
@@ -38,9 +37,9 @@ export function getLogs(): string {
 
 // eslint-disable-next-line max-statements
 export function prepareFilesystem(): void {
-  logtime(`prepareFilesystem start`)
+  console.log(`prepareFilesystem start`)
   if (fileSystemHasBeenPrepared) {
-    logtime(`filesystem already prepared`)
+    console.log(`filesystem already prepared`)
     return
   }
   fileSystemHasBeenPrepared = true
@@ -66,9 +65,9 @@ export function prepareFilesystem(): void {
     console.log('directory already exists')
     return
   }
-  logtime(`Start copying ${dir}`)
+  console.log(`Start copying ${dir}`)
   copySync(join(CACHE_DIR, dir), join(TEMP_CACHE_DIR, dir))
-  logtime(`End copying ${dir}`)
+  console.log(`End copying ${dir}`)
 }
 
 // Inlined from gatsby-core-utils
