@@ -4,20 +4,25 @@
 
 import { join } from 'path'
 import process from 'process'
-import type { GatsbyFunctionRequest } from 'gatsby'
 
 import { Handler } from '@netlify/functions'
 import etag from 'etag'
-// eslint-disable-next-line import/order
 import { readFile } from 'fs-extra'
-
 /* eslint-disable  node/no-unpublished-import */
-import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
+import type { GatsbyFunctionRequest } from 'gatsby'
 import type {
   getData as getDataType,
   renderHTML as renderHTMLType,
   renderPageData as renderPageDataType,
 } from 'gatsby/cache-dir/page-ssr'
+import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
+
+import {
+  prepareFilesystem,
+  CACHE_DIR,
+  getPagePathFromPageDataPath,
+  getGraphQLEngine,
+} from './utils'
 /* eslint-enable  node/no-unpublished-import */
 
 type SSRReq = Pick<
@@ -32,13 +37,6 @@ type PageSSR = {
   renderHTML: typeof renderHTMLType
   renderPageData: typeof renderPageDataType
 }
-
-import {
-  prepareFilesystem,
-  CACHE_DIR,
-  getPagePathFromPageDataPath,
-  getGraphQLEngine,
-} from './utils'
 
 prepareFilesystem()
 
@@ -90,6 +88,7 @@ export const handler: Handler = async function handler(event) {
         headers: {
           ETag: etag(body),
           'Content-Type': 'application/json',
+          'X-Mode': 'SSR',
         },
       }
     }
@@ -102,6 +101,7 @@ export const handler: Handler = async function handler(event) {
       headers: {
         ETag: etag(body),
         'Content-Type': 'text/html; charset=utf-8',
+        'X-Mode': 'SSR',
       },
     }
   }
@@ -114,6 +114,7 @@ export const handler: Handler = async function handler(event) {
     headers: {
       Tag: etag(body),
       'Content-Type': 'text/html; charset=utf-8',
+      'X-Mode': 'SSR',
     },
   }
 }

@@ -73,6 +73,7 @@ export const handler: Handler = builder(async function handler(event) {
         headers: {
           ETag: etag(body),
           'Content-Type': 'application/json',
+          'X-Mode': 'DSR',
         },
       }
     }
@@ -85,6 +86,7 @@ export const handler: Handler = builder(async function handler(event) {
       headers: {
         ETag: etag(body),
         'Content-Type': 'text/html; charset=utf-8',
+        'X-Mode': 'DSR',
       },
     }
   }
@@ -97,6 +99,7 @@ export const handler: Handler = builder(async function handler(event) {
     headers: {
       Tag: etag(body),
       'Content-Type': 'text/html; charset=utf-8',
+      'X-Mode': 'DSR',
     },
   }
 })
