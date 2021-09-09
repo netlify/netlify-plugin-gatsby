@@ -22,7 +22,6 @@ export function prepareFilesystem() {
     [join(CACHE_DIR, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
     [join(CACHE_DIR, 'caches-lmdb'), join(TEMP_CACHE_DIR, 'caches-lmdb')],
     [join(CACHE_DIR, 'data'), join(TEMP_CACHE_DIR, 'data')],
-    [join(process.cwd(), 'public'), join(os.tmpdir(), 'gatsby', 'public')],
   ]
   // Alias the cache dir paths to the temp dir
   const lfs = link(fs, rewrites)
@@ -38,7 +37,9 @@ export function prepareFilesystem() {
   global._fsWrapper = lfs
   emptyDirSync(TEMP_CACHE_DIR)
   const dir = 'data'
-  if (!existsSync(join(TEMP_CACHE_DIR, dir))) {
+  if (existsSync(join(TEMP_CACHE_DIR, dir))) {
+    console.log('directory already exists')
+  } else {
     console.time(`Copying ${dir}`)
     copySync(join(CACHE_DIR, dir), join(TEMP_CACHE_DIR, dir))
     console.timeEnd(`Copying ${dir}`)
@@ -71,6 +72,8 @@ export function getPagePathFromPageDataPath(
  * Loads the bundled GraphQL engine from the Gatsby cache directory
  */
 export function getGraphQLEngine(): GraphQLEngine {
+  prepareFilesystem()
+
   // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
   const { GraphQLEngine: GQE } = require(join(CACHE_DIR, 'query-engine')) as {
     GraphQLEngine: typeof GraphQLEngine

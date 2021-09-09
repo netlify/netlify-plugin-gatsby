@@ -18,7 +18,6 @@ import type {
 import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
 
 import {
-  prepareFilesystem,
   CACHE_DIR,
   getPagePathFromPageDataPath,
   getGraphQLEngine,
@@ -30,8 +29,6 @@ type PageSSR = {
   renderHTML: typeof renderHTMLType
   renderPageData: typeof renderPageDataType
 }
-
-prepareFilesystem()
 
 // Requiring this dynamically so esbuild doesn't re-bundle it
 // eslint-disable-next-line @typescript-eslint/no-var-requires
