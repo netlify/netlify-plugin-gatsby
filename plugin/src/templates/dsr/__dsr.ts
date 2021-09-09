@@ -7,7 +7,6 @@ import process from 'process'
 
 import { builder, Handler } from '@netlify/functions'
 import etag from 'etag'
-// eslint-disable-next-line import/order
 import { readFile } from 'fs-extra'
 /* eslint-disable  node/no-unpublished-import */
 import type {
@@ -44,28 +43,29 @@ const DATA_PREFIX = '/page-data/'
 
 // eslint-disable-next-line complexity, max-statements
 export const handler: Handler = builder(async function handler(event) {
-  logtime('handler start')
   const eventPath = event.path
+  logtime(`handler: start ${eventPath}`)
+
   const isPageData =
     eventPath.endsWith(DATA_SUFFIX) && eventPath.startsWith(DATA_PREFIX)
 
   const pathName = isPageData
     ? getPagePathFromPageDataPath(eventPath)
     : eventPath
-  logtime('handler: getGraphQLEngine start')
+  logtime(`handler: getGraphQLEngine start ${eventPath}`)
   const graphqlEngine = getGraphQLEngine()
-  logtime('handler: getGraphQLEngine end')
+  logtime(`handler: getGraphQLEngine end ${eventPath}`)
   // Gatsby doesn't currently export this type. Hopefully fixed by v4 release
   const page: IGatsbyPage & { mode?: string } =
     graphqlEngine.findPageByPath(pathName)
 
   if (page && page.mode === `DSR`) {
-    logtime('handler: getData start')
+    logtime(`handler: getData start ${eventPath}`)
     const data = await getData({
       pathName,
       graphqlEngine,
     })
-    logtime('handler: getData end')
+    logtime(`handler: getData end ${eventPath}`)
 
     if (isPageData) {
       const body = JSON.stringify({

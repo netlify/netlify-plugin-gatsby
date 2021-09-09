@@ -3,7 +3,7 @@ import os from 'os'
 import { join } from 'path'
 import process from 'process'
 
-import { existsSync, copySync, emptyDirSync } from 'fs-extra'
+import { existsSync, emptyDirSync, copy } from 'fs-extra'
 // eslint-disable-next-line node/no-unpublished-import
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
@@ -16,6 +16,8 @@ export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
 
 const start = Date.now()
 const logs = []
+
+let fsPromise: Promise<void>
 
 export function logtime(msg: string): void {
   const now = Date.now()
@@ -30,7 +32,15 @@ export function getLogs(): string {
 /**
  * Hacks to deal with the fact that functions execute on a readonly filesystem
  */
-export function prepareFilesystem(): void {
+export function prepareFilesystem(): Promise<void> {
+  if (fsPromise) {
+    return fsPromise
+  }
+  fsPromise = doPrepareFilesystem()
+  return fsPromise
+}
+
+async function doPrepareFilesystem(): Promise<void> {
   logtime(`prepareFilesystem start`)
   const rewrites = [
     [join(CACHE_DIR, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
@@ -49,13 +59,12 @@ export function prepareFilesystem(): void {
   // Gatsby uses this instead of fs if present
   // eslint-disable-next-line no-underscore-dangle
   global._fsWrapper = lfs
-  emptyDirSync(TEMP_CACHE_DIR)
   const dir = 'data'
   if (existsSync(join(TEMP_CACHE_DIR, dir))) {
     console.log('directory already exists')
   } else {
     logtime(`Start copying ${dir}`)
-    copySync(join(CACHE_DIR, dir), join(TEMP_CACHE_DIR, dir))
+    await copy(join(CACHE_DIR, dir), join(TEMP_CACHE_DIR, dir))
     logtime(`End copying ${dir}`)
   }
 }
