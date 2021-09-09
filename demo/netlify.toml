@@ -8,3 +8,8 @@ package = "./local-plugin"
 
 [[plugins]]
 package = "@netlify/plugin-local-install-core"
+
+[[redirects]]
+from = "/dogs/"
+to = "/.netlify/functions/__ssr"
+status = 200

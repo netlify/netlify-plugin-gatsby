@@ -1,10 +1,10 @@
 ![Netlify Build plugin Gatsby – Run Gatsby seamlessly on Netlify](netlify-gatsby-plugin.png)
 
-# Essential Gatsby Plugin
+# Essential Gatsby Plugin - v2 alpha
 
-This build plugin is a utility for supporting Gatsby on Netlify. To support
-build caching and Gatsby functions on Netlify, you will need to install this
-plugin for your app.
+This build plugin is an alpha release, supporting the new features of Gatsby 4.
+For older versions of Gatsby, please use version 1.x of the build plugin, which
+is installed automatically for new Gatsby sites.
 
 > **Note:**
 >
@@ -42,10 +42,6 @@ at any time by visiting the **Plugins** tab for your site in the Netlify UI. -->
    the plugins section below:
 
 ```toml
-[build]
-command = "npm run build"
-publish = "public/"
-
 [[plugins]]
 package = "@netlify/plugin-gatsby"
 ```
@@ -54,8 +50,8 @@ package = "@netlify/plugin-gatsby"
    `package.json`.
 
 ```bash
-# yarn add -D @netlify/plugin-gatsby
-npm install -D @netlify/plugin-gatsby
+# yarn add -D @netlify/plugin-gatsby@alpha
+npm install -D @netlify/plugin-gatsby@alpha
 ```
 
 Read more about

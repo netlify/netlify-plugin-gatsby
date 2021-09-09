@@ -36,6 +36,7 @@ const descriptionStyle = {
 // data
 const links = [
   { text: 'Blog', url: 'blog', description: 'DSR demo' },
+  { text: 'Dog of the day', url: 'dog', description: 'SSR demo' },
   { text: 'Hello World', url: 'api/hello-world', description: '' },
   {
     text: 'I Am Capitalized',
