@@ -10,6 +10,11 @@ package = "./local-plugin"
 package = "@netlify/plugin-local-install-core"
 
 [[redirects]]
-from = "/dogs/"
+from = "/dog"
+to = "/.netlify/functions/__ssr"
+status = 200
+
+[[redirects]]
+from = "/page-data/dog/page-data.json"
 to = "/.netlify/functions/__ssr"
 status = 200
