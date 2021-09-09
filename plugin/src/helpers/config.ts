@@ -98,7 +98,7 @@ export function mutateConfig({
   netlifyConfig,
   compiledFunctionsDir,
   CACHE_DIR,
-}) {
+}): void {
   /* eslint-disable no-underscore-dangle, no-param-reassign */
   netlifyConfig.functions.__api = {
     included_files: [path.posix.join(compiledFunctionsDir, '**')],
@@ -107,7 +107,7 @@ export function mutateConfig({
 
   netlifyConfig.functions.__dsr = {
     included_files: [
-      path.posix.resolve(path.dirname(CACHE_DIR), 'public', '404.html'),
+      path.posix.join('public', '404.html'),
       path.posix.join(CACHE_DIR, 'data', '**'),
       path.posix.join(CACHE_DIR, 'query-engine', '**'),
       path.posix.join(CACHE_DIR, 'page-ssr', '**'),
