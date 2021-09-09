@@ -14,10 +14,24 @@ export const CACHE_DIR = join(process.cwd(), `.cache`)
 // Alias in the temp directory so it's writable
 export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
 
+const start = Date.now()
+const logs = []
+
+export function logtime(msg: string): void {
+  const now = Date.now()
+  const elapsed = now - start
+  logs.push(`${msg} ${elapsed}ms`)
+}
+
+export function getLogs(): string {
+  return logs.join('\n')
+}
+
 /**
  * Hacks to deal with the fact that functions execute on a readonly filesystem
  */
-export function prepareFilesystem() {
+export function prepareFilesystem(): void {
+  logtime(`prepareFilesystem start`)
   const rewrites = [
     [join(CACHE_DIR, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
     [join(CACHE_DIR, 'caches-lmdb'), join(TEMP_CACHE_DIR, 'caches-lmdb')],
@@ -40,9 +54,9 @@ export function prepareFilesystem() {
   if (existsSync(join(TEMP_CACHE_DIR, dir))) {
     console.log('directory already exists')
   } else {
-    console.time(`Copying ${dir}`)
+    logtime(`Start copying ${dir}`)
     copySync(join(CACHE_DIR, dir), join(TEMP_CACHE_DIR, dir))
-    console.timeEnd(`Copying ${dir}`)
+    logtime(`End copying ${dir}`)
   }
 }
 
