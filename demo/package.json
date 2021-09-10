@@ -29,6 +29,7 @@
     "react-dom": "^17.0.1"
   },
   "devDependencies": {
+    "@ascorbic/gatsby-plugin-netlify": "^4.0.0-2",
     "@netlify/functions": "^0.7.2",
     "co-body": "^6.1.0",
     "cookie": "^0.4.1",
