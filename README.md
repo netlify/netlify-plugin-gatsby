@@ -1,8 +1,8 @@
 ![Netlify Build plugin Gatsby – Run Gatsby seamlessly on Netlify](netlify-gatsby-plugin.png)
 
-# Essential Gatsby Plugin - v2 alpha
+# Essential Gatsby Plugin - v2 beta
 
-This build plugin is an alpha release, supporting the new features of Gatsby 4.
+This version of the Essential Gatsby build plugin is an beta release, supporting the new features of Gatsby 4 including the SSR and DSG [render modes](https://www.gatsbyjs.com/docs/conceptual/rendering-options).
 For older versions of Gatsby, please use version 1.x of the build plugin, which
 is installed automatically for new Gatsby sites.
 
@@ -17,12 +17,6 @@ is installed automatically for new Gatsby sites.
 > - Essential Gatsby is not compatible with the Gatsby community plugin
 >   [gatsby-plugin-netlify-cache](https://www.gatsbyjs.com/plugins/gatsby-plugin-netlify-cache/).
 
-## Table of Contents
-
-- [Installation and Configuration](#installation-and-configuration)
-- [CLI Usage](#cli-usage)
-- [Using Gatsby Functions](#using-gatsby-functions)
-- [Credits](#credits)
 
 ## Installation and Configuration
 
@@ -36,6 +30,11 @@ You're able to
 [remove the plugin](https://docs.netlify.com/configure-builds/build-plugins/#remove-a-plugin)
 at any time by visiting the **Plugins** tab for your site in the Netlify UI. -->
 
+### Build configuration
+During the beta phase there are some changes that need to be made manually in your build configuration. 
+
+- Set the build image to "Ubuntu Xenial 16.04". Read the docs on [how to select a build image](https://docs.netlify.com/configure-builds/get-started/#build-image-selection).
+- Gatsby now requires Node 14 for building and SSR/DSG. For this to work you must set the environment variable `AWS_LAMBDA_JS_RUNTIME` to `nodejs14.x`. This must be done in the Netlify UI, not in the `netlify.toml`. Read the docs on [choosing a functions runtime](https://docs.netlify.com/functions/build-with-javascript/#runtime-settings).
 ### Manual Installation
 
 1. Create a `netlify.toml` in the root of your project. Your file should include
@@ -50,49 +49,24 @@ package = "@netlify/plugin-gatsby"
    `package.json`.
 
 ```bash
-# yarn add -D @netlify/plugin-gatsby@alpha
-npm install -D @netlify/plugin-gatsby@alpha
+# yarn add -D @netlify/plugin-gatsby@^2.0.0-beta
+npm install -D @netlify/plugin-gatsby@^2.0.0-beta
 ```
 
 Read more about
 [file-based plugin installation](https://docs.netlify.com/configure-builds/build-plugins/#file-based-installation)
 in our docs.
 
-## CLI Usage
+### Caveats
+Currently you cannot use `StaticImage` or `gatsby-transformer-sharp` in SSR or DSG pages. The best workaround is to use an image CDN such as [Cloudinary](https://www.gatsbyjs.com/docs/how-to/images-and-media/using-cloudinary-image-service/) or [imgix](https://github.com/imgix/gatsby) to host your images. This will give you faster builds and rendering too. 
 
-If you'd like to build and deploy your project using the
-[Netlify CLI](https://docs.netlify.com/cli/get-started/).
-
-1. Make sure all your project's files are committed before running a build with
-   the CLI
-2. Run any number of builds and deploys freely (i.e. `netlify build`,
-   `netlify deploy --build`, `netlify deploy --prod`)
-3. Run `git stash --include-unstaged` to easily ignore plugin-generated files
-
-It's important to note that the CLI may mix your project's source code and
-plugin-generated files; this is why we recommend committing all project source
-files before running CLI builds.
-
-## Using Gatsby Functions
-
-This plugin will convert all
-[Gatsby Functions](https://www.gatsbyjs.com/docs/how-to/functions/) in the
-project to run as
-[Netlify functions](https://docs.netlify.com/functions/overview/). This should
-be invisible: you can write the Gatsby Functions in the same way as you usually
-would. The API is the same, and if you use this plugin then it will deploy to
-Netlify functions without needing any extra configuration.
-
-When the site is built, this plugin will create a wrapper Netlify function in
-`/netlify/functions/gatsby`, and then deploy that alongside the Gatsby
-functions. If you run this locally with the Netlify CLI, you will see it create
-these files. It will add an entry to your `.gitignore` to ignore the
-`/netlify/functions/gatsby` directory.
+### Beta feedback
+TODO: forums link
 
 ### Local development
 
 When developing Gatsby Functions it is usually easier to use the built-in
 `gatsby develop` functions server. However if you want to try the Netlify
-functions wrapper it will run via `netlify dev`. However you should be sure to
+functions wrapper it will run via `netlify dev`. You should be sure to
 run `netlify build` first, so that the wrappers are generated and the functions
 copied across.
