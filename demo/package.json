@@ -21,9 +21,9 @@
   },
   "dependencies": {
     "@sindresorhus/slugify": "^1.1.2",
-    "gatsby": "alpha-9689ff",
-    "gatsby-source-filesystem": "alpha-9689ff",
-    "gatsby-transformer-remark": "alpha-9689ff",
+    "gatsby": "^4.0.0-alpha-9689ff.12",
+    "gatsby-source-filesystem": "^4.0.0-alpha-9689ff.36",
+    "gatsby-transformer-remark": "^5.0.0-alpha-9689ff.23",
     "lmdb-store": "^1.6.7",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
