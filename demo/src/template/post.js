@@ -28,7 +28,7 @@ export default function BlogPostTemplate({ data }) {
 }
 
 /**
- * Example of DSR per path using fs Routes
+ * Example of DSG per path using fs Routes
  */
 // export function config({ params }) {
 //   return {
@@ -37,7 +37,7 @@ export default function BlogPostTemplate({ data }) {
 // }
 
 /**
- * Example of DSR for all routes
+ * Example of DSG for all routes
  */
 // export const config = {
 //   defer: true,

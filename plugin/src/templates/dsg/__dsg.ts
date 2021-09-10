@@ -1,5 +1,5 @@
 /**
- * Handler for DSR routes
+ * Handler for DSR/DSG routes
  */
 
 import { join } from 'path'
@@ -64,7 +64,7 @@ export const handler: Handler = builder(async function handler(event) {
     graphqlEngine.findPageByPath(pathName)
   logtime(`handler: findPageByPath end ${eventPath}`, start)
 
-  if (page && page.mode === `DSR`) {
+  if (page?.mode === `DSR` || page?.mode === `DSG`) {
     logtime(`handler: getData start ${eventPath}`, start)
     const data = await getData({
       pathName,
@@ -83,7 +83,7 @@ export const handler: Handler = builder(async function handler(event) {
         headers: {
           ETag: etag(body),
           'Content-Type': 'application/json',
-          'X-Mode': 'DSR',
+          'X-Mode': 'DSG',
         },
       }
     }
@@ -96,7 +96,7 @@ export const handler: Handler = builder(async function handler(event) {
       headers: {
         ETag: etag(body),
         'Content-Type': 'text/html; charset=utf-8',
-        'X-Mode': 'DSR',
+        'X-Mode': 'DSG',
       },
     }
   }
@@ -109,7 +109,7 @@ export const handler: Handler = builder(async function handler(event) {
     headers: {
       Tag: etag(body),
       'Content-Type': 'text/html; charset=utf-8',
-      'X-Mode': 'DSR',
+      'X-Mode': 'DSG',
     },
   }
 })

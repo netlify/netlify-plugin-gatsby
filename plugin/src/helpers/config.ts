@@ -105,7 +105,7 @@ export function mutateConfig({
     external_node_modules: ['msgpackr-extract'],
   }
 
-  netlifyConfig.functions.__dsr = {
+  netlifyConfig.functions.__dsg = {
     included_files: [
       path.posix.join('public', '404.html'),
       path.posix.join(CACHE_DIR, 'data', '**'),
@@ -115,6 +115,6 @@ export function mutateConfig({
     external_node_modules: ['msgpackr-extract'],
   }
 
-  netlifyConfig.functions.__ssr = { ...netlifyConfig.functions.__dsr }
+  netlifyConfig.functions.__ssr = { ...netlifyConfig.functions.__dsg }
   /* eslint-enable no-underscore-dangle, no-param-reassign */
 }

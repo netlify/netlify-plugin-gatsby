@@ -61,8 +61,7 @@ in our docs.
 ## CLI Usage
 
 If you'd like to build and deploy your project using the
-[Netlify CLI](https://docs.netlify.com/cli/get-started/), we recommend this
-workflow to manage git tracking plugin-generated files:
+[Netlify CLI](https://docs.netlify.com/cli/get-started/).
 
 1. Make sure all your project's files are committed before running a build with
    the CLI

@@ -35,7 +35,7 @@ const descriptionStyle = {
 
 // data
 const links = [
-  { text: 'Blog', url: 'blog', description: 'DSR demo' },
+  { text: 'Blog', url: 'blog', description: 'DSG demo' },
   { text: 'Dog of the day', url: 'dog', description: 'SSR demo' },
   { text: 'Hello World', url: 'api/hello-world', description: '' },
   {

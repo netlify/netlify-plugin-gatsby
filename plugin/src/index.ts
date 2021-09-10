@@ -66,7 +66,7 @@ export async function onBuild({
   // copying Netlify wrapper function into functions directory
 
   await Promise.all(
-    ['api', 'dsr', 'ssr'].map((func) =>
+    ['api', 'dsg', 'ssr'].map((func) =>
       fs.copy(
         path.join(__dirname, '..', 'src', 'templates', func),
         path.join(functionsSrcDir, `__${func}`),
@@ -111,7 +111,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   netlifyConfig.redirects.push({
     from: '/*',
-    to: '/.netlify/functions/__dsr',
+    to: '/.netlify/functions/__dsg',
     status: 200,
   })
 }
