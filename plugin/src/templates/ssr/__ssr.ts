@@ -12,6 +12,7 @@ import { readFile } from 'fs-extra'
 import type { GatsbyFunctionRequest } from 'gatsby'
 import type {
   getData as getDataType,
+  ISSRData,
   renderHTML as renderHTMLType,
   renderPageData as renderPageDataType,
 } from 'gatsby/cache-dir/page-ssr'
@@ -47,7 +48,7 @@ const { getData, renderHTML, renderPageData }: PageSSR = require(join(
   'page-ssr',
 ))
 
-// eslint-disable-next-line func-style
+// eslint-disable-next-line func-style, max-statements, complexity
 export const handler: Handler = async function handler(event) {
   const eventPath = event.path
   const isPageData =
@@ -86,11 +87,16 @@ export const handler: Handler = async function handler(event) {
     headers: event.headers,
   }
 
-  const data = await getData({
+  const data = (await getData({
     pathName,
     graphqlEngine,
     req,
-  })
+  })) as ISSRData & {
+    // Remove when https://github.com/gatsbyjs/gatsby/pull/33159 is merged
+    serverDataHeaders?: Record<string, string | number | Array<string>>
+  }
+
+  const headers = data.serverDataHeaders || {}
 
   if (isPageData) {
     const body = JSON.stringify(await renderPageData({ data }))
@@ -101,6 +107,7 @@ export const handler: Handler = async function handler(event) {
         ETag: etag(body),
         'Content-Type': 'application/json',
         'X-Mode': 'SSR',
+        ...headers,
       },
     }
   }
@@ -114,6 +121,7 @@ export const handler: Handler = async function handler(event) {
       ETag: etag(body),
       'Content-Type': 'text/html; charset=utf-8',
       'X-Mode': 'SSR',
+      ...headers,
     },
   }
 }
