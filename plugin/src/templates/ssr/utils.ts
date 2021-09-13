@@ -3,7 +3,7 @@ import os from 'os'
 import { join } from 'path'
 import process from 'process'
 
-import { existsSync, copySync, emptyDirSync } from 'fs-extra'
+import { existsSync, copySync } from 'fs-extra'
 // eslint-disable-next-line node/no-unpublished-import
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
@@ -14,15 +14,23 @@ export const CACHE_DIR = join(process.cwd(), `.cache`)
 // Alias in the temp directory so it's writable
 export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
 
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace NodeJS {
+    interface Global {
+      _fsWrapper: typeof import('fs')
+    }
+  }
+}
+
 /**
  * Hacks to deal with the fact that functions execute on a readonly filesystem
  */
-export function prepareFilesystem() {
+export function prepareFilesystem(): void {
   const rewrites = [
     [join(CACHE_DIR, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
     [join(CACHE_DIR, 'caches-lmdb'), join(TEMP_CACHE_DIR, 'caches-lmdb')],
     [join(CACHE_DIR, 'data'), join(TEMP_CACHE_DIR, 'data')],
-    [join(process.cwd(), 'public'), join(os.tmpdir(), 'gatsby', 'public')],
   ]
   // Alias the cache dir paths to the temp dir
   const lfs = link(fs, rewrites)
@@ -36,13 +44,14 @@ export function prepareFilesystem() {
   // Gatsby uses this instead of fs if present
   // eslint-disable-next-line no-underscore-dangle
   global._fsWrapper = lfs
-  emptyDirSync(TEMP_CACHE_DIR)
   const dir = 'data'
-  if (!existsSync(join(TEMP_CACHE_DIR, dir))) {
-    console.time(`Copying ${dir}`)
-    copySync(join(CACHE_DIR, dir), join(TEMP_CACHE_DIR, dir))
-    console.timeEnd(`Copying ${dir}`)
+  if (existsSync(join(TEMP_CACHE_DIR, dir))) {
+    console.log('directory already exists')
+    return
   }
+  console.log(`Start copying ${dir}`)
+  copySync(join(CACHE_DIR, dir), join(TEMP_CACHE_DIR, dir))
+  console.log(`End copying ${dir}`)
 }
 
 // Inlined from gatsby-core-utils

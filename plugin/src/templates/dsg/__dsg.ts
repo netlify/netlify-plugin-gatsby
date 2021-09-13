@@ -15,17 +15,16 @@ import type {
   renderPageData as renderPageDataType,
 } from 'gatsby/cache-dir/page-ssr'
 import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
+/* eslint-enable  node/no-unpublished-import */
 
 import {
   CACHE_DIR,
   getPagePathFromPageDataPath,
   getGraphQLEngine,
-  logtime,
-  getLogs,
   prepareFilesystem,
 } from './utils'
-/* eslint-enable  node/no-unpublished-import */
 
+// Doing this as an import side-effect as it only needs to happen once, when bootstrapping the function
 prepareFilesystem()
 
 type PageSSR = {
@@ -44,11 +43,8 @@ const { getData, renderHTML, renderPageData }: PageSSR = require(join(
 const DATA_SUFFIX = '/page-data.json'
 const DATA_PREFIX = '/page-data/'
 
-// eslint-disable-next-line complexity, max-statements
 export const handler: Handler = builder(async function handler(event) {
-  const start = Date.now()
   const eventPath = event.path
-  logtime(`handler: start ${eventPath}`, start)
 
   const isPageData =
     eventPath.endsWith(DATA_SUFFIX) && eventPath.startsWith(DATA_PREFIX)
@@ -56,58 +52,53 @@ export const handler: Handler = builder(async function handler(event) {
   const pathName = isPageData
     ? getPagePathFromPageDataPath(eventPath)
     : eventPath
-  logtime(`handler: getGraphQLEngine start ${eventPath}`, start)
   const graphqlEngine = getGraphQLEngine()
-  logtime(`handler: getGraphQLEngine end ${eventPath}`, start)
   // Gatsby doesn't currently export this type. Hopefully fixed by v4 release
   const page: IGatsbyPage & { mode?: string } =
     graphqlEngine.findPageByPath(pathName)
-  logtime(`handler: findPageByPath end ${eventPath}`, start)
 
-  if (page?.mode === `DSR` || page?.mode === `DSG`) {
-    logtime(`handler: getData start ${eventPath}`, start)
-    const data = await getData({
-      pathName,
-      graphqlEngine,
-    })
-    logtime(`handler: getData end ${eventPath}`, start)
-
-    if (isPageData) {
-      const body = JSON.stringify({
-        ...(await renderPageData({ data })),
-        logs: getLogs(),
-      })
-      return {
-        statusCode: 200,
-        body,
-        headers: {
-          ETag: etag(body),
-          'Content-Type': 'application/json',
-          'X-Mode': 'DSG',
-        },
-      }
-    }
-
-    const body = `${await renderHTML({ data })}\n<!-- ${getLogs()} -->`
+  // Is it DSR or DSG? One is the old name for the other.
+  if (!page?.mode?.startsWith('DS')) {
+    const body = await readFile(
+      join(process.cwd(), 'public', '404.html'),
+      'utf8',
+    )
 
     return {
-      statusCode: 200,
+      statusCode: 404,
       body,
       headers: {
-        ETag: etag(body),
+        Tag: etag(body),
         'Content-Type': 'text/html; charset=utf-8',
         'X-Mode': 'DSG',
       },
     }
   }
+  const data = await getData({
+    pathName,
+    graphqlEngine,
+  })
 
-  const body = await readFile(join(process.cwd(), 'public', '404.html'), 'utf8')
+  if (isPageData) {
+    const body = JSON.stringify(await renderPageData({ data }))
+    return {
+      statusCode: 200,
+      body,
+      headers: {
+        ETag: etag(body),
+        'Content-Type': 'application/json',
+        'X-Mode': 'DSG',
+      },
+    }
+  }
+
+  const body = await renderHTML({ data })
 
   return {
-    statusCode: 404,
+    statusCode: 200,
     body,
     headers: {
-      Tag: etag(body),
+      ETag: etag(body),
       'Content-Type': 'text/html; charset=utf-8',
       'X-Mode': 'DSG',
     },

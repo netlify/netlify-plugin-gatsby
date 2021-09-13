@@ -14,35 +14,19 @@ export const CACHE_DIR = join(process.cwd(), `.cache`)
 // Alias in the temp directory so it's writable
 export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
 
-let logs = []
-let fileSystemHasBeenPrepared = false
-
-export function logtime(msg: string, start: number): void {
-  const now = Date.now()
-  const elapsed = now - start
-  const logmsg = `${msg} ${elapsed}ms`
-  console.log(logmsg)
-  logs.push(logmsg)
-}
-
-export function getLogs(): string {
-  const result = logs.join('\n')
-  logs = []
-  return result
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace NodeJS {
+    interface Global {
+      _fsWrapper: typeof import('fs')
+    }
+  }
 }
 
 /**
  * Hacks to deal with the fact that functions execute on a readonly filesystem
  */
-
-// eslint-disable-next-line max-statements
 export function prepareFilesystem(): void {
-  console.log(`prepareFilesystem start`)
-  if (fileSystemHasBeenPrepared) {
-    console.log(`filesystem already prepared`)
-    return
-  }
-  fileSystemHasBeenPrepared = true
   const rewrites = [
     [join(CACHE_DIR, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
     [join(CACHE_DIR, 'caches-lmdb'), join(TEMP_CACHE_DIR, 'caches-lmdb')],

@@ -47,14 +47,11 @@ const { getData, renderHTML, renderPageData }: PageSSR = require(join(
   'page-ssr',
 ))
 
-const DATA_SUFFIX = '/page-data.json'
-const DATA_PREFIX = '/page-data/'
-
-// eslint-disable-next-line func-style, complexity
+// eslint-disable-next-line func-style
 export const handler: Handler = async function handler(event) {
   const eventPath = event.path
   const isPageData =
-    eventPath.endsWith(DATA_SUFFIX) && eventPath.startsWith(DATA_PREFIX)
+    eventPath.startsWith('/page-data/') && eventPath.endsWith('/page-data.json')
 
   const pathName = isPageData
     ? getPagePathFromPageDataPath(eventPath)
@@ -66,53 +63,55 @@ export const handler: Handler = async function handler(event) {
   const page: IGatsbyPage & { mode?: string } =
     graphqlEngine.findPageByPath(pathName)
 
-  if (page && page.mode === `SSR`) {
-    const req: SSRReq = {
-      query: event.queryStringParameters,
-      method: event.httpMethod,
-      url: event.path,
-      headers: event.headers,
-    }
-
-    const data = await getData({
-      pathName,
-      graphqlEngine,
-      req,
-    })
-
-    if (isPageData) {
-      const body = JSON.stringify(await renderPageData({ data }))
-      return {
-        statusCode: 200,
-        body,
-        headers: {
-          ETag: etag(body),
-          'Content-Type': 'application/json',
-          'X-Mode': 'SSR',
-        },
-      }
-    }
-
-    const body = await renderHTML({ data })
-
+  if (page?.mode !== `SSR`) {
+    const body = await readFile(
+      join(process.cwd(), 'public', '404.html'),
+      'utf8',
+    )
     return {
-      statusCode: 200,
+      statusCode: 404,
       body,
       headers: {
-        ETag: etag(body),
+        Tag: etag(body),
         'Content-Type': 'text/html; charset=utf-8',
         'X-Mode': 'SSR',
       },
     }
   }
 
-  const body = await readFile(join(process.cwd(), 'public', '404.html'), 'utf8')
+  const req: SSRReq = {
+    query: event.queryStringParameters,
+    method: event.httpMethod,
+    url: event.path,
+    headers: event.headers,
+  }
+
+  const data = await getData({
+    pathName,
+    graphqlEngine,
+    req,
+  })
+
+  if (isPageData) {
+    const body = JSON.stringify(await renderPageData({ data }))
+    return {
+      statusCode: 200,
+      body,
+      headers: {
+        ETag: etag(body),
+        'Content-Type': 'application/json',
+        'X-Mode': 'SSR',
+      },
+    }
+  }
+
+  const body = await renderHTML({ data })
 
   return {
-    statusCode: 404,
+    statusCode: 200,
     body,
     headers: {
-      Tag: etag(body),
+      ETag: etag(body),
       'Content-Type': 'text/html; charset=utf-8',
       'X-Mode': 'SSR',
     },
