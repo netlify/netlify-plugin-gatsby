@@ -64,12 +64,11 @@ function hasPlugin(plugins: PluginRef[], pluginName: string): boolean {
 
 export function checkGatsbyConfig({ utils, netlifyConfig }): void {
   // warn if gatsby-plugin-netlify is missing
-  const pluginName = 'gatsby-plugin-netlify'
   const gatsbyConfig = loadGatsbyConfig(utils)
 
-  if (!hasPlugin(gatsbyConfig.plugins, pluginName)) {
-    console.warn(
-      'Install `gatsby-plugin-netlify` if you would like to support Gatsby redirects. https://www.gatsbyjs.com/plugins/gatsby-plugin-netlify/',
+  if (!hasPlugin(gatsbyConfig.plugins, 'gatsby-plugin-netlify')) {
+    console.error(
+      'Please install `gatsby-plugin-netlify` and enable it in your gatsby-config.js. https://www.gatsbyjs.com/plugins/gatsby-plugin-netlify/',
     )
   }
 
