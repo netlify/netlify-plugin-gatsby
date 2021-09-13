@@ -53,7 +53,7 @@ export async function onBuild({
     INTERNAL_FUNCTIONS_SRC,
   },
   netlifyConfig,
-}) {
+}): Promise<void> {
   const CACHE_DIR = normalizedCacheDir(PUBLISH_DIR)
   const compiledFunctionsDir = path.join(CACHE_DIR, '/functions')
   // eslint-disable-next-line node/no-sync
