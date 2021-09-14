@@ -3,7 +3,7 @@
 # Essential Gatsby Plugin - v2 beta
 
 This version of the Essential Gatsby build plugin is an beta release, supporting the new features of Gatsby 4 including the SSR and DSG [render modes](https://www.gatsbyjs.com/docs/conceptual/rendering-options).
-For older versions of Gatsby, please use version 1.x of the build plugin, which
+For older versions of Gatsby, please use [version 1.x of the build plugin](https://github.com/netlify/netlify-plugin-gatsby/tree/v1), which
 is installed automatically for new Gatsby sites.
 
 > **Note:**
