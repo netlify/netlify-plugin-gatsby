@@ -33,7 +33,7 @@ export function prepareFilesystem(): void {
     [join(CACHE_DIR, 'data'), join(TEMP_CACHE_DIR, 'data')],
   ]
   // Alias the cache dir paths to the temp dir
-  const lfs = link(fs, rewrites)
+  const lfs = link(fs, rewrites) as typeof import('fs')
 
   // linkfs doesn't pass across the `native` prop, which graceful-fs needs
   for (const key in lfs) {
@@ -45,7 +45,7 @@ export function prepareFilesystem(): void {
   // eslint-disable-next-line no-underscore-dangle
   global._fsWrapper = lfs
   const dir = 'data'
-  if (existsSync(join(TEMP_CACHE_DIR, dir))) {
+  if (!process.env.NETLIFY_LOCAL && existsSync(join(TEMP_CACHE_DIR, dir))) {
     console.log('directory already exists')
     return
   }

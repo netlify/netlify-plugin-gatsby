@@ -21,6 +21,9 @@ export async function getServerData() {
 
     return {
       props: await res.json(),
+      headers: {
+        'x-dog': 'good',
+      },
     }
   } catch (error) {
     return {

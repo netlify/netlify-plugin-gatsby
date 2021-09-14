@@ -12,7 +12,7 @@
     "start": "HOST=0.0.0.0 gatsby develop",
     "build": "gatsby -v && gatsby build && ls -l .cache public",
     "serve": "gatsby serve",
-    "clean": "gatsby clean",
+    "clean": "gatsby clean && rm -rf .netlify/cache .netlify/functions*",
     "build:netlify": "netlify build --offline",
     "preview": "netlify dev --offline",
     "test": "run-s build:netlify test:e2e",
@@ -21,9 +21,9 @@
   },
   "dependencies": {
     "@sindresorhus/slugify": "^1.1.2",
-    "gatsby": "^4.0.0-alpha-9689ff.12",
-    "gatsby-source-filesystem": "^4.0.0-alpha-9689ff.36",
-    "gatsby-transformer-remark": "^5.0.0-alpha-9689ff.23",
+    "gatsby": "^4.0.0-alpha-9689ff.13",
+    "gatsby-source-filesystem": "^4.0.0-alpha-9689ff.13",
+    "gatsby-transformer-remark": "^5.0.0-alpha-9689ff.13",
     "lmdb-store": "^1.6.7",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"

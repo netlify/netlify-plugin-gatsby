@@ -5,14 +5,13 @@
 import { join } from 'path'
 import process from 'process'
 
-import { Handler } from '@netlify/functions'
+import { Handler, HandlerEvent } from '@netlify/functions'
 import etag from 'etag'
 import { readFile } from 'fs-extra'
 /* eslint-disable  node/no-unpublished-import */
 import type { GatsbyFunctionRequest } from 'gatsby'
 import type {
   getData as getDataType,
-  ISSRData,
   renderHTML as renderHTMLType,
   renderPageData as renderPageDataType,
 } from 'gatsby/cache-dir/page-ssr'
@@ -26,10 +25,9 @@ import {
 } from './utils'
 /* eslint-enable  node/no-unpublished-import */
 
-type SSRReq = Pick<
-  GatsbyFunctionRequest,
-  'query' | 'method' | 'url' | 'headers'
->
+type SSRReq = Pick<GatsbyFunctionRequest, 'query' | 'method' | 'url'> & {
+  headers: HandlerEvent['headers']
+}
 
 type PageSSR = {
   getData: (
@@ -87,14 +85,11 @@ export const handler: Handler = async function handler(event) {
     headers: event.headers,
   }
 
-  const data = (await getData({
+  const data = await getData({
     pathName,
     graphqlEngine,
     req,
-  })) as ISSRData & {
-    // Remove when https://github.com/gatsbyjs/gatsby/pull/33159 is merged
-    serverDataHeaders?: Record<string, string | number | Array<string>>
-  }
+  })
 
   const headers = data.serverDataHeaders || {}
 
