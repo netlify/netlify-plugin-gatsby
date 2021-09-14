@@ -93,9 +93,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     startMarker: '# @netlify/plugin-gatsby start',
     endMarker: '# @netlify/plugin-gatsby end',
     contents: `GATSBY_PRECOMPILE_DEVELOP_FUNCTIONS=true`,
-    fileName: path.posix.resolve(
-      path.posix.join(PUBLISH_DIR, '..', '.env.development'),
-    ),
+    fileName: join(PUBLISH_DIR, '..', '.env.development'),
   })
 
   const root = dirname(netlifyConfig.build.publish)
