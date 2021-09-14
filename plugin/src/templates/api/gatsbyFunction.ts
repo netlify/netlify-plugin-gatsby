@@ -38,7 +38,7 @@ export async function gatsbyFunction(
     console.log('Error parsing body', e, req)
   }
 
-  let pathFragment = decodeURIComponent(req.url)
+  let pathFragment = decodeURIComponent(req.url).replace('/api/', '')
 
   let functions
   try {
@@ -50,60 +50,6 @@ export async function gatsbyFunction(
       body: 'Could not load function manifest',
     }
   }
-
-  const ssrRoutes = new Map()
-
-  functions.forEach((fn) => {
-    // Functions that start with "_ssr" are actually SSR page routes
-    if (
-      fn.functionRoute.startsWith(`_ssr/`) &&
-      !fn.functionRoute.startsWith(`_ssr/page-data/`)
-    ) {
-      let pathName: string | RegExp = fn.functionRoute
-
-      let pageDataRoute: string | RegExp = fn.functionRoute.replace(
-        `_ssr/`,
-        `_ssr/page-data/`,
-      )
-      const keys = []
-      if (fn.matchPath) {
-        pathName = pathToRegexp(fn.matchPath, keys, {})
-        pageDataRoute = pathToRegexp(
-          fn.matchPath.replace(`_ssr/`, `_ssr/page-data/`) + `/page-data.json`,
-          [],
-          {},
-        )
-      }
-
-      ssrRoutes.set(pathName, {
-        apiRoute: `/api/${fn.functionRoute}`,
-        params: keys.map((key) => key.name),
-      })
-      ssrRoutes.set(pageDataRoute, {
-        apiRoute: `/api/${fn.functionRoute.replace(`_ssr`, `_ssr/page-data`)}`,
-        params: keys.map((key) => key.name),
-      })
-    }
-  })
-
-  // Find the matching function, given a path. Based on Gatsby Functions dev server implementation
-  // https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby/src/internal-plugins/functions/gatsby-node.ts
-
-  for (const [ssrPath, ssrFn] of ssrRoutes) {
-    const match = `_ssr${pathFragment}`.match(ssrPath)
-    if (match) {
-      let url = ssrFn.apiRoute
-      ssrFn.params.forEach((param, index) => {
-        url = url.replace(`[${param}]`, match[index + 1])
-      })
-
-      pathFragment = url
-      res.setHeader('content-type', 'text/html')
-      break
-    }
-  }
-
-  pathFragment = pathFragment.replace('/api/', '')
 
   // Check first for exact matches.
   let functionObj = functions.find(
