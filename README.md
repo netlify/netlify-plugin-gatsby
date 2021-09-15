@@ -57,10 +57,10 @@ Read more about
 in our docs.
 
 ## Install the Gatsby Plugin
-To use SSR pages you must install version 4 of [gatsby-plugin-netlify](https://www.gatsbyjs.org/plugins/gatsby-plugin-netlify/):
+To use SSR pages you must install the beta version of [gatsby-plugin-netlify](https://www.gatsbyjs.org/plugins/gatsby-plugin-netlify/):
 
 ```shell
-npm install -D gatsby-plugin-netlify
+npm install -D gatsby-plugin-netlify@next
 ```
 
 Then add the following to your `gatsby-config.js` file:
