@@ -1,16 +1,28 @@
-// @ts-check
+import pathToRegexp from 'path-to-regexp'
+import bodyParser from 'co-body'
+import multer from 'multer'
+import path from 'path'
+import { existsSync } from 'fs'
+import { proxyRequest } from './utils'
+import {
+  AugmentedGatsbyFunctionResponse,
+  AugmentedGatsbyFunctionRequest,
+} from './utils'
+import { HandlerEvent } from '@netlify/functions'
 
-const pathToRegexp = require('path-to-regexp')
-const bodyParser = require('co-body')
-const multer = require('multer')
 const parseForm = multer().any()
-const path = require('path')
-const { existsSync } = require('fs')
-const { proxyRequest } = require('./functions')
 
-module.exports = async (req, res, event) => {
+/**
+ * Execute a Gatsby function
+ */
+export async function gatsbyFunction(
+  req: AugmentedGatsbyFunctionRequest,
+  res: AugmentedGatsbyFunctionResponse<any>,
+  event: HandlerEvent,
+) {
   // Multipart form data middleware. because co-body can't handle it
 
+  // @ts-ignore As we're using a fake Express handler we need to ignore the type to keep multer happy
   await new Promise((next) => parseForm(req, res, next))
   try {
     // If req.body is populated then it was multipart data
@@ -20,14 +32,13 @@ module.exports = async (req, res, event) => {
       req.method !== 'GET' &&
       req.method !== 'HEAD'
     ) {
-      req.body = await bodyParser(req)
+      req.body = await bodyParser(req as unknown as Request)
     }
   } catch (e) {
     console.log('Error parsing body', e, req)
   }
 
-  //  Strip "/api/" from path
-  const pathFragment = decodeURIComponent(req.url.substr(5))
+  let pathFragment = decodeURIComponent(req.url).replace('/api/', '')
 
   let functions
   try {
@@ -40,23 +51,20 @@ module.exports = async (req, res, event) => {
     }
   }
 
-  // Find the matching function, given a path. Based on Gatsby Functions dev server implementation
-  // https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby/src/internal-plugins/functions/gatsby-node.ts
-
   // Check first for exact matches.
   let functionObj = functions.find(
-    ({ apiRoute, functionRoute }) =>
-      (functionRoute || apiRoute) === pathFragment,
+    ({ functionRoute }) => functionRoute === pathFragment,
   )
 
   if (!functionObj) {
     // Check if there's any matchPaths that match.
     // We loop until we find the first match.
+
     functions.some((f) => {
       let exp
       const keys = []
       if (f.matchPath) {
-        exp = pathToRegexp(f.matchPath, keys)
+        exp = pathToRegexp(f.matchPath, keys, {})
       }
       if (exp && exp.exec(pathFragment) !== null) {
         functionObj = f
@@ -77,19 +85,22 @@ module.exports = async (req, res, event) => {
     const start = Date.now()
 
     const pathToFunction = process.env.NETLIFY_DEV
-      ? functionObj.absoluteCompiledFilePath
-      : path.join(
+      ? // During develop, the absolute path is correct
+        functionObj.absoluteCompiledFilePath
+      : // ...otherwise we need to use a relative path, as we're in a lambda
+        path.join(
           __dirname,
           '..',
           '..',
           '..',
+          // ...We got there in the end
           '.cache',
           'functions',
           functionObj.relativeCompiledFilePath,
         )
 
     if (process.env.NETLIFY_DEV && !existsSync(pathToFunction)) {
-      // Functions are lazily-compiled, so we proxy the first request to the gatsby develop server
+      // Functions are sometimes lazily-compiled, so we check and proxy the request if needed
       console.log(
         'No compiled function found. Proxying to gatsby develop server',
       )
@@ -97,6 +108,7 @@ module.exports = async (req, res, event) => {
     }
 
     try {
+      // Make sure it's hot and fresh from the filesystem
       delete require.cache[require.resolve(pathToFunction)]
       const fn = require(pathToFunction)
 

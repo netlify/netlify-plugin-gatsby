@@ -1,9 +1,21 @@
 module.exports = {
-  flags: {
-    FUNCTIONS: true,
-  },
   siteMetadata: {
-    title: "Function test",
+    title: 'Function test',
   },
-  plugins: [],
-};
+  plugins: [
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/content/posts`,
+        name: `blog`,
+      },
+    },
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [],
+      },
+    },
+    '@ascorbic/gatsby-plugin-netlify',
+  ],
+}

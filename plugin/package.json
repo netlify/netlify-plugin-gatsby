@@ -1,8 +1,8 @@
 {
   "name": "@netlify/plugin-gatsby",
-  "version": "1.0.3",
+  "version": "2.0.0-beta.0",
   "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
-  "source": "src/index.js",
+  "source": "src/index.ts",
   "main": "lib/main.js",
   "module": "lib/module.js",
   "files": [
@@ -26,7 +26,7 @@
     "test": "test"
   },
   "engines": {
-    "node": ">=12.13.0"
+    "node": ">=14.15.0"
   },
   "bugs": {
     "url": "https://github.com/netlify/netlify-plugin-gatsby/issues"
@@ -38,20 +38,27 @@
     "clean": "rimraf lib",
     "watch": "parcel watch",
     "build": "parcel build",
-    "start": "npm run watch"
+    "start": "npm run watch",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@netlify/functions": "^0.7.2",
     "co-body": "^6.1.0",
     "cookie": "^0.4.1",
     "download": "^8.0.0",
+    "etag": "^1.8.1",
     "fs-extra": "^10.0.0",
+    "linkfs": "^2.1.0",
+    "lmdb-store": "~1.5.5",
     "multer": "^1.4.2",
     "node-fetch": "^2.6.1",
-    "path-to-regexp": "^6.0.0",
+    "path-to-regexp": "^0.1.7",
     "tempy": "^1.0.0"
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.12",
+    "@types/multer": "^1.4.7",
+    "gatsby": "^4.0.0-next.0",
     "npm-run-all": "^4.1.5",
     "parcel": "^2.0.0-rc.0",
     "release-it": "^14.8.0",
