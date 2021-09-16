@@ -1,6 +1,6 @@
 {
   "name": "netlify-plugin-gatsby",
-  "version": "1.0.0",
+  "version": "1.0.1-beta.0",
   "description": "Netlify Build plugin gatsby - Run Gatsby seamlessly on Netlify.",
   "directories": {
     "test": "test"
