@@ -1,3 +1,6 @@
+// eslint-disable-next-line unicorn/filename-case
+const path = require('path')
+
 module.exports = {
   siteMetadata: {
     title: 'Function test',
@@ -17,5 +20,11 @@ module.exports = {
       },
     },
     'gatsby-plugin-netlify',
+    {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        defaultLayouts: { default: path.resolve('./src/layout/default.js') },
+      },
+    },
   ],
 }
