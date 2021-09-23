@@ -6,6 +6,14 @@
   automerge: true,
   packageRules: [
     {
+      matchPackagePrefixes: [
+        '@sindresorhus/'
+      ],
+      major: {
+        enabled: false,
+      },
+    },
+    {
       packageNames: [
         // Those cannot be upgraded to requiring ES modules
         'strip-ansi',
