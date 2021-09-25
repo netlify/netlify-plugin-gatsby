@@ -57,7 +57,6 @@ function getHandler(): Handler {
     const page: IGatsbyPage & { mode?: string } =
       graphqlEngine.findPageByPath(pathName)
 
-    // Is it DSR or DSG? One is the old name for the other.
     if (page?.mode !== 'DSG') {
       const body = await readFile(
         join(process.cwd(), 'public', '404.html'),
