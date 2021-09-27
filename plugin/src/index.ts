@@ -42,6 +42,10 @@ export async function onPreBuild({
     await checkEnvironment({ utils })
   }
   await restoreCache({ utils, publish: PUBLISH_DIR })
+  const CACHE_DIR = normalizedCacheDir(PUBLISH_DIR)
+
+  // Work around Gatsby bug https://github.com/gatsbyjs/gatsby/issues/33262
+  await fs.ensureDir(join(CACHE_DIR, 'json'))
 
   checkGatsbyConfig({ utils, netlifyConfig })
 }
