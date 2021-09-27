@@ -2,7 +2,7 @@
 
 # Essential Gatsby Plugin - v2 beta
 
-This version of the Essential Gatsby build plugin is an beta release, supporting
+This version of the Essential Gatsby build plugin is a beta release, supporting
 the new features of Gatsby 4 including the SSR and DSG
 [render modes](https://v4.gatsbyjs.com/docs/conceptual/rendering-options/). For
 older versions of Gatsby, please use
