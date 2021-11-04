@@ -1,14 +1,9 @@
-/**
- * Handler for SSR routes
- */
-
 import { join } from 'path'
 import process from 'process'
 
 import { Handler, HandlerEvent } from '@netlify/functions'
 import etag from 'etag'
 import { readFile } from 'fs-extra'
-/* eslint-disable  node/no-unpublished-import */
 import type { GatsbyFunctionRequest } from 'gatsby'
 import type {
   getData as getDataType,
@@ -23,24 +18,31 @@ import {
   getPagePathFromPageDataPath,
   getGraphQLEngine,
 } from './utils'
-/* eslint-enable  node/no-unpublished-import */
 
 type SSRReq = Pick<GatsbyFunctionRequest, 'query' | 'method' | 'url'> & {
-  headers: HandlerEvent['headers']
+  headers: Record<string, string>
 }
 
 type PageSSR = {
   getData: (
-    args: Parameters<typeof getDataType>[0] & { req: SSRReq },
+    args: Parameters<typeof getDataType>[0],
   ) => ReturnType<typeof getDataType>
   renderHTML: typeof renderHTMLType
   renderPageData: typeof renderPageDataType
 }
 
-function getHandler(): Handler {
+function removeEmpties<T>(
+  obj: Record<string, T | undefined> = {},
+): Record<string, T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, value]) => value !== undefined),
+  ) as Record<string, T>
+}
+
+export const getHandler = (mode: 'DSG' | 'SSR'): Handler => {
   prepareFilesystem()
   // Requiring this dynamically so esbuild doesn't re-bundle it
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require, import/no-dynamic-require
   const { getData, renderHTML, renderPageData }: PageSSR = require(join(
     CACHE_DIR,
     'page-ssr',
@@ -59,10 +61,11 @@ function getHandler(): Handler {
       : eventPath
 
     // Gatsby doesn't currently export this type. Hopefully fixed by v4 release
-    const page: IGatsbyPage & { mode?: string } =
-      graphqlEngine.findPageByPath(pathName)
+    const page: (IGatsbyPage & { mode?: string }) | undefined = pathName
+      ? graphqlEngine.findPageByPath(pathName)
+      : undefined
 
-    if (page?.mode !== `SSR`) {
+    if (!pathName || page?.mode !== mode) {
       const body = await readFile(
         join(process.cwd(), 'public', '404.html'),
         'utf8',
@@ -71,18 +74,18 @@ function getHandler(): Handler {
         statusCode: 404,
         body,
         headers: {
-          Tag: etag(body),
+          ETag: etag(body),
           'Content-Type': 'text/html; charset=utf-8',
-          'X-Mode': 'SSR',
+          'X-Mode': mode,
         },
       }
     }
 
     const req: SSRReq = {
-      query: event.queryStringParameters,
+      query: removeEmpties(event.queryStringParameters || {}),
       method: event.httpMethod,
       url: event.path,
-      headers: event.headers,
+      headers: removeEmpties(event.headers),
     }
 
     const data = await getData({
@@ -101,7 +104,7 @@ function getHandler(): Handler {
         headers: {
           ETag: etag(body),
           'Content-Type': 'application/json',
-          'X-Mode': 'SSR',
+          'X-Mode': mode,
           ...headers,
         },
       }
@@ -115,10 +118,9 @@ function getHandler(): Handler {
       headers: {
         ETag: etag(body),
         'Content-Type': 'text/html; charset=utf-8',
-        'X-Mode': 'SSR',
+        'X-Mode': mode,
         ...headers,
       },
     }
   }
 }
-export const handler: Handler = getHandler()

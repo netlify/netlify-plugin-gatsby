@@ -1,12 +1,17 @@
 import path from 'path'
 
 import { existsSync, readdirSync } from 'fs-extra'
-
-function getCacheDirs(publish) {
+import { NetlifyPluginOptions } from './config'
+function getCacheDirs(publish: string) {
   return [publish, normalizedCacheDir(publish)]
 }
 
-export async function saveCache({ publish, utils }): Promise<void> {
+interface CacheArgs {
+  publish: string
+  utils: NetlifyPluginOptions['utils']
+}
+
+export async function saveCache({ publish, utils }: CacheArgs): Promise<void> {
   const cacheDirs = getCacheDirs(publish)
 
   if (await utils.cache.save(cacheDirs)) {
@@ -19,7 +24,10 @@ export async function saveCache({ publish, utils }): Promise<void> {
   }
 }
 
-export async function restoreCache({ publish, utils }): Promise<void> {
+export async function restoreCache({
+  publish,
+  utils,
+}: CacheArgs): Promise<void> {
   const cacheDirs = getCacheDirs(publish)
 
   if (await utils.cache.restore(cacheDirs)) {

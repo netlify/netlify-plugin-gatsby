@@ -1,18 +1,20 @@
 import path, { dirname, join } from 'path'
 import process from 'process'
 
+import type { NetlifyPlugin } from '@netlify/build'
 import fs from 'fs-extra'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import { checkGatsbyConfig, mutateConfig, spliceConfig } from './helpers/config'
 import { checkEnvironment } from './helpers/environment'
+import { generateFunctions } from './helpers/functions'
 
 // eslint-disable-next-line no-template-curly-in-string
 const lmdbCacheString = 'process.cwd(), `.cache/${cacheDbFile}`'
 // eslint-disable-next-line no-template-curly-in-string
 const replacement = "require('os').tmpdir(), 'gatsby', `.cache/${cacheDbFile}`"
 
-async function patchFile(baseDir): Promise<void> {
+const patchFile = async (baseDir: string): Promise<void> => {
   const bundleFile = join(baseDir, '.cache', 'query-engine', 'index.js')
   // eslint-disable-next-line node/no-sync
   if (!fs.existsSync(bundleFile)) {
@@ -26,11 +28,11 @@ async function patchFile(baseDir): Promise<void> {
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
 
-export async function onPreBuild({
+export const onPreBuild: NetlifyPlugin['onPreBuild'] = async ({
   constants: { PUBLISH_DIR },
   utils,
   netlifyConfig,
-}): Promise<void> {
+}) => {
   // print a helpful message if the publish dir is misconfigured
   if (!PUBLISH_DIR || process.cwd() === PUBLISH_DIR) {
     utils.build.failBuild(
@@ -50,14 +52,14 @@ export async function onPreBuild({
   checkGatsbyConfig({ utils, netlifyConfig })
 }
 
-export async function onBuild({
+export const onBuild: NetlifyPlugin['onBuild'] = async ({
   constants: {
     PUBLISH_DIR,
     FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC,
     INTERNAL_FUNCTIONS_SRC,
   },
   netlifyConfig,
-}): Promise<void> {
+}) => {
   const CACHE_DIR = normalizedCacheDir(PUBLISH_DIR)
   const compiledFunctionsDir = path.join(CACHE_DIR, '/functions')
   // eslint-disable-next-line node/no-sync
@@ -65,19 +67,9 @@ export async function onBuild({
     return
   }
 
-  const functionsSrcDir = INTERNAL_FUNCTIONS_SRC || FUNCTIONS_SRC
-
-  // copying Netlify wrapper function into functions directory
-
-  await Promise.all(
-    ['api', 'dsg', 'ssr'].map((func) =>
-      fs.copy(
-        path.join(__dirname, '..', 'src', 'templates', func),
-        path.join(functionsSrcDir, `__${func}`),
-      ),
-    ),
-  )
-
+  await generateFunctions({
+    functionsSrcDir: INTERNAL_FUNCTIONS_SRC ?? FUNCTIONS_SRC,
+  })
   if (
     INTERNAL_FUNCTIONS_SRC &&
     // eslint-disable-next-line node/no-sync
@@ -118,9 +110,9 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   })
 }
 
-export async function onPostBuild({
+export const onPostBuild: NetlifyPlugin['onPostBuild'] = async ({
   constants: { PUBLISH_DIR },
   utils,
-}): Promise<void> {
+}) => {
   await saveCache({ publish: PUBLISH_DIR, utils })
 }

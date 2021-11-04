@@ -1,9 +1,15 @@
 import { EOL } from 'os'
 import path from 'path'
 import process from 'process'
+import type { NetlifyPlugin } from '@netlify/build'
 
 import fs from 'fs-extra'
 import type { GatsbyConfig, PluginRef } from 'gatsby'
+
+// Until this type is exported...
+export type NetlifyPluginOptions = Parameters<
+  Required<NetlifyPlugin>['onBuild']
+>[0]
 
 export async function spliceConfig({
   startMarker,
@@ -37,7 +43,9 @@ export async function spliceConfig({
   return fs.writeFile(fileName, out)
 }
 
-function loadGatsbyConfig(utils): GatsbyConfig | never {
+function loadGatsbyConfig(
+  utils: NetlifyPluginOptions['utils'],
+): GatsbyConfig | never {
   const gatsbyConfigFile = path.resolve(process.cwd(), 'gatsby-config.js')
   // eslint-disable-next-line node/no-sync
   if (!fs.existsSync(gatsbyConfigFile)) {
@@ -48,21 +56,31 @@ function loadGatsbyConfig(utils): GatsbyConfig | never {
     // eslint-disable-next-line node/global-require, @typescript-eslint/no-var-requires
     return require(gatsbyConfigFile) as GatsbyConfig
   } catch (error) {
-    utils.build.failBuild('Could not load gatsby-config.js', { error })
+    return utils.build.failBuild('Could not load gatsby-config.js', {
+      error: error as Error,
+    }) as never
   }
 }
 
-function hasPlugin(plugins: PluginRef[], pluginName: string): boolean {
-  return plugins?.some(
-    (plugin) =>
-      plugin &&
-      (typeof plugin === 'string'
-        ? plugin === pluginName
-        : plugin.resolve === pluginName),
+function hasPlugin(
+  plugins: PluginRef[] | undefined,
+  pluginName: string,
+): boolean {
+  return (
+    plugins?.some(
+      (plugin) =>
+        plugin &&
+        (typeof plugin === 'string'
+          ? plugin === pluginName
+          : plugin.resolve === pluginName),
+    ) ?? false
   )
 }
 
-export function checkGatsbyConfig({ utils, netlifyConfig }): void {
+export function checkGatsbyConfig({
+  utils,
+  netlifyConfig,
+}: Pick<NetlifyPluginOptions, 'utils' | 'netlifyConfig'>): void {
   // warn if gatsby-plugin-netlify is missing
   const gatsbyConfig = loadGatsbyConfig(utils)
 
@@ -97,14 +115,17 @@ export function mutateConfig({
   netlifyConfig,
   compiledFunctionsDir,
   CACHE_DIR,
+}: {
+  netlifyConfig: NetlifyPluginOptions['netlifyConfig']
+  compiledFunctionsDir: string
+  CACHE_DIR: string
 }): void {
   /* eslint-disable no-underscore-dangle, no-param-reassign */
-  netlifyConfig.functions.__api = {
+  ;(netlifyConfig.functions.__api as any) = {
     included_files: [path.posix.join(compiledFunctionsDir, '**')],
     external_node_modules: ['msgpackr-extract'],
   }
-
-  netlifyConfig.functions.__dsg = {
+  ;(netlifyConfig.functions.__dsg as any) = {
     included_files: [
       'public/404.html',
       path.posix.join(CACHE_DIR, 'data', '**'),
