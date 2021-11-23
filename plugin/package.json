@@ -42,7 +42,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@netlify/functions": "^0.9.0",
+    "@netlify/functions": "^0.10.0",
     "co-body": "^6.1.0",
     "cookie": "^0.4.1",
     "download": "^8.0.0",
