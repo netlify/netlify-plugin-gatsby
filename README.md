@@ -56,7 +56,7 @@ package = "@netlify/plugin-gatsby"
    `package.json`.
 
 ```shell
-npm install -D @netlify/plugin-gatsby@^2.0.0-beta
+npm install -D @netlify/plugin-gatsby@latest
 ```
 
 Read more about
