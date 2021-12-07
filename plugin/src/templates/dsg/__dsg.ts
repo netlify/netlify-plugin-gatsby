@@ -5,10 +5,11 @@
 import { join } from 'path'
 import process from 'process'
 
-import { builder, Handler } from '@netlify/functions'
+import { builder, Handler, HandlerEvent } from '@netlify/functions'
 import etag from 'etag'
 import { readFile } from 'fs-extra'
 /* eslint-disable  node/no-unpublished-import */
+import { GatsbyFunctionRequest } from 'gatsby'
 import type {
   getData as getDataType,
   renderHTML as renderHTMLType,
@@ -23,6 +24,10 @@ import {
   getGraphQLEngine,
   prepareFilesystem,
 } from './utils'
+
+type SSRReq = Pick<GatsbyFunctionRequest, 'query' | 'method' | 'url'> & {
+  headers: HandlerEvent['headers']
+}
 
 type PageSSR = {
   getData: typeof getDataType
@@ -73,9 +78,18 @@ function getHandler(): Handler {
         },
       }
     }
+    // Headers and query are not set in DSG mode
+    const req: SSRReq = {
+      query: {},
+      method: 'GET',
+      url: event.path,
+      headers: {},
+    }
+
     const data = await getData({
       pathName,
       graphqlEngine,
+      req,
     })
 
     if (isPageData) {

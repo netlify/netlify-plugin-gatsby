@@ -113,7 +113,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   netlifyConfig.redirects.push({
     from: '/*',
-    to: '/.netlify/functions/__dsg',
+    to: '/.netlify/builders/__dsg',
     status: 200,
   })
 }

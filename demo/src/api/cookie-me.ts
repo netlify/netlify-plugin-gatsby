@@ -1,8 +1,8 @@
-import { GatsbyAPIFunctionResponse, GatsbyAPIFunctionRequest } from "gatsby"
+import { GatsbyFunctionResponse, GatsbyFunctionRequest } from 'gatsby'
 
 export default function topLevel(
-  req: GatsbyAPIFunctionRequest,
-  res: GatsbyAPIFunctionResponse
+  req: GatsbyFunctionRequest,
+  res: GatsbyFunctionResponse,
 ) {
   res.json(req.cookies)
 }
