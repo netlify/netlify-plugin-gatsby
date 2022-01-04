@@ -1,6 +1,6 @@
 {
   "name": "@netlify/plugin-gatsby",
-  "version": "2.0.0-zz-beta.0",
+  "version": "2.0.0",
   "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
   "source": "src/index.ts",
   "main": "lib/main.js",
@@ -26,13 +26,12 @@
     "test": "test"
   },
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=12.13.0"
   },
   "bugs": {
     "url": "https://github.com/netlify/netlify-plugin-gatsby/issues"
   },
   "scripts": {
-    "release": "release-it",
     "prepublishOnly": "npm-run-all -l -s clean -p copy-readme build",
     "copy-readme": "cp ../README.md .",
     "clean": "rimraf lib",
@@ -59,7 +58,6 @@
     "@types/multer": "^1.4.7",
     "gatsby": "^4.3.0",
     "npm-run-all": "^4.1.5",
-    "release-it": "^14.8.0",
     "rimraf": "^3.0.2",
     "typescript": "^4.5.2"
   }
