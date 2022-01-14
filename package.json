@@ -6,6 +6,7 @@
     "test": "test"
   },
   "scripts": {
+    "prepare": "husky install node_modules/@netlify/eslint-config-node/.husky/",
     "test": "run-s format test:e2e",
     "test:e2e": "cd plugin/test && ./e2e-test.sh",
     "format": "run-s format:check-fix:*",
@@ -42,6 +43,7 @@
     "eslint": "^7.32.0",
     "eslint-import-resolver-typescript": "^2.4.0",
     "execa": "^5.0.0",
+    "husky": "^7.0.4",
     "prettier": "^2.1.2"
   },
   "private": true
