@@ -40,7 +40,6 @@ Gatsby Plugin", and a Gatsby plugin called "gatsby-plugin-netlify":
   (the Netlify build plugin)
 - [Install version 4 beta of `gatsby-plugin-netlify`](#install-the-gatsby-plugin)
   (the Gatsby plugin)
-- [Configure your build to use the correct build image and Node.js runtime](#build-configuration)
 
 ### Install the Netlify build plugin
 
