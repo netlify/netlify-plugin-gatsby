@@ -1,14 +1,15 @@
 /**
- * Handler for DSR/DSG routes
+ * Handler for DSG routes
  */
 
 import { join } from 'path'
 import process from 'process'
 
-import { builder, Handler } from '@netlify/functions'
+import { builder, Handler, HandlerEvent } from '@netlify/functions'
 import etag from 'etag'
 import { readFile } from 'fs-extra'
 /* eslint-disable  node/no-unpublished-import */
+import { GatsbyFunctionRequest } from 'gatsby'
 import type {
   getData as getDataType,
   renderHTML as renderHTMLType,
@@ -24,8 +25,9 @@ import {
   prepareFilesystem,
 } from './utils'
 
-// Doing this as an import side-effect as it only needs to happen once, when bootstrapping the function
-prepareFilesystem()
+type SSRReq = Pick<GatsbyFunctionRequest, 'query' | 'method' | 'url'> & {
+  headers: HandlerEvent['headers']
+}
 
 type PageSSR = {
   getData: typeof getDataType
@@ -33,74 +35,88 @@ type PageSSR = {
   renderPageData: typeof renderPageDataType
 }
 
-// Requiring this dynamically so esbuild doesn't re-bundle it
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getData, renderHTML, renderPageData }: PageSSR = require(join(
-  CACHE_DIR,
-  'page-ssr',
-))
-
 const DATA_SUFFIX = '/page-data.json'
 const DATA_PREFIX = '/page-data/'
 
-export const handler: Handler = builder(async function handler(event) {
-  const eventPath = event.path
+function getHandler(): Handler {
+  prepareFilesystem()
+  // Requiring this dynamically so esbuild doesn't re-bundle it
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
+  const { getData, renderHTML, renderPageData }: PageSSR = require(join(
+    CACHE_DIR,
+    'page-ssr',
+  ))
 
-  const isPageData =
-    eventPath.endsWith(DATA_SUFFIX) && eventPath.startsWith(DATA_PREFIX)
-
-  const pathName = isPageData
-    ? getPagePathFromPageDataPath(eventPath)
-    : eventPath
   const graphqlEngine = getGraphQLEngine()
-  // Gatsby doesn't currently export this type. Hopefully fixed by v4 release
-  const page: IGatsbyPage & { mode?: string } =
-    graphqlEngine.findPageByPath(pathName)
 
-  // Is it DSR or DSG? One is the old name for the other.
-  if (!page?.mode?.startsWith('DS')) {
-    const body = await readFile(
-      join(process.cwd(), 'public', '404.html'),
-      'utf8',
-    )
+  return async function handler(event) {
+    const eventPath = event.path
 
-    return {
-      statusCode: 404,
-      body,
-      headers: {
-        Tag: etag(body),
-        'Content-Type': 'text/html; charset=utf-8',
-        'X-Mode': 'DSG',
-      },
+    const isPageData =
+      eventPath.endsWith(DATA_SUFFIX) && eventPath.startsWith(DATA_PREFIX)
+
+    const pathName = isPageData
+      ? getPagePathFromPageDataPath(eventPath)
+      : eventPath
+    // Gatsby doesn't currently export this type. Hopefully fixed by v4 release
+    const page: IGatsbyPage & { mode?: string } =
+      graphqlEngine.findPageByPath(pathName)
+
+    if (page?.mode !== 'DSG') {
+      const body = await readFile(
+        join(process.cwd(), 'public', '404.html'),
+        'utf8',
+      )
+
+      return {
+        statusCode: 404,
+        body,
+        headers: {
+          Tag: etag(body),
+          'Content-Type': 'text/html; charset=utf-8',
+          'X-Mode': 'DSG',
+        },
+      }
     }
-  }
-  const data = await getData({
-    pathName,
-    graphqlEngine,
-  })
+    // Headers and query are not set in DSG mode
+    const req: SSRReq = {
+      query: {},
+      method: 'GET',
+      url: event.path,
+      headers: {},
+    }
 
-  if (isPageData) {
-    const body = JSON.stringify(await renderPageData({ data }))
+    const data = await getData({
+      pathName,
+      graphqlEngine,
+      req,
+    })
+
+    if (isPageData) {
+      const body = JSON.stringify(await renderPageData({ data }))
+      return {
+        statusCode: 200,
+        body,
+        headers: {
+          ETag: etag(body),
+          'Content-Type': 'application/json',
+          'X-Mode': 'DSG',
+        },
+      }
+    }
+
+    const body = await renderHTML({ data })
+
     return {
       statusCode: 200,
       body,
       headers: {
         ETag: etag(body),
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/html; charset=utf-8',
         'X-Mode': 'DSG',
       },
     }
   }
+}
 
-  const body = await renderHTML({ data })
-
-  return {
-    statusCode: 200,
-    body,
-    headers: {
-      ETag: etag(body),
-      'Content-Type': 'text/html; charset=utf-8',
-      'X-Mode': 'DSG',
-    },
-  }
-})
+export const handler: Handler = builder(getHandler())

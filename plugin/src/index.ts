@@ -5,7 +5,6 @@ import fs from 'fs-extra'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import { checkGatsbyConfig, mutateConfig, spliceConfig } from './helpers/config'
-import { checkEnvironment } from './helpers/environment'
 
 // eslint-disable-next-line no-template-curly-in-string
 const lmdbCacheString = 'process.cwd(), `.cache/${cacheDbFile}`'
@@ -36,10 +35,6 @@ export async function onPreBuild({
     utils.build.failBuild(
       `Gatsby sites must publish the public directory, but your site’s publish directory is set to “${PUBLISH_DIR}”. Please set your publish directory to your Gatsby site’s public directory.`,
     )
-  }
-  // Only run in CI
-  if (process.env.NETLIFY) {
-    await checkEnvironment({ utils })
   }
   await restoreCache({ utils, publish: PUBLISH_DIR })
   const CACHE_DIR = normalizedCacheDir(PUBLISH_DIR)

@@ -6,9 +6,7 @@
   automerge: true,
   packageRules: [
     {
-      matchPackagePrefixes: [
-        '@sindresorhus/'
-      ],
+      matchPackagePrefixes: ['@sindresorhus/'],
       major: {
         enabled: false,
       },
