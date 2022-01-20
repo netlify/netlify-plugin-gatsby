@@ -1,14 +1,16 @@
-import pathToRegexp from 'path-to-regexp'
+import { existsSync } from 'fs'
+import path from 'path'
+
+import { match as reachMatch } from '@gatsbyjs/reach-router/lib/utils'
+import { HandlerEvent } from '@netlify/functions'
 import bodyParser from 'co-body'
 import multer from 'multer'
-import path from 'path'
-import { existsSync } from 'fs'
-import { proxyRequest } from './utils'
+
 import {
+  proxyRequest,
   AugmentedGatsbyFunctionResponse,
   AugmentedGatsbyFunctionRequest,
 } from './utils'
-import { HandlerEvent } from '@netlify/functions'
 
 const parseForm = multer().any()
 
@@ -34,17 +36,17 @@ export async function gatsbyFunction(
     ) {
       req.body = await bodyParser(req as unknown as Request)
     }
-  } catch (e) {
-    console.log('Error parsing body', e, req)
+  } catch (error) {
+    console.log('Error parsing body', error, req)
   }
 
-  let pathFragment = decodeURIComponent(req.url).replace('/api/', '')
+  const pathFragment = decodeURIComponent(req.url).replace('/api/', '')
 
   let functions
   try {
     // @ts-ignore This is generated in the user's site
     functions = require('../../../.cache/functions/manifest.json') // eslint-disable-line node/no-missing-require, node/no-unpublished-require
-  } catch (e) {
+  } catch {
     return {
       statusCode: 404,
       body: 'Could not load function manifest',
@@ -59,24 +61,23 @@ export async function gatsbyFunction(
   if (!functionObj) {
     // Check if there's any matchPaths that match.
     // We loop until we find the first match.
-
     functions.some((f) => {
-      let exp
-      const keys = []
       if (f.matchPath) {
-        exp = pathToRegexp(f.matchPath, keys, {})
-      }
-      if (exp && exp.exec(pathFragment) !== null) {
-        functionObj = f
-        const matches = [...pathFragment.match(exp)].slice(1)
-        const newParams = {}
-        matches.forEach((match, index) => (newParams[keys[index].name] = match))
-        req.params = newParams
+        const matchResult = reachMatch(f.matchPath, pathFragment)
+        if (matchResult) {
+          req.params = matchResult.params
+          if (req.params[`*`]) {
+            // Backwards compatability for v3
+            // TODO remove in v5
+            req.params[`0`] = req.params[`*`]
+          }
+          functionObj = f
 
-        return true
-      } else {
-        return false
+          return true
+        }
       }
+
+      return false
     })
   }
 
@@ -109,20 +110,19 @@ export async function gatsbyFunction(
 
     try {
       // Make sure it's hot and fresh from the filesystem
-      delete require.cache[require.resolve(pathToFunction)]
       const fn = require(pathToFunction)
 
       const fnToExecute = (fn && fn.default) || fn
 
       await Promise.resolve(fnToExecute(req, res))
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      console.error(error)
       // Don't send the error if that would cause another error.
       if (!res.headersSent) {
         res
           .status(500)
           .send(
-            `Error when executing function "${functionObj.originalRelativeFilePath}": "${e.message}"`,
+            `Error when executing function "${functionObj.originalRelativeFilePath}": "${error.message}"`,
           )
       }
     }
