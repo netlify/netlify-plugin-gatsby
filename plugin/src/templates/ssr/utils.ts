@@ -4,7 +4,6 @@ import { join } from 'path'
 import process from 'process'
 
 import { existsSync, copySync } from 'fs-extra'
-// eslint-disable-next-line node/no-unpublished-import
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
 
@@ -80,7 +79,6 @@ export function getPagePathFromPageDataPath(
  * Loads the bundled GraphQL engine from the Gatsby cache directory
  */
 export function getGraphQLEngine(): GraphQLEngine {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
   const { GraphQLEngine: GQE } = require(join(CACHE_DIR, 'query-engine')) as {
     GraphQLEngine: typeof GraphQLEngine
   }

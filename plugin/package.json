@@ -54,6 +54,7 @@
     "tempy": "^1.0.0"
   },
   "devDependencies": {
+    "@netlify/build": "^26.2.0",
     "@types/fs-extra": "^9.0.12",
     "@types/multer": "^1.4.7",
     "gatsby": "^4.3.0",

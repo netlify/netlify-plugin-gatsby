@@ -126,8 +126,7 @@ const links = [
 ]
 
 // markup
-const IndexPage = () => {
-  return (
+const IndexPage = () => (
     <main style={pageStyles}>
       <title>Home Page</title>
       <h1 style={headingStyles}>
@@ -179,6 +178,5 @@ const IndexPage = () => {
       />
     </main>
   )
-}
 
 export default IndexPage

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useEffect } from 'react'
 
 // styles
 const pageStyles = {
@@ -109,7 +109,7 @@ const links = [
 
 // markup
 const IndexPage = () => {
-  React.useEffect(() => {
+  useEffect(() => {
     document.cookie = 'thiscookie=was%20set%20on%20previous%20page'
   })
   return (
@@ -151,7 +151,7 @@ const IndexPage = () => {
             <form
               action="/api/parser"
               method="POST"
-              enctype="multipart/form-data"
+              encType="multipart/form-data"
             >
               <input type="hidden" name="hidden" value="hidden field" />
 

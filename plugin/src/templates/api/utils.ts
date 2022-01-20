@@ -1,16 +1,18 @@
-import { default as fetch, Headers } from 'node-fetch'
+import { Buffer } from 'buffer'
+import type { OutgoingHttpHeaders } from 'http'
+import http from 'http'
+import type { Socket } from 'net'
+import Stream from 'stream'
+
 import {
   HandlerEvent,
   HandlerResponse,
   HandlerContext,
 } from '@netlify/functions'
-import type { GatsbyFunctionResponse } from 'gatsby'
-import type { OutgoingHttpHeaders } from 'http'
-import { GatsbyFunctionRequest } from 'gatsby'
-import Stream from 'stream'
-import type { Socket } from 'net'
-import http from 'http'
 import cookie from 'cookie'
+import type { GatsbyFunctionResponse } from 'gatsby'
+import { GatsbyFunctionRequest } from 'gatsby'
+import fetch, { Headers } from 'node-fetch'
 
 interface NetlifyFunctionParams {
   event: HandlerEvent
@@ -32,12 +34,12 @@ export interface AugmentedGatsbyFunctionRequest extends GatsbyFunctionRequest {
 // Based on API Gateway Lambda Compat
 // Source: https://github.com/serverless-nextjs/serverless-next.js/blob/master/packages/compat-layers/apigw-lambda-compat/lib/compatLayer.js
 
+// eslint-disable-next-line complexity, max-statements
 export function createRequestObject({
   event,
   context,
 }: NetlifyFunctionParams): AugmentedGatsbyFunctionRequest {
   const {
-    rawUrl = {},
     path = '',
     multiValueQueryStringParameters,
     queryStringParameters,
@@ -68,18 +70,13 @@ export function createRequestObject({
 
   for (const key of Object.keys(multiValueHeaders)) {
     for (const value of multiValueHeaders[key]) {
-      req.rawHeaders.push(key)
-      req.rawHeaders.push(value)
+      req.rawHeaders.push(key, value)
     }
     req.headers[key.toLowerCase()] = multiValueHeaders[key].toString()
   }
 
-  req.getHeader = (name) => {
-    return req.headers[name.toLowerCase()]
-  }
-  req.getHeaders = () => {
-    return req.headers
-  }
+  req.getHeader = (name) => req.headers[name.toLowerCase()]
+  req.getHeaders = () => req.headers
 
   // Gatsby includes cookie middleware
 
@@ -100,7 +97,7 @@ export function createRequestObject({
   return req as AugmentedGatsbyFunctionRequest
 }
 
-export interface AugmentedGatsbyFunctionResponse<T = any>
+export interface AugmentedGatsbyFunctionResponse<T = unknown>
   extends GatsbyFunctionResponse<T> {
   headers: OutgoingHttpHeaders
   writableEnded: boolean
@@ -113,7 +110,6 @@ export interface AugmentedGatsbyFunctionResponse<T = any>
 interface IntermediateHandlerResponse
   extends Partial<Omit<HandlerResponse, 'body'>> {
   body?: string | Buffer
-  multiValueHeaders?: Record<string, Array<string | string | boolean>>
 }
 
 // Mock a HTTP ServerResponse object that returns a Netlify Function-compatible
@@ -121,6 +117,7 @@ interface IntermediateHandlerResponse
 // Based on API Gateway Lambda Compat
 // Source: https://github.com/serverless-nextjs/serverless-next.js/blob/master/packages/compat-layers/apigw-lambda-compat/lib/compatLayer.js
 
+// eslint-disable-next-line max-statements, max-lines-per-function
 export function createResponseObject({ onResEnd }) {
   const response: IntermediateHandlerResponse = {
     isBase64Encoded: true,
@@ -169,15 +166,10 @@ export function createResponseObject({ onResEnd }) {
   res.removeHeader = (name) => {
     delete res.headers[name.toLowerCase()]
   }
-  res.getHeader = (name) => {
-    return res.headers[name.toLowerCase()]
-  }
-  res.getHeaders = () => {
-    return res.headers
-  }
-  res.hasHeader = (name) => {
-    return !!res.getHeader(name)
-  }
+  res.getHeader = (name) => res.headers[name.toLowerCase()]
+  res.getHeaders = () => res.headers
+  res.hasHeader = (name) => Boolean(res.getHeader(name))
+  // eslint-disable-next-line complexity
   res.end = (text) => {
     if (text) res.write(text)
     if (!res.statusCode) {
@@ -187,7 +179,9 @@ export function createResponseObject({ onResEnd }) {
     if (response.body) {
       response.body = Buffer.from(response.body).toString('base64')
     }
-    // @ts-ignore TODO Sort out converting this
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore The types for this are really messed-up
     response.multiValueHeaders = res.headers
     res.writeHead(response.statusCode)
 
@@ -228,19 +222,24 @@ export function createResponseObject({ onResEnd }) {
   }
 
   res.status = (code: number | string) => {
-    const numericCode = parseInt(code as string, 10)
-    if (!isNaN(numericCode)) {
+    const numericCode = Number.parseInt(code as string)
+    if (!Number.isNaN(numericCode)) {
       response.statusCode = numericCode
     }
     return res
   }
 
-  res.redirect = (statusCode: number | string, url?: string) => {
-    if (!url && typeof statusCode === 'string') {
-      url = statusCode
+  res.redirect = (statusCodeOrUrl: number | string, maybeUrl?: string) => {
+    let Location: string
+    let statusCode: number
+    if (!maybeUrl && typeof statusCode === 'string') {
+      Location = statusCodeOrUrl as string
       statusCode = 302
+    } else {
+      Location = maybeUrl
+      statusCode = statusCodeOrUrl as number
     }
-    res.writeHead(statusCode as number, { Location: url })
+    res.writeHead(statusCode, { Location })
     res.end()
     return res
   }
@@ -252,6 +251,7 @@ export function createResponseObject({ onResEnd }) {
  * During `netlify dev` we proxy requests to the `gatsby develop` server instead of
  * serving them ourselves.
  */
+// eslint-disable-next-line max-statements
 export async function proxyRequest(event: HandlerEvent, res) {
   // todo: get this from config
   const port = `8000`
@@ -259,16 +259,21 @@ export async function proxyRequest(event: HandlerEvent, res) {
   const url = new URL(event.path, `http://localhost:${port}`)
 
   Object.entries(event.multiValueQueryStringParameters).forEach(
-    ([name, values]) =>
-      values.forEach((value) => url.searchParams.append(name, value)),
+    ([name, values]) => {
+      values.forEach((value) => {
+        url.searchParams.append(name, value)
+      })
+    },
   )
 
   const headers = new Headers()
 
   // Multi-value headers have an array of values, so we need to loop through them and append them to the Headers object
-  Object.entries(event.multiValueHeaders).forEach(([name, val]) =>
-    val.forEach((header) => headers.append(name, header)),
-  )
+  Object.entries(event.multiValueHeaders).forEach(([name, val]) => {
+    val.forEach((header) => {
+      headers.append(name, header)
+    })
+  })
 
   const response = await fetch(url, {
     method: event.httpMethod,
@@ -276,9 +281,9 @@ export async function proxyRequest(event: HandlerEvent, res) {
     body: event.body,
     redirect: 'manual',
   })
-  ;[...response.headers.entries()].forEach(([name, value]) =>
-    res.setHeader(name, value),
-  )
+  ;[...response.headers.entries()].forEach(([name, value]) => {
+    res.setHeader(name, value)
+  })
   res.setHeader('x-forwarded-host', url.host)
 
   res.statusCode = response.status

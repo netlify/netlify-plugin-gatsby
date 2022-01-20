@@ -1,29 +1,35 @@
-import pathToRegexp from 'path-to-regexp'
+import { existsSync } from 'fs'
+import path from 'path'
+import process from 'process'
+
+import { HandlerEvent } from '@netlify/functions'
 import bodyParser from 'co-body'
 import multer from 'multer'
-import path from 'path'
-import { existsSync } from 'fs'
-import { proxyRequest } from './utils'
+import pathToRegexp from 'path-to-regexp'
+
 import {
+  proxyRequest,
   AugmentedGatsbyFunctionResponse,
   AugmentedGatsbyFunctionRequest,
 } from './utils'
-import { HandlerEvent } from '@netlify/functions'
 
 const parseForm = multer().any()
-
+type MulterReq = Parameters<typeof parseForm>[0]
+type MulterRes = Parameters<typeof parseForm>[1]
 /**
  * Execute a Gatsby function
  */
+// eslint-disable-next-line complexity, max-statements
 export async function gatsbyFunction(
   req: AugmentedGatsbyFunctionRequest,
-  res: AugmentedGatsbyFunctionResponse<any>,
+  res: AugmentedGatsbyFunctionResponse,
   event: HandlerEvent,
 ) {
   // Multipart form data middleware. because co-body can't handle it
-
-  // @ts-ignore As we're using a fake Express handler we need to ignore the type to keep multer happy
-  await new Promise((next) => parseForm(req, res, next))
+  await new Promise((resolve) => {
+    // As we're using a fake Express handler we need to ignore the type to keep multer happy
+    parseForm(req as unknown as MulterReq, res as unknown as MulterRes, resolve)
+  })
   try {
     // If req.body is populated then it was multipart data
     if (
@@ -34,17 +40,16 @@ export async function gatsbyFunction(
     ) {
       req.body = await bodyParser(req as unknown as Request)
     }
-  } catch (e) {
-    console.log('Error parsing body', e, req)
+  } catch (error) {
+    console.log('Error parsing body', error, req)
   }
 
-  let pathFragment = decodeURIComponent(req.url).replace('/api/', '')
+  const pathFragment = decodeURIComponent(req.url).replace('/api/', '')
 
   let functions
   try {
-    // @ts-ignore This is generated in the user's site
-    functions = require('../../../.cache/functions/manifest.json') // eslint-disable-line node/no-missing-require, node/no-unpublished-require
-  } catch (e) {
+    functions = require('../../../.cache/functions/manifest.json')
+  } catch {
     return {
       statusCode: 404,
       body: 'Could not load function manifest',
@@ -60,35 +65,34 @@ export async function gatsbyFunction(
     // Check if there's any matchPaths that match.
     // We loop until we find the first match.
 
-    functions.some((f) => {
+    functions.some((func) => {
       let exp
       const keys = []
-      if (f.matchPath) {
-        exp = pathToRegexp(f.matchPath, keys, {})
+      if (func.matchPath) {
+        exp = pathToRegexp(func.matchPath, keys, {})
       }
       if (exp && exp.exec(pathFragment) !== null) {
-        functionObj = f
+        functionObj = func
         const matches = [...pathFragment.match(exp)].slice(1)
         const newParams = {}
-        matches.forEach((match, index) => (newParams[keys[index].name] = match))
+        matches.forEach((match, index) => {
+          newParams[keys[index].name] = match
+        })
         req.params = newParams
 
         return true
-      } else {
-        return false
       }
+      return false
     })
   }
 
   if (functionObj) {
     console.log(`Running ${functionObj.functionRoute}`)
     const start = Date.now()
-
+    // During develop, the absolute path is correct, otherwise we need to use a relative path, as we're in a lambda
     const pathToFunction = process.env.NETLIFY_DEV
-      ? // During develop, the absolute path is correct
-        functionObj.absoluteCompiledFilePath
-      : // ...otherwise we need to use a relative path, as we're in a lambda
-        path.join(
+      ? functionObj.absoluteCompiledFilePath
+      : path.join(
           __dirname,
           '..',
           '..',
@@ -115,14 +119,15 @@ export async function gatsbyFunction(
       const fnToExecute = (fn && fn.default) || fn
 
       await Promise.resolve(fnToExecute(req, res))
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      console.error(error)
       // Don't send the error if that would cause another error.
+      // eslint-disable-next-line max-depth
       if (!res.headersSent) {
         res
           .status(500)
           .send(
-            `Error when executing function "${functionObj.originalRelativeFilePath}": "${e.message}"`,
+            `Error when executing function "${functionObj.originalRelativeFilePath}": "${error.message}"`,
           )
       }
     }
