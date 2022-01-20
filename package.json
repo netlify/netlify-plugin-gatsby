@@ -6,6 +6,7 @@
     "test": "test"
   },
   "scripts": {
+    "prepare": "husky install node_modules/@netlify/eslint-config-node/.husky/",
     "test": "run-s format test:e2e",
     "test:e2e": "cd plugin/test && ./e2e-test.sh",
     "format": "run-s format:check-fix:*",
@@ -29,14 +30,15 @@
   },
   "homepage": "https://github.com/netlify/netlify-plugin-gatsby#readme",
   "config": {
-    "eslint": "--ignore-path .gitignore --cache --format=codeframe --max-warnings=0 \"{bin,.github}/**/*.{js,md,html}\" \".*.js\" \"*.md\"",
-    "prettier": "--ignore-path .gitignore --loglevel=warn \"{bin,.github}/**/*.{js,md,yml,json,html}\" \"*.{js,yml,json,html}\" \"!**/package-lock.json\" \"!CHANGELOG.md\""
+    "eslint": "--cache --format=codeframe --max-warnings=0 \"{plugin,demo,.github}/**/*.{ts,js,md,html}\" \"*.{ts,js,md,html}\" \".*.{ts,js,md,html}\"",
+    "prettier": "--loglevel=warn \"{plugin,demo,.github}/**/*.{ts,js,md,yml,json,html}\" \"*.{ts,js,yml,json,html}\" \".*.{ts,js,yml,json,html}\" \"!package-lock.json\""
   },
   "devDependencies": {
     "@netlify/build": "latest",
     "@netlify/eslint-config-node": "latest",
     "ava": "^3.13.0",
-    "cross-env": "^7.0.2"
+    "cross-env": "^7.0.2",
+    "husky": "^7.0.4"
   },
   "private": true
 }
