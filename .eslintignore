@@ -1,7 +1,7 @@
 plugin/lib
 .netlify
-fixtures/*/public
-demo/public
+fixtures/
+demo
 
 *~
 *.swp
