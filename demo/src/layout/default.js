@@ -1,6 +1,6 @@
-import * as React from "react";
-import { Link } from "gatsby";
-import { headerCss, titleCss } from "./default.module.css";
+import * as React from 'react'
+import { Link } from 'gatsby'
+import { headerCss, titleCss } from './default.module.css'
 
 export function Layout({ children }) {
   return (
@@ -12,5 +12,5 @@ export function Layout({ children }) {
       </header>
       <main>{children}</main>
     </>
-  );
+  )
 }

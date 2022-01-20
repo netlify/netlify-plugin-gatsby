@@ -35,10 +35,10 @@ export interface AugmentedGatsbyFunctionRequest extends GatsbyFunctionRequest {
 // Source: https://github.com/serverless-nextjs/serverless-next.js/blob/master/packages/compat-layers/apigw-lambda-compat/lib/compatLayer.js
 
 // eslint-disable-next-line complexity, max-statements
-export function createRequestObject({
+export const createRequestObject = ({
   event,
   context,
-}: NetlifyFunctionParams): AugmentedGatsbyFunctionRequest {
+}: NetlifyFunctionParams): AugmentedGatsbyFunctionRequest => {
   const {
     path = '',
     multiValueQueryStringParameters,
@@ -110,6 +110,7 @@ export interface AugmentedGatsbyFunctionResponse<T = unknown>
 interface IntermediateHandlerResponse
   extends Partial<Omit<HandlerResponse, 'body'>> {
   body?: string | Buffer
+  multiValueHeaders?: Record<string, Array<string | string | boolean>>
 }
 
 // Mock a HTTP ServerResponse object that returns a Netlify Function-compatible
@@ -118,7 +119,7 @@ interface IntermediateHandlerResponse
 // Source: https://github.com/serverless-nextjs/serverless-next.js/blob/master/packages/compat-layers/apigw-lambda-compat/lib/compatLayer.js
 
 // eslint-disable-next-line max-statements, max-lines-per-function
-export function createResponseObject({ onResEnd }) {
+export const createResponseObject = ({ onResEnd }) => {
   const response: IntermediateHandlerResponse = {
     isBase64Encoded: true,
     multiValueHeaders: {},
@@ -179,9 +180,8 @@ export function createResponseObject({ onResEnd }) {
     if (response.body) {
       response.body = Buffer.from(response.body).toString('base64')
     }
-
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore The types for this are really messed-up
+    // @ts-ignore These types are a mess, and need sorting out
     response.multiValueHeaders = res.headers
     res.writeHead(response.statusCode)
 
@@ -229,21 +229,17 @@ export function createResponseObject({ onResEnd }) {
     return res
   }
 
-  res.redirect = (statusCodeOrUrl: number | string, maybeUrl?: string) => {
-    let Location: string
-    let statusCode: number
-    if (!maybeUrl && typeof statusCode === 'string') {
-      Location = statusCodeOrUrl as string
+  res.redirect = (statusCodeOrUrl: number | string, url?: string) => {
+    let statusCode = statusCodeOrUrl
+    let Location = url
+    if (!url && typeof statusCodeOrUrl === 'string') {
+      Location = statusCodeOrUrl
       statusCode = 302
-    } else {
-      Location = maybeUrl
-      statusCode = statusCodeOrUrl as number
     }
-    res.writeHead(statusCode, { Location })
+    res.writeHead(statusCode as number, { Location })
     res.end()
     return res
   }
-
   return res
 }
 
@@ -252,7 +248,7 @@ export function createResponseObject({ onResEnd }) {
  * serving them ourselves.
  */
 // eslint-disable-next-line max-statements
-export async function proxyRequest(event: HandlerEvent, res) {
+export const proxyRequest = async (event: HandlerEvent, res) => {
   // todo: get this from config
   const port = `8000`
 

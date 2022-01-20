@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import * as React from 'react'
 
 // styles
 const pageStyles = {
@@ -109,7 +109,7 @@ const links = [
 
 // markup
 const IndexPage = () => {
-  useEffect(() => {
+  React.useEffect(() => {
     document.cookie = 'thiscookie=was%20set%20on%20previous%20page'
   })
   return (
