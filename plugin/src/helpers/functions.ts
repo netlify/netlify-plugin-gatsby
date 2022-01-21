@@ -1,7 +1,7 @@
 import process from 'process'
 
 import { NetlifyPluginConstants } from '@netlify/build'
-import { copyFile, ensureDir, writeFile } from 'fs-extra'
+import { copy, copyFile, ensureDir, writeFile } from 'fs-extra'
 import { resolve, join, relative } from 'pathe'
 
 import { makeHandler } from '../templates/handlers'
@@ -26,7 +26,7 @@ export const writeFunctions = async ({
   PUBLISH_DIR,
 }: NetlifyPluginConstants): Promise<void> => {
   const siteRoot = resolve(process.cwd(), PUBLISH_DIR, '..')
-  const functionDir = join(process.cwd(), INTERNAL_FUNCTIONS_SRC, '__ssr')
+  const functionDir = join(process.cwd(), INTERNAL_FUNCTIONS_SRC, '__api')
   const appDir = relative(functionDir, siteRoot)
 
   await writeFunction({
@@ -42,4 +42,9 @@ export const writeFunctions = async ({
     appDir,
     functionsSrc: INTERNAL_FUNCTIONS_SRC,
   })
+
+  await copy(
+    join(__dirname, '..', '..', 'lib', 'templates', 'api'),
+    functionDir,
+  )
 }
