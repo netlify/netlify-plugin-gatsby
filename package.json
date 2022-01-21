@@ -40,10 +40,8 @@
     "cross-env": "^7.0.2",
     "husky": "^7.0.4"
   },
-  "jest": {
-    "transformIgnorePatterns": [
-      "/node_modules/(?!(@netlify/build|@netlify/eslint-config-node|@netlify/plugin-gatsby)/)"
-    ]
+  "peerDependencies": {
+    "execa": "^5.0.0"
   },
   "private": true
 }
