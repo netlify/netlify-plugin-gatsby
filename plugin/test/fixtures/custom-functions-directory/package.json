@@ -20,7 +20,7 @@
     "test:jest": "jest"
   },
   "dependencies": {
-    "gatsby": "^3.6.2",
+    "gatsby": "next",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
@@ -33,6 +33,6 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=12.13.0"
+    "node": ">=14.15.0"
   }
 }
