@@ -19,7 +19,6 @@ type MulterRes = Parameters<typeof parseForm>[1]
 /**
  * Execute a Gatsby function
  */
-// eslint-disable-next-line complexity, max-statements
 export async function gatsbyFunction(
   req: AugmentedGatsbyFunctionRequest,
   res: AugmentedGatsbyFunctionResponse,

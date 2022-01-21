@@ -48,8 +48,8 @@ const getHandler =
 
     const graphqlEngine = getGraphQLEngine(cacheDir)
 
-    // eslint-disable-next-line complexity
     return async function handler(event) {
+      process.chdir(appDir)
       const eventPath = event.path
 
       const isPageData =
