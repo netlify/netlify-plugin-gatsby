@@ -1,9 +1,0 @@
-[build]
-command = "npm run build"
-publish = "public/"
-
-[[plugins]]
-package = "../../../src/index.ts"
-
-[functions]
-directory = "serverless-functions"
