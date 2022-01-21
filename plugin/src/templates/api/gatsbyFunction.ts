@@ -1,5 +1,6 @@
 import { existsSync } from 'fs'
 import path from 'path'
+import process from 'process'
 
 import { match as reachMatch } from '@gatsbyjs/reach-router/lib/utils'
 import { HandlerEvent } from '@netlify/functions'
@@ -47,8 +48,7 @@ export async function gatsbyFunction(
 
   let functions
   try {
-    // @ts-ignore This is generated in the user's site
-    functions = require('../../../.cache/functions/manifest.json') // eslint-disable-line node/no-missing-require, node/no-unpublished-require
+    functions = require('../../../.cache/functions/manifest.json')
   } catch {
     return {
       statusCode: 404,
@@ -56,6 +56,7 @@ export async function gatsbyFunction(
     }
   }
 
+  // Begin copied from Gatsby serve command
   // Check first for exact matches.
   let functionObj = functions.find(
     ({ functionRoute }) => functionRoute === pathFragment,
@@ -64,17 +65,18 @@ export async function gatsbyFunction(
   if (!functionObj) {
     // Check if there's any matchPaths that match.
     // We loop until we find the first match.
-    functions.some((f) => {
-      if (f.matchPath) {
-        const matchResult = reachMatch(f.matchPath, pathFragment)
+    functions.some((func) => {
+      if (func.matchPath) {
+        const matchResult = reachMatch(func.matchPath, pathFragment)
         if (matchResult) {
           req.params = matchResult.params
+          // eslint-disable-next-line max-depth
           if (req.params[`*`]) {
             // Backwards compatability for v3
             // TODO remove in v5
             req.params[`0`] = req.params[`*`]
           }
-          functionObj = f
+          functionObj = func
 
           return true
         }
@@ -83,7 +85,7 @@ export async function gatsbyFunction(
       return false
     })
   }
-
+  // end copied from Gatsby serve command
   if (functionObj) {
     console.log(`Running ${functionObj.functionRoute}`)
     const start = Date.now()
