@@ -1,5 +1,6 @@
 import { existsSync } from 'fs'
 import path from 'path'
+import process from 'process'
 
 import { match as reachMatch } from '@gatsbyjs/reach-router/lib/utils'
 import { HandlerEvent } from '@netlify/functions'
@@ -13,19 +14,22 @@ import {
 } from './utils'
 
 const parseForm = multer().any()
-
+type MulterReq = Parameters<typeof parseForm>[0]
+type MulterRes = Parameters<typeof parseForm>[1]
 /**
  * Execute a Gatsby function
  */
+// eslint-disable-next-line complexity, max-statements
 export async function gatsbyFunction(
   req: AugmentedGatsbyFunctionRequest,
-  res: AugmentedGatsbyFunctionResponse<any>,
+  res: AugmentedGatsbyFunctionResponse,
   event: HandlerEvent,
 ) {
   // Multipart form data middleware. because co-body can't handle it
-
-  // @ts-ignore As we're using a fake Express handler we need to ignore the type to keep multer happy
-  await new Promise((next) => parseForm(req, res, next))
+  await new Promise((resolve) => {
+    // As we're using a fake Express handler we need to ignore the type to keep multer happy
+    parseForm(req as unknown as MulterReq, res as unknown as MulterRes, resolve)
+  })
   try {
     // If req.body is populated then it was multipart data
     if (
@@ -44,8 +48,7 @@ export async function gatsbyFunction(
 
   let functions
   try {
-    // @ts-ignore This is generated in the user's site
-    functions = require('../../../.cache/functions/manifest.json') // eslint-disable-line node/no-missing-require, node/no-unpublished-require
+    functions = require('../../../.cache/functions/manifest.json')
   } catch {
     return {
       statusCode: 404,
@@ -53,6 +56,7 @@ export async function gatsbyFunction(
     }
   }
 
+  // Begin copied from Gatsby serve command
   // Check first for exact matches.
   let functionObj = functions.find(
     ({ functionRoute }) => functionRoute === pathFragment,
@@ -61,17 +65,18 @@ export async function gatsbyFunction(
   if (!functionObj) {
     // Check if there's any matchPaths that match.
     // We loop until we find the first match.
-    functions.some((f) => {
-      if (f.matchPath) {
-        const matchResult = reachMatch(f.matchPath, pathFragment)
+    functions.some((func) => {
+      if (func.matchPath) {
+        const matchResult = reachMatch(func.matchPath, pathFragment)
         if (matchResult) {
           req.params = matchResult.params
+          // eslint-disable-next-line max-depth
           if (req.params[`*`]) {
             // Backwards compatability for v3
             // TODO remove in v5
             req.params[`0`] = req.params[`*`]
           }
-          functionObj = f
+          functionObj = func
 
           return true
         }
@@ -80,16 +85,14 @@ export async function gatsbyFunction(
       return false
     })
   }
-
+  // end copied from Gatsby serve command
   if (functionObj) {
     console.log(`Running ${functionObj.functionRoute}`)
     const start = Date.now()
-
+    // During develop, the absolute path is correct, otherwise we need to use a relative path, as we're in a lambda
     const pathToFunction = process.env.NETLIFY_DEV
-      ? // During develop, the absolute path is correct
-        functionObj.absoluteCompiledFilePath
-      : // ...otherwise we need to use a relative path, as we're in a lambda
-        path.join(
+      ? functionObj.absoluteCompiledFilePath
+      : path.join(
           __dirname,
           '..',
           '..',
@@ -118,6 +121,7 @@ export async function gatsbyFunction(
     } catch (error) {
       console.error(error)
       // Don't send the error if that would cause another error.
+      // eslint-disable-next-line max-depth
       if (!res.headersSent) {
         res
           .status(500)

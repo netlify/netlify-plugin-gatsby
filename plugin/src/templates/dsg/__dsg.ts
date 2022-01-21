@@ -8,7 +8,6 @@ import process from 'process'
 import { builder, Handler, HandlerEvent } from '@netlify/functions'
 import etag from 'etag'
 import { readFile } from 'fs-extra'
-/* eslint-disable  node/no-unpublished-import */
 import { GatsbyFunctionRequest } from 'gatsby'
 import type {
   getData as getDataType,
@@ -16,7 +15,6 @@ import type {
   renderPageData as renderPageDataType,
 } from 'gatsby/cache-dir/page-ssr'
 import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
-/* eslint-enable  node/no-unpublished-import */
 
 import {
   CACHE_DIR,
@@ -41,7 +39,6 @@ const DATA_PREFIX = '/page-data/'
 function getHandler(): Handler {
   prepareFilesystem()
   // Requiring this dynamically so esbuild doesn't re-bundle it
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
   const { getData, renderHTML, renderPageData }: PageSSR = require(join(
     CACHE_DIR,
     'page-ssr',

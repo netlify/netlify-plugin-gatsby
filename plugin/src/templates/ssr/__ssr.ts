@@ -8,7 +8,6 @@ import process from 'process'
 import { Handler, HandlerEvent } from '@netlify/functions'
 import etag from 'etag'
 import { readFile } from 'fs-extra'
-/* eslint-disable  node/no-unpublished-import */
 import type { GatsbyFunctionRequest } from 'gatsby'
 import type {
   getData as getDataType,
@@ -23,7 +22,6 @@ import {
   getPagePathFromPageDataPath,
   getGraphQLEngine,
 } from './utils'
-/* eslint-enable  node/no-unpublished-import */
 
 type SSRReq = Pick<GatsbyFunctionRequest, 'query' | 'method' | 'url'> & {
   headers: HandlerEvent['headers']
@@ -40,7 +38,6 @@ type PageSSR = {
 function getHandler(): Handler {
   prepareFilesystem()
   // Requiring this dynamically so esbuild doesn't re-bundle it
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
   const { getData, renderHTML, renderPageData }: PageSSR = require(join(
     CACHE_DIR,
     'page-ssr',

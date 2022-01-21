@@ -151,7 +151,7 @@ const IndexPage = () => {
             <form
               action="/api/parser"
               method="POST"
-              enctype="multipart/form-data"
+              encType="multipart/form-data"
             >
               <input type="hidden" name="hidden" value="hidden field" />
 
