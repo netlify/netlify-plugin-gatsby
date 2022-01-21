@@ -1,11 +1,10 @@
 import { existsSync } from 'fs'
 import path from 'path'
-import process from 'process'
 
+import { match as reachMatch } from '@gatsbyjs/reach-router/lib/utils'
 import { HandlerEvent } from '@netlify/functions'
 import bodyParser from 'co-body'
 import multer from 'multer'
-import { pathToRegexp } from 'path-to-regexp'
 
 import {
   proxyRequest,
@@ -48,7 +47,8 @@ export async function gatsbyFunction(
 
   let functions
   try {
-    functions = require('../../../.cache/functions/manifest.json')
+    // @ts-ignore This is generated in the user's site
+    functions = require('../../../.cache/functions/manifest.json') // eslint-disable-line node/no-missing-require, node/no-unpublished-require
   } catch {
     return {
       statusCode: 404,
@@ -64,24 +64,22 @@ export async function gatsbyFunction(
   if (!functionObj) {
     // Check if there's any matchPaths that match.
     // We loop until we find the first match.
+    functions.some((f) => {
+      if (f.matchPath) {
+        const matchResult = reachMatch(f.matchPath, pathFragment)
+        if (matchResult) {
+          req.params = matchResult.params
+          if (req.params[`*`]) {
+            // Backwards compatability for v3
+            // TODO remove in v5
+            req.params[`0`] = req.params[`*`]
+          }
+          functionObj = f
 
-    functions.some((func) => {
-      let exp
-      const keys = []
-      if (func.matchPath) {
-        exp = pathToRegexp(func.matchPath, keys, {})
+          return true
+        }
       }
-      if (exp && exp.exec(pathFragment) !== null) {
-        functionObj = func
-        const matches = [...pathFragment.match(exp)].slice(1)
-        const newParams = {}
-        matches.forEach((match, index) => {
-          newParams[keys[index].name] = match
-        })
-        req.params = newParams
 
-        return true
-      }
       return false
     })
   }
@@ -113,7 +111,6 @@ export async function gatsbyFunction(
 
     try {
       // Make sure it's hot and fresh from the filesystem
-      delete require.cache[require.resolve(pathToFunction)]
       const fn = require(pathToFunction)
 
       const fnToExecute = (fn && fn.default) || fn

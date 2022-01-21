@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest] #, windows-latest] # TODO add an e2etest.bat file
-        node-version: [14.15.0, '*']
+        node-version: ['*']
         exclude:
           - os: macOS-latest
             node-version: 14.15.0

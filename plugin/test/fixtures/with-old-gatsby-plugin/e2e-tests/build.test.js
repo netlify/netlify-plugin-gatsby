@@ -1,7 +1,7 @@
 // eslint-disable-next-line node/no-unpublished-require
 const { buildSite } = require('../../../helpers')
 
-jest.setTimeout(60_000)
+jest.setTimeout(120_000)
 
 describe('A site using gatsby-plugin-netlify-cache', () => {
   it('bails when running a build', async () => {
