@@ -112,6 +112,7 @@ export function mutateConfig({
       path.posix.join(CACHE_DIR, 'page-ssr', '**'),
     ],
     external_node_modules: ['msgpackr-extract'],
+    node_bundler: 'esbuild',
   }
 
   netlifyConfig.functions.__ssr = { ...netlifyConfig.functions.__dsg }

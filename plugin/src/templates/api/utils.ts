@@ -34,7 +34,6 @@ export interface AugmentedGatsbyFunctionRequest extends GatsbyFunctionRequest {
 // Based on API Gateway Lambda Compat
 // Source: https://github.com/serverless-nextjs/serverless-next.js/blob/master/packages/compat-layers/apigw-lambda-compat/lib/compatLayer.js
 
-// eslint-disable-next-line complexity, max-statements
 export const createRequestObject = ({
   event,
   context,
@@ -118,7 +117,7 @@ interface IntermediateHandlerResponse
 // Based on API Gateway Lambda Compat
 // Source: https://github.com/serverless-nextjs/serverless-next.js/blob/master/packages/compat-layers/apigw-lambda-compat/lib/compatLayer.js
 
-// eslint-disable-next-line max-statements, max-lines-per-function
+// eslint-disable-next-line  max-lines-per-function
 export const createResponseObject = ({ onResEnd }) => {
   const response: IntermediateHandlerResponse = {
     isBase64Encoded: true,
@@ -170,7 +169,6 @@ export const createResponseObject = ({ onResEnd }) => {
   res.getHeader = (name) => res.headers[name.toLowerCase()]
   res.getHeaders = () => res.headers
   res.hasHeader = (name) => Boolean(res.getHeader(name))
-  // eslint-disable-next-line complexity
   res.end = (text) => {
     if (text) res.write(text)
     if (!res.statusCode) {
@@ -247,7 +245,6 @@ export const createResponseObject = ({ onResEnd }) => {
  * During `netlify dev` we proxy requests to the `gatsby develop` server instead of
  * serving them ourselves.
  */
-// eslint-disable-next-line max-statements
 export const proxyRequest = async (event: HandlerEvent, res) => {
   // todo: get this from config
   const port = `8000`
