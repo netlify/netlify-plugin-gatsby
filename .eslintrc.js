@@ -9,6 +9,7 @@ module.exports = {
     'node/no-unsupported-features/es-syntax': 'off',
     // This is a duplicate of `import/no-duplicates` but can handle "import type"
     'no-duplicate-imports': 'off',
+    'max-depth': ['error', 4],
   },
   env: {
     jest: true,

@@ -8,7 +8,7 @@ import type {
 } from 'gatsby/cache-dir/page-ssr'
 import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
 
-// These are "require()"d rather than improted so the symbol names are munged,
+// These are "require()"d rather than imported so the symbol names are not munged,
 // as we need them to match the hard-coded values
 const { readFileSync } = require('fs')
 const { join } = require('path')
@@ -130,10 +130,9 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
   }
 }
 
-export const makeHandler = (
-  appDir: string,
-  renderMode: RenderMode,
-): string => javascript`
+export const makeHandler = (appDir: string, renderMode: RenderMode): string =>
+  // This is a string, but if you have the right editor plugin it should format as js
+  javascript`
     // @ts-check
     const { readFileSync } = require('fs');
     const { builder } = require('@netlify/functions');
