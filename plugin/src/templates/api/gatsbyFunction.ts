@@ -69,7 +69,7 @@ export async function gatsbyFunction(
         const matchResult = reachMatch(func.matchPath, pathFragment)
         if (matchResult) {
           req.params = matchResult.params
-          // eslint-disable-next-line max-depth
+
           if (req.params[`*`]) {
             // Backwards compatability for v3
             // TODO remove in v5
@@ -111,7 +111,11 @@ export async function gatsbyFunction(
     }
 
     try {
-      // Make sure it's hot and fresh from the filesystem
+      if (process.env.NETLIFY_LOCAL) {
+        // Make sure it's hot and fresh from the filesystem
+        delete require.cache[require.resolve(pathToFunction)]
+      }
+
       const fn = require(pathToFunction)
 
       const fnToExecute = (fn && fn.default) || fn
@@ -120,7 +124,6 @@ export async function gatsbyFunction(
     } catch (error) {
       console.error(error)
       // Don't send the error if that would cause another error.
-      // eslint-disable-next-line max-depth
       if (!res.headersSent) {
         res
           .status(500)
