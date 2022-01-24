@@ -5,7 +5,7 @@ import fs from 'fs-extra'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import { checkGatsbyConfig, mutateConfig, spliceConfig } from './helpers/config'
-import { checkEnvironment } from './helpers/environment'
+import { writeFunctions } from './helpers/functions'
 
 // eslint-disable-next-line no-template-curly-in-string
 const lmdbCacheString = 'process.cwd(), `.cache/${cacheDbFile}`'
@@ -37,10 +37,6 @@ export async function onPreBuild({
       `Gatsby sites must publish the public directory, but your site’s publish directory is set to “${PUBLISH_DIR}”. Please set your publish directory to your Gatsby site’s public directory.`,
     )
   }
-  // Only run in CI
-  if (process.env.NETLIFY) {
-    await checkEnvironment({ utils })
-  }
   await restoreCache({ utils, publish: PUBLISH_DIR })
   const CACHE_DIR = normalizedCacheDir(PUBLISH_DIR)
 
@@ -50,14 +46,12 @@ export async function onPreBuild({
   checkGatsbyConfig({ utils, netlifyConfig })
 }
 
-export async function onBuild({
-  constants: {
+export async function onBuild({ constants, netlifyConfig }): Promise<void> {
+  const {
     PUBLISH_DIR,
     FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC,
     INTERNAL_FUNCTIONS_SRC,
-  },
-  netlifyConfig,
-}): Promise<void> {
+  } = constants
   const CACHE_DIR = normalizedCacheDir(PUBLISH_DIR)
   const compiledFunctionsDir = path.join(CACHE_DIR, '/functions')
   // eslint-disable-next-line node/no-sync
@@ -65,18 +59,9 @@ export async function onBuild({
     return
   }
 
-  const functionsSrcDir = INTERNAL_FUNCTIONS_SRC || FUNCTIONS_SRC
+  await writeFunctions(constants)
 
   // copying Netlify wrapper function into functions directory
-
-  await Promise.all(
-    ['api', 'dsg', 'ssr'].map((func) =>
-      fs.copy(
-        path.join(__dirname, '..', 'src', 'templates', func),
-        path.join(functionsSrcDir, `__${func}`),
-      ),
-    ),
-  )
 
   if (
     INTERNAL_FUNCTIONS_SRC &&

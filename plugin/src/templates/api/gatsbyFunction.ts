@@ -1,29 +1,34 @@
-import pathToRegexp from 'path-to-regexp'
+import { existsSync } from 'fs'
+import path from 'path'
+import process from 'process'
+
+import { match as reachMatch } from '@gatsbyjs/reach-router/lib/utils'
+import { HandlerEvent } from '@netlify/functions'
 import bodyParser from 'co-body'
 import multer from 'multer'
-import path from 'path'
-import { existsSync } from 'fs'
-import { proxyRequest } from './utils'
+
 import {
+  proxyRequest,
   AugmentedGatsbyFunctionResponse,
   AugmentedGatsbyFunctionRequest,
 } from './utils'
-import { HandlerEvent } from '@netlify/functions'
 
 const parseForm = multer().any()
-
+type MulterReq = Parameters<typeof parseForm>[0]
+type MulterRes = Parameters<typeof parseForm>[1]
 /**
  * Execute a Gatsby function
  */
 export async function gatsbyFunction(
   req: AugmentedGatsbyFunctionRequest,
-  res: AugmentedGatsbyFunctionResponse<any>,
+  res: AugmentedGatsbyFunctionResponse,
   event: HandlerEvent,
 ) {
   // Multipart form data middleware. because co-body can't handle it
-
-  // @ts-ignore As we're using a fake Express handler we need to ignore the type to keep multer happy
-  await new Promise((next) => parseForm(req, res, next))
+  await new Promise((resolve) => {
+    // As we're using a fake Express handler we need to ignore the type to keep multer happy
+    parseForm(req as unknown as MulterReq, res as unknown as MulterRes, resolve)
+  })
   try {
     // If req.body is populated then it was multipart data
     if (
@@ -34,23 +39,23 @@ export async function gatsbyFunction(
     ) {
       req.body = await bodyParser(req as unknown as Request)
     }
-  } catch (e) {
-    console.log('Error parsing body', e, req)
+  } catch (error) {
+    console.log('Error parsing body', error, req)
   }
 
-  let pathFragment = decodeURIComponent(req.url).replace('/api/', '')
+  const pathFragment = decodeURIComponent(req.url).replace('/api/', '')
 
   let functions
   try {
-    // @ts-ignore This is generated in the user's site
-    functions = require('../../../.cache/functions/manifest.json') // eslint-disable-line node/no-missing-require, node/no-unpublished-require
-  } catch (e) {
+    functions = require('../../../.cache/functions/manifest.json')
+  } catch {
     return {
       statusCode: 404,
       body: 'Could not load function manifest',
     }
   }
 
+  // Begin copied from Gatsby serve command
   // Check first for exact matches.
   let functionObj = functions.find(
     ({ functionRoute }) => functionRoute === pathFragment,
@@ -59,36 +64,34 @@ export async function gatsbyFunction(
   if (!functionObj) {
     // Check if there's any matchPaths that match.
     // We loop until we find the first match.
+    functions.some((func) => {
+      if (func.matchPath) {
+        const matchResult = reachMatch(func.matchPath, pathFragment)
+        if (matchResult) {
+          req.params = matchResult.params
 
-    functions.some((f) => {
-      let exp
-      const keys = []
-      if (f.matchPath) {
-        exp = pathToRegexp(f.matchPath, keys, {})
-      }
-      if (exp && exp.exec(pathFragment) !== null) {
-        functionObj = f
-        const matches = [...pathFragment.match(exp)].slice(1)
-        const newParams = {}
-        matches.forEach((match, index) => (newParams[keys[index].name] = match))
-        req.params = newParams
+          if (req.params[`*`]) {
+            // Backwards compatability for v3
+            // TODO remove in v5
+            req.params[`0`] = req.params[`*`]
+          }
+          functionObj = func
 
-        return true
-      } else {
-        return false
+          return true
+        }
       }
+
+      return false
     })
   }
-
+  // end copied from Gatsby serve command
   if (functionObj) {
     console.log(`Running ${functionObj.functionRoute}`)
     const start = Date.now()
-
+    // During develop, the absolute path is correct, otherwise we need to use a relative path, as we're in a lambda
     const pathToFunction = process.env.NETLIFY_DEV
-      ? // During develop, the absolute path is correct
-        functionObj.absoluteCompiledFilePath
-      : // ...otherwise we need to use a relative path, as we're in a lambda
-        path.join(
+      ? functionObj.absoluteCompiledFilePath
+      : path.join(
           __dirname,
           '..',
           '..',
@@ -108,21 +111,24 @@ export async function gatsbyFunction(
     }
 
     try {
-      // Make sure it's hot and fresh from the filesystem
-      delete require.cache[require.resolve(pathToFunction)]
+      if (process.env.NETLIFY_LOCAL) {
+        // Make sure it's hot and fresh from the filesystem
+        delete require.cache[require.resolve(pathToFunction)]
+      }
+
       const fn = require(pathToFunction)
 
       const fnToExecute = (fn && fn.default) || fn
 
       await Promise.resolve(fnToExecute(req, res))
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      console.error(error)
       // Don't send the error if that would cause another error.
       if (!res.headersSent) {
         res
           .status(500)
           .send(
-            `Error when executing function "${functionObj.originalRelativeFilePath}": "${e.message}"`,
+            `Error when executing function "${functionObj.originalRelativeFilePath}": "${error.message}"`,
           )
       }
     }

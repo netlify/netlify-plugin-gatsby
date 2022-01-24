@@ -3,7 +3,7 @@ module.exports = {
     FUNCTIONS: true,
   },
   siteMetadata: {
-    title: "Function test",
+    title: 'Function test',
   },
   plugins: [],
-};
+}

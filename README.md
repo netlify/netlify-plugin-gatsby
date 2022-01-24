@@ -40,7 +40,6 @@ Gatsby Plugin", and a Gatsby plugin called "gatsby-plugin-netlify":
   (the Netlify build plugin)
 - [Install version 4 beta of `gatsby-plugin-netlify`](#install-the-gatsby-plugin)
   (the Gatsby plugin)
-- [Configure your build to use the correct build image and Node.js runtime](#build-configuration)
 
 ### Install the Netlify build plugin
 
@@ -83,14 +82,6 @@ module.exports = {
 See
 [the gatsby-plugin-netlify docs](https://github.com/netlify/gatsby-plugin-netlify/)
 for more information, including optional plugin configuration.
-
-### Build configuration
-
-Gatsby now requires Node 14 for building and SSR/DSG. During the beta period you
-need to manually set the environment variable `AWS_LAMBDA_JS_RUNTIME` to
-`nodejs14.x` to ensure SSR and DSR use the correct version. This must be done in
-the Netlify UI, not in the `netlify.toml`. Read the docs on
-[choosing a functions runtime](https://docs.netlify.com/functions/build-with-javascript/#runtime-settings).
 
 ### Caveats
 

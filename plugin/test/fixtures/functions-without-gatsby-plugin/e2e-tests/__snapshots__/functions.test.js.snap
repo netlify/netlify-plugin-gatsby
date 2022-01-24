@@ -33,6 +33,7 @@ Object {
 
 exports[`Local routing dynamic routes 2`] = `
 Object {
+  "*": "super",
   "0": "super",
 }
 `;

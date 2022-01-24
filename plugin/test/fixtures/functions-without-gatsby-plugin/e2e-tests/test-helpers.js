@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 const fetch = require(`node-fetch`)
-const FormData = require('form-data')
-const path = require('path')
 const { readFileSync } = require('fs')
+const path = require('path')
+
+const FormData = require('form-data')
 // Based on Gatsby Functions integration tests
 // Source: https://github.com/gatsbyjs/gatsby/blob/master/integration-tests/functions/test-helpers.js
 
@@ -231,7 +232,7 @@ exports.runTests = function runTests(env, host) {
       test(`normal`, async () => {
         const result = await fetchTwice(`${host}/api/redirect-me`)
 
-        expect(result.url).toEqual(host + `/`)
+        expect(result.url).toEqual(`${host}/`)
       })
     })
 

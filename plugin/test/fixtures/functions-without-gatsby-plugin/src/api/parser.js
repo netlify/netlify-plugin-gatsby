@@ -1,7 +1,7 @@
 export default function topLevel(req, res) {
-  if (req.query && Object.keys(req.query).length) {
+  if (req.query && Object.keys(req.query).length !== 0) {
     res.json(req.query)
-  } else if (req.files && req.files.length) {
+  } else if (req.files && req.files.length !== 0) {
     res.json({ files: req.files, body: req.body })
   } else if (req.body) {
     res.json(req.body)

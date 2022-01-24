@@ -25,5 +25,8 @@
   "devDependencies": {
     "@netlify/build": "latest",
     "jest": "^27.0.4"
+  },
+  "peerDependencies": {
+    "execa": "^5.0.0"
   }
 }
