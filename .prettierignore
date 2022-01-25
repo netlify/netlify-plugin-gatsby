@@ -1,8 +1,5 @@
 plugin/lib
 .netlify
-fixtures/
-demo
-
 *~
 *.swp
 npm-debug.log
@@ -20,3 +17,4 @@ node_modules
 public
 .DS_Store
 .parcel-cache
+node_modules

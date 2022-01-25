@@ -25,5 +25,8 @@
     "@netlify/build": "latest",
     "jest": "^27.0.4",
     "netlify-plugin-gatsby-cache": "^0.3.2"
+  },
+  "peerDependencies": {
+    "execa": "^5.0.0"
   }
 }

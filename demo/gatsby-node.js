@@ -1,4 +1,5 @@
 const path = require('path')
+
 const slugify = require('@sindresorhus/slugify')
 
 exports.createSchemaCustomization = function createSchemaCustomization({
