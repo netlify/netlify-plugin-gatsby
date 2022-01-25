@@ -1,6 +1,7 @@
 import path, { dirname, join } from 'path'
 import process from 'process'
 
+import { NetlifyPluginOptions } from '@netlify/build'
 import { stripIndent } from 'common-tags'
 import { existsSync, readFile, writeFile } from 'fs-extra'
 
@@ -11,7 +12,7 @@ import {
   shouldSkipFunctions,
   spliceConfig,
 } from './helpers/config'
-import { writeFunctions } from './helpers/functions'
+import { deleteFunctions, writeFunctions } from './helpers/functions'
 
 /**
  * This horrible thing is required because Gatsby tries to use a cache file in location that is readonly when deployed to a lambda
@@ -49,7 +50,10 @@ export async function onPreBuild({
   checkGatsbyConfig({ utils, netlifyConfig })
 }
 
-export async function onBuild({ constants, netlifyConfig }): Promise<void> {
+export async function onBuild({
+  constants,
+  netlifyConfig,
+}: NetlifyPluginOptions): Promise<void> {
   const {
     PUBLISH_DIR,
     FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC,
@@ -70,6 +74,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   }
 
   if (shouldSkipFunctions(cacheDir)) {
+    await deleteFunctions(constants)
     return
   }
   const compiledFunctionsDir = path.join(cacheDir, '/functions')

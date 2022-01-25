@@ -1,7 +1,7 @@
 import process from 'process'
 
 import { NetlifyPluginConstants } from '@netlify/build'
-import { copy, copyFile, ensureDir, writeFile } from 'fs-extra'
+import { copy, copyFile, ensureDir, existsSync, rm, writeFile } from 'fs-extra'
 import { resolve, join, relative } from 'pathe'
 
 import { makeHandler } from '../templates/handlers'
@@ -47,4 +47,15 @@ export const writeFunctions = async ({
     join(__dirname, '..', '..', 'lib', 'templates', 'api'),
     functionDir,
   )
+}
+
+export const deleteFunctions = async ({
+  INTERNAL_FUNCTIONS_SRC,
+}: NetlifyPluginConstants): Promise<void> => {
+  for (const func of ['__api', '__ssr', '__dsg']) {
+    const funcDir = join(process.cwd(), INTERNAL_FUNCTIONS_SRC, func)
+    if (existsSync(funcDir)) {
+      await rm(funcDir, { recursive: true, force: true })
+    }
+  }
 }
