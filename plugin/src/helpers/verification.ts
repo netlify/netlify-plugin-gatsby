@@ -52,6 +52,7 @@ export const checkZipSize = async (
       'Uncompressed Size': prettyBytes(sortedFiles[idx].size),
     }
   }
+  await zip.close()
   console.log(yellowBright`\n\nThese are the largest files in the zip:`)
   console.table(largest)
 }
