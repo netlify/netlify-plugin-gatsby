@@ -39,6 +39,12 @@ const links = [
   { text: 'Dog of the day', url: 'dog', description: 'SSR demo' },
   { text: 'Hello World', url: 'api/hello-world', description: '' },
   {
+    text: 'Error Page',
+    url: 'bad-dog',
+    description: 'SSR page that throws an error',
+  },
+
+  {
     text: 'I Am Capitalized',
     url: 'api/I-Am-Capitalized',
     description: 'Shows case-sensitive URLs',
