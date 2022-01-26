@@ -3,7 +3,9 @@ import os from 'os'
 import { join } from 'path'
 import process from 'process'
 
-import { existsSync, copySync } from 'fs-extra'
+import { HandlerResponse } from '@netlify/functions'
+import etag from 'etag'
+import { existsSync, copySync, readFileSync } from 'fs-extra'
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
 
@@ -23,6 +25,7 @@ declare global {
  * Hacks to deal with the fact that functions execute on a readonly filesystem
  */
 export function prepareFilesystem(cacheDir: string): void {
+  console.log('Preparing Gatsby filesystem')
   const rewrites = [
     [join(cacheDir, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
     [join(cacheDir, 'caches-lmdb'), join(TEMP_CACHE_DIR, 'caches-lmdb')],
@@ -85,4 +88,42 @@ export function getGraphQLEngine(cacheDir: string): GraphQLEngine {
   return new GQE({
     dbPath,
   })
+}
+
+/**
+ * Gets an error page to return from a function
+ */
+
+export function getErrorResponse({
+  statusCode = 500,
+  error,
+  renderMode,
+}: {
+  statusCode?: number
+  error?: Error
+  renderMode: 'DSG' | 'SSR'
+}): HandlerResponse {
+  let body = `<html><body><h1>${statusCode}</h1><p>${
+    statusCode === 404 ? 'Not found' : 'Internal Server Error'
+  }</p></body></html>`
+
+  if (error) {
+    console.error(error)
+  }
+
+  if (statusCode === 500 || statusCode === 404) {
+    const filename = join(process.cwd(), 'public', `${statusCode}.html`)
+    if (existsSync(filename)) {
+      body = readFileSync(filename, 'utf8')
+    }
+  }
+  return {
+    statusCode,
+    body,
+    headers: {
+      Tag: etag(body),
+      'Content-Type': 'text/html; charset=utf-8',
+      'X-Render-Mode': renderMode,
+    },
+  }
 }
