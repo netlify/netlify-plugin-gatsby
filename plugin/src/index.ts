@@ -6,6 +6,7 @@ import fs from 'fs-extra'
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import { checkGatsbyConfig, mutateConfig, spliceConfig } from './helpers/config'
 import { writeFunctions } from './helpers/functions'
+import { checkZipSize } from './helpers/verification'
 
 // eslint-disable-next-line no-template-curly-in-string
 const lmdbCacheString = 'process.cwd(), `.cache/${cacheDbFile}`'
@@ -104,8 +105,11 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 }
 
 export async function onPostBuild({
-  constants: { PUBLISH_DIR },
+  constants: { PUBLISH_DIR, FUNCTIONS_DIST },
   utils,
 }): Promise<void> {
   await saveCache({ publish: PUBLISH_DIR, utils })
+  for (const func of ['api', 'dsg', 'ssr']) {
+    await checkZipSize(path.join(FUNCTIONS_DIST, `__${func}.zip`))
+  }
 }

@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@netlify/functions": "^0.11.0",
+    "chalk": "^4.1.2",
     "co-body": "^6.1.0",
     "cookie": "^0.4.1",
     "download": "^8.0.0",
@@ -50,7 +51,9 @@
     "linkfs": "^2.1.0",
     "multer": "^1.4.2",
     "node-fetch": "^2.6.1",
+    "node-stream-zip": "^1.15.0",
     "pathe": "^0.2.0",
+    "pretty-bytes": "^5.6.0",
     "tempy": "^1.0.0"
   },
   "devDependencies": {
