@@ -11,6 +11,7 @@ import prettyBytes from 'pretty-bytes'
 // eslint-disable-next-line no-magic-numbers
 export const LAMBDA_MAX_SIZE = 1024 * 1024 * 50
 
+// eslint-disable-next-line max-statements
 export const checkZipSize = async (
   file: string,
   maxSize: number = LAMBDA_MAX_SIZE,
@@ -33,8 +34,7 @@ export const checkZipSize = async (
     )}, which is larger than the maximum supported size of ${prettyBytes(
       maxSize,
     )}.
-      There are a few reasons this could happen. You may have accidentally bundled a large dependency, or you might have a
-      large number of pre-rendered pages included.
+      There are a few reasons this could happen, such as accidentally bundling a large dependency or adding lots of files to "included_files".
     `),
   )
   const zip = new StreamZip({ file })
@@ -44,8 +44,8 @@ export const checkZipSize = async (
   )
 
   const largest = {}
-  // eslint-disable-next-line no-magic-numbers
-  for (let idx = 0; idx < 10 && idx < sortedFiles.length; idx++) {
+  const MAX_ROWS = 10
+  for (let idx = 0; idx < MAX_ROWS && idx < sortedFiles.length; idx++) {
     largest[`${idx + 1}`] = {
       File: sortedFiles[idx].name,
       'Compressed Size': prettyBytes(sortedFiles[idx].compressedSize),
