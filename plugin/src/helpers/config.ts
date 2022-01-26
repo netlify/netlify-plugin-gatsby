@@ -111,6 +111,7 @@ export function mutateConfig({
       path.posix.join(cacheDir, 'data', '**'),
       path.posix.join(cacheDir, 'query-engine', '**'),
       path.posix.join(cacheDir, 'page-ssr', '**'),
+      '!**/*.js.map',
     ],
     external_node_modules: ['msgpackr-extract'],
     node_bundler: 'esbuild',
