@@ -107,6 +107,7 @@ export function mutateConfig({
   netlifyConfig.functions.__dsg = {
     included_files: [
       'public/404.html',
+      'public/500.html',
       path.posix.join(cacheDir, 'data', '**'),
       path.posix.join(cacheDir, 'query-engine', '**'),
       path.posix.join(cacheDir, 'page-ssr', '**'),

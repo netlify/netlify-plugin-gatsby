@@ -10,7 +10,6 @@ import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
 
 // These are "require()"d rather than imported so the symbol names are not munged,
 // as we need them to match the hard-coded values
-const { readFileSync } = require('fs')
 const { join } = require('path')
 
 const etag = require('etag')
@@ -19,6 +18,7 @@ const {
   getPagePathFromPageDataPath,
   getGraphQLEngine,
   prepareFilesystem,
+  getErrorResponse,
 } = require('./utils')
 
 type SSRReq = Pick<GatsbyFunctionRequest, 'query' | 'method' | 'url'> & {
@@ -39,6 +39,8 @@ export type RenderMode = 'SSR' | 'DSG'
  * the actual handler code, with the correct paths and render mode injected.
  */
 const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
+  process.chdir(appDir)
+
   const DATA_SUFFIX = '/page-data.json'
   const DATA_PREFIX = '/page-data/'
   const cacheDir = join(appDir, '.cache')
@@ -68,17 +70,7 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
       graphqlEngine.findPageByPath(pathName)
 
     if (page?.mode !== renderMode) {
-      const body = readFileSync(join(appDir, 'public', '404.html'), 'utf8')
-
-      return {
-        statusCode: 404,
-        body,
-        headers: {
-          Tag: etag(body),
-          'Content-Type': 'text/html; charset=utf-8',
-          'X-Mode': renderMode,
-        },
-      }
+      return getErrorResponse({ statusCode: 404, renderMode })
     }
     const req: SSRReq =
       renderMode === 'SSR'
@@ -95,37 +87,42 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
             headers: {},
           }
 
-    const data = await getData({
-      pathName,
-      graphqlEngine,
-      req,
-    })
+    console.log(`[${req.method}] ${event.path} (${renderMode})`)
 
-    if (isPageData) {
-      const body = JSON.stringify(await renderPageData({ data }))
+    try {
+      const data = await getData({
+        pathName,
+        graphqlEngine,
+        req,
+      })
+      if (isPageData) {
+        const body = JSON.stringify(await renderPageData({ data }))
+        return {
+          statusCode: 200,
+          body,
+          headers: {
+            ETag: etag(body),
+            'Content-Type': 'application/json',
+            'X-Render-Mode': renderMode,
+            ...data.serverDataHeaders,
+          },
+        }
+      }
+
+      const body = await renderHTML({ data })
+
       return {
         statusCode: 200,
         body,
         headers: {
           ETag: etag(body),
-          'Content-Type': 'application/json',
-          'X-Mode': renderMode,
+          'Content-Type': 'text/html; charset=utf-8',
+          'X-Render-Mode': renderMode,
           ...data.serverDataHeaders,
         },
       }
-    }
-
-    const body = await renderHTML({ data })
-
-    return {
-      statusCode: 200,
-      body,
-      headers: {
-        ETag: etag(body),
-        'Content-Type': 'text/html; charset=utf-8',
-        'X-Mode': renderMode,
-        ...data.serverDataHeaders,
-      },
+    } catch (error) {
+      return getErrorResponse({ error, renderMode })
     }
   }
 }
@@ -133,10 +130,9 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
 export const makeHandler = (appDir: string, renderMode: RenderMode): string =>
   // This is a string, but if you have the right editor plugin it should format as js
   javascript`
-    // @ts-check
     const { readFileSync } = require('fs');
     const { builder } = require('@netlify/functions');
-    const { getPagePathFromPageDataPath, getGraphQLEngine, prepareFilesystem } = require('./utils')
+    const { getPagePathFromPageDataPath, getGraphQLEngine, prepareFilesystem, getErrorResponse } = require('./utils')
     const { join, resolve } = require("path");
     const etag = require('etag');
     const pageRoot = resolve(__dirname, "${appDir}");
