@@ -89,12 +89,11 @@ In order to support Gatsby Functions and DSG and SSR render modes, this plugin
 generates three Netlify Functions called `__api`, `__ssr` and `__dsg`. If you
 are not using any of these modes, then you can disable the creation of these
 functions. If you are using the latest version of `gatsby-plugin-netlify` then
-this will be handled automatically, by the plugin generating the file
-`.cache/.nf-skip-gatsby-functions` if it detects than there are no DSG or SSR
-pages or Gatsby Functions. Otherwise, you can do this manually by setting the
-environment variable `NETLIFY_SKIP_GATSBY_FUNCTIONS` to `true`. Be aware that if
-you do this, any DSG or SSR pages will not work, and nor will any Gatsby
-Functions.
+this will be handled automatically, disabling functions if the site has no
+Gatsby Functions, or DSG/SSR pages. Otherwise, you can do this manually by
+setting the environment variable `NETLIFY_SKIP_GATSBY_FUNCTIONS` to `true`. Be
+aware that if you do this, any DSG or SSR pages will not work, and nor will any
+Gatsby Functions.
 
 ### Caveats
 
