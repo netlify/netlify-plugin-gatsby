@@ -2,7 +2,8 @@ import { EOL } from 'os'
 import path from 'path'
 import process from 'process'
 
-import fs from 'fs-extra'
+import { stripIndent } from 'common-tags'
+import fs, { existsSync } from 'fs-extra'
 import type { GatsbyConfig, PluginRef } from 'gatsby'
 
 export async function spliceConfig({
@@ -39,8 +40,7 @@ export async function spliceConfig({
 
 function loadGatsbyConfig(utils): GatsbyConfig | never {
   const gatsbyConfigFile = path.resolve(process.cwd(), 'gatsby-config.js')
-  // eslint-disable-next-line node/no-sync
-  if (!fs.existsSync(gatsbyConfigFile)) {
+  if (!existsSync(gatsbyConfigFile)) {
     return {}
   }
 
@@ -96,7 +96,7 @@ export function checkGatsbyConfig({ utils, netlifyConfig }): void {
 export function mutateConfig({
   netlifyConfig,
   compiledFunctionsDir,
-  CACHE_DIR,
+  cacheDir,
 }): void {
   /* eslint-disable no-underscore-dangle, no-param-reassign */
   netlifyConfig.functions.__api = {
@@ -108,9 +108,9 @@ export function mutateConfig({
     included_files: [
       'public/404.html',
       'public/500.html',
-      path.posix.join(CACHE_DIR, 'data', '**'),
-      path.posix.join(CACHE_DIR, 'query-engine', '**'),
-      path.posix.join(CACHE_DIR, 'page-ssr', '**'),
+      path.posix.join(cacheDir, 'data', '**'),
+      path.posix.join(cacheDir, 'query-engine', '**'),
+      path.posix.join(cacheDir, 'page-ssr', '**'),
       '!**/*.js.map',
     ],
     external_node_modules: ['msgpackr-extract'],
@@ -119,4 +119,36 @@ export function mutateConfig({
 
   netlifyConfig.functions.__ssr = { ...netlifyConfig.functions.__dsg }
   /* eslint-enable no-underscore-dangle, no-param-reassign */
+}
+
+export function shouldSkipFunctions(cacheDir: string): boolean {
+  if (
+    process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === 'true' ||
+    process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === '1'
+  ) {
+    console.log(
+      'Skipping Gatsby Functions and SSR/DSG support because the environment variable NETLIFY_SKIP_GATSBY_FUNCTIONS is set to true',
+    )
+    return true
+  }
+
+  if (!existsSync(path.join(cacheDir, 'functions'))) {
+    console.log(
+      `Skipping Gatsby Functions and SSR/DSG support because the site's Gatsby version does not support them`,
+    )
+    return true
+  }
+
+  const skipFile = path.join(cacheDir, '.nf-skip-gatsby-functions')
+
+  if (existsSync(skipFile)) {
+    console.log(
+      stripIndent`
+      Skipping Gatsby Functions and SSR/DSG support because gatsby-plugin-netlify reported that this site does not use them. 
+      If this is incorrect, remove the file "${skipFile}" and try again.`,
+    )
+    return true
+  }
+
+  return false
 }

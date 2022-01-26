@@ -135,7 +135,7 @@ export const makeHandler = (appDir: string, renderMode: RenderMode): string =>
     const { getPagePathFromPageDataPath, getGraphQLEngine, prepareFilesystem, getErrorResponse } = require('./utils')
     const { join, resolve } = require("path");
     const etag = require('etag');
-    const pageRoot = resolve(join(__dirname, "${appDir}"));
+    const pageRoot = resolve(__dirname, "${appDir}");
     exports.handler = ${
       renderMode === 'DSG'
         ? `builder((${getHandler.toString()})("${renderMode}", pageRoot))`
