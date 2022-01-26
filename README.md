@@ -2,8 +2,7 @@
 
 # Essential Gatsby Plugin - v2
 
-The Essential Gatsby build plugin enables caching of builds, and adds supports
-for SSR and DSG
+The Essential Gatsby build plugin enables caching of builds, SSR and DSG
 [render modes](https://v4.gatsbyjs.com/docs/conceptual/rendering-options/) and
 Gatsby Functions. It is installed automatically for all new Gatsby sites.
 
@@ -25,20 +24,18 @@ Gatsby sites need two plugins to support all features.
 1. The Netlify build plugin, called "Essential Gatsby" or
    `@netlify/plugin-gatsby`. This is installed automatically for all Gatsby
    sites deployed to Netlify.
-2. The Gatsby plugin `gatsby-plugin-netlify`, which needs to be manually
+2. The Gatsby plugin `gatsby-plugin-netlify`. This needs to be manually
    installed.
 
 ### Installing the Netlify build plugin
 
-New Gatsby sites will have the Essential Gatsby build plugin installed
-automatically. You can confirm this in the build logs. If you need to install it
+New Gatsby sites on Netlify automatically install the Essential Gatsby build plugin. You can confirm this in the build logs. If you need to install it
 manually, you have two options:
 
-1. Search for "Essential Gatsby" and install the plugin
-   [from the Netlify UI](https://docs.netlify.com/configure-builds/build-plugins/#ui-installation)
+- [The Netlify UI](https://docs.netlify.com/configure-builds/build-plugins/#ui-installation). Here, you can search for "Essential Gatsby" and install the plugin.
 
-2. Install the plugin as `@netlify/plugin-gatsby` using
-   [file-based plugin installation](https://docs.netlify.com/configure-builds/build-plugins/#file-based-installation).
+- [File-based plugin installation](https://docs.netlify.com/configure-builds/build-plugins/#file-based-installation). You can install the plugin as `@netlify/plugin-gatsby` in your `netlify.toml` file.
+   
 
 ### Install the Gatsby Plugin
 
