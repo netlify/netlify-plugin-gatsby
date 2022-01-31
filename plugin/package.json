@@ -3,8 +3,7 @@
   "version": "2.0.0",
   "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
   "source": "src/index.ts",
-  "main": "lib/main.js",
-  "module": "lib/module.js",
+  "main": "lib/index.js",
   "files": [
     "src/templates/**",
     "lib/**/*",
