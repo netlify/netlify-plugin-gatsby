@@ -18,7 +18,7 @@ jobs:
           token: ${{ steps.get-token.outputs.token }}
           release-type: node
           package-name: '@netlify/plugin-gatsby'
-          path: 'plugin'
+          path: ./plugin
       - uses: actions/checkout@v2
         if: ${{ steps.release.outputs.release_created }}
       - uses: actions/setup-node@v2
