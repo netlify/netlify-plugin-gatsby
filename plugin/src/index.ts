@@ -3,7 +3,7 @@ import process from 'process'
 
 import { NetlifyPluginOptions } from '@netlify/build'
 import { stripIndent } from 'common-tags'
-import { existsSync, readFile, writeFile } from 'fs-extra'
+import { existsSync } from 'fs-extra'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {
@@ -12,26 +12,9 @@ import {
   shouldSkipFunctions,
   spliceConfig,
 } from './helpers/config'
+import { patchFile, relocateBinaries } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
-
-/**
- * This horrible thing is required because Gatsby tries to use a cache file in location that is readonly when deployed to a lambda
- */
-async function patchFile(baseDir): Promise<void> {
-  /* eslint-disable no-template-curly-in-string */
-  const lmdbCacheString = 'process.cwd(), `.cache/${cacheDbFile}`'
-  const replacement =
-    "require('os').tmpdir(), 'gatsby', `.cache/${cacheDbFile}`"
-  /* eslint-enable no-template-curly-in-string */
-
-  const bundleFile = join(baseDir, '.cache', 'query-engine', 'index.js')
-  if (!existsSync(bundleFile)) {
-    return
-  }
-  const bundle = await readFile(bundleFile, 'utf8')
-  await writeFile(bundleFile, bundle.replace(lmdbCacheString, replacement))
-}
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
 
@@ -86,6 +69,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   const root = dirname(netlifyConfig.build.publish)
   await patchFile(root)
+  await relocateBinaries(root)
 
   // Editing _redirects so it works with ntl dev
   spliceConfig({
