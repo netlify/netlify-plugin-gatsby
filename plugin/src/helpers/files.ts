@@ -52,7 +52,7 @@ export const patchFile = async (baseDir): Promise<void> => {
 /**
  * Given an array of base paths and candidate modules, return the first one that exists
  */
-export const findModuleFromBase = ({ paths, candidates }) => {
+export const findModuleFromBase = ({ paths, candidates }): string | null => {
   for (const candidate of candidates) {
     try {
       const modulePath = require.resolve(candidate, { paths })
@@ -73,8 +73,9 @@ export const findModuleFromBase = ({ paths, candidates }) => {
  */
 
 // eslint-disable-next-line complexity, max-statements
-export const relocateBinaries = async (baseDir: string) => {
+export const relocateBinaries = async (baseDir: string): Promise<void> => {
   if (process.env.NETLIFY_LOCAL) {
+    // We currently only handle CI builds
     return
   }
   const currentAbi = process.versions.modules
@@ -85,7 +86,8 @@ export const relocateBinaries = async (baseDir: string) => {
     currentArch === DEFAULT_LAMBDA_ARCH &&
     currentPlatform === DEFAULT_LAMBDA_PLATFORM
   ) {
-    return true
+    // No need to relocate
+    return
   }
 
   const gatsbyPath = findModuleFromBase({
@@ -95,7 +97,7 @@ export const relocateBinaries = async (baseDir: string) => {
 
   if (!gatsbyPath) {
     console.error(`Could not find gatsby module in ${baseDir}`)
-    return false
+    return
   }
 
   const lmdbPath = findModuleFromBase({
