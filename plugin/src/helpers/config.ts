@@ -1,10 +1,14 @@
+/* eslint-disable max-lines */
 import { EOL } from 'os'
 import path from 'path'
 import process from 'process'
 
 import { stripIndent } from 'common-tags'
-import fs, { existsSync } from 'fs-extra'
+import fs, { existsSync, move, writeFile } from 'fs-extra'
 import type { GatsbyConfig, PluginRef } from 'gatsby'
+import { relative } from 'pathe'
+
+import { getGatsbyConfigWrapper } from '../templates/gatsby-config'
 
 export async function spliceConfig({
   startMarker,
@@ -62,14 +66,47 @@ function hasPlugin(plugins: PluginRef[], pluginName: string): boolean {
   )
 }
 
-export function checkGatsbyConfig({ utils, netlifyConfig }): void {
+function hasAutoInstall(
+  // eslint-disable-next-line camelcase
+  plugins: Array<PluginRef & { __nf_auto?: true }>,
+): boolean {
+  // eslint-disable-next-line no-underscore-dangle
+  return plugins?.some((plugin) => plugin.__nf_auto)
+}
+
+/**
+ * Wrap the Gatsby config to inject the Netlify plugin
+ */
+export async function wrapGatsbyConfig() {
+  const configFile = path.resolve(process.cwd(), 'gatsby-config.js')
+  if (!existsSync(configFile)) {
+    console.error('Could not find Gatsby config')
+    return
+  }
+  await move(configFile, path.resolve(process.cwd(), 'gatsby-config-orig.js'))
+
+  const pluginRoot = require.resolve('gatsby-plugin-netlify')
+
+  const pluginPath = relative(process.cwd(), pluginRoot)
+  console.log({ pluginPath, pluginRoot })
+  await writeFile(configFile, getGatsbyConfigWrapper(pluginPath))
+}
+
+export async function checkGatsbyConfig({
+  utils,
+  netlifyConfig,
+}): Promise<void> {
   // warn if gatsby-plugin-netlify is missing
   const gatsbyConfig = loadGatsbyConfig(utils)
 
-  if (!hasPlugin(gatsbyConfig.plugins, 'gatsby-plugin-netlify')) {
+  if (
+    !hasPlugin(gatsbyConfig.plugins, 'gatsby-plugin-netlify') &&
+    !hasAutoInstall(gatsbyConfig.plugins)
+  ) {
     console.error(
       'Please install `gatsby-plugin-netlify` and enable it in your gatsby-config.js. https://www.gatsbyjs.com/plugins/gatsby-plugin-netlify/',
     )
+    await wrapGatsbyConfig()
   }
 
   if (hasPlugin(gatsbyConfig.plugins, 'gatsby-plugin-netlify-cache')) {
@@ -152,3 +189,4 @@ export function shouldSkipFunctions(cacheDir: string): boolean {
 
   return false
 }
+/* eslint-enable max-lines */

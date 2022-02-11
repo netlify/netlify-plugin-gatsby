@@ -31,7 +31,7 @@ export async function onPreBuild({
   }
   await restoreCache({ utils, publish: PUBLISH_DIR })
 
-  checkGatsbyConfig({ utils, netlifyConfig })
+  await checkGatsbyConfig({ utils, netlifyConfig })
 }
 
 export async function onBuild({
