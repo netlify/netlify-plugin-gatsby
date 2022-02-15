@@ -1,4 +1,9 @@
-import type { Handler, HandlerEvent } from '@netlify/functions'
+import type {
+  Handler,
+  HandlerContext,
+  HandlerEvent,
+  HandlerResponse,
+} from '@netlify/functions'
 import { stripIndent as javascript } from 'common-tags'
 import type { GatsbyFunctionRequest } from 'gatsby'
 import type {
@@ -14,6 +19,8 @@ const { join } = require('path')
 
 const etag = require('etag')
 
+const { gatsbyFunction } = require('./api/gatsbyFunction')
+const { createRequestObject, createResponseObject } = require('./api/utils')
 const {
   getPagePathFromPageDataPath,
   getGraphQLEngine,
@@ -127,6 +134,32 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
   }
 }
 
+/**
+ * Generate an API handler
+ */
+
+const getApiHandler = (appDir: string): Handler =>
+  function handler(
+    event: HandlerEvent,
+    context: HandlerContext,
+  ): Promise<HandlerResponse> {
+    // Create a fake Gatsby/Express Request object
+    const req = createRequestObject({ event, context })
+
+    return new Promise((resolve) => {
+      // Create a stubbed Gatsby/Express Response object
+      // onResEnd is the "resolve" cb for this Promise
+      const res = createResponseObject({ onResEnd: resolve })
+      try {
+        // Try to call the actual function
+        gatsbyFunction(req, res, event, appDir)
+      } catch (error) {
+        console.error(`Error executing ${event.path}`, error)
+        resolve({ statusCode: 500 })
+      }
+    })
+  }
+
 export const makeHandler = (appDir: string, renderMode: RenderMode): string =>
   // This is a string, but if you have the right editor plugin it should format as js
   javascript`
@@ -141,6 +174,15 @@ export const makeHandler = (appDir: string, renderMode: RenderMode): string =>
         ? `builder((${getHandler.toString()})("${renderMode}", pageRoot))`
         : `((${getHandler.toString()})("${renderMode}", pageRoot))`
     }
-
 `
-getHandler.toString()
+
+export const makeApiHandler = (appDir: string): string =>
+  // This is a string, but if you have the right editor plugin it should format as js
+  javascript`
+    const { gatsbyFunction } = require('./gatsbyFunction')
+    const { createRequestObject, createResponseObject } = require('./utils')
+    const { resolve } = require("path");
+
+    const pageRoot = resolve(__dirname, "${appDir}");
+    exports.handler = ((${getApiHandler.toString()})(pageRoot))
+`
