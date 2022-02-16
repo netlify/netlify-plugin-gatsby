@@ -147,10 +147,10 @@ const getApiHandler = (appDir: string): Handler =>
     const req = createRequestObject({ event, context })
 
     return new Promise((resolve) => {
-      // Create a stubbed Gatsby/Express Response object
-      // onResEnd is the "resolve" cb for this Promise
-      const res = createResponseObject({ onResEnd: resolve })
       try {
+        // Create a stubbed Gatsby/Express Response object
+        // onResEnd is the "resolve" cb for this Promise
+        const res = createResponseObject({ onResEnd: resolve })
         // Try to call the actual function
         gatsbyFunction(req, res, event, appDir)
       } catch (error) {
