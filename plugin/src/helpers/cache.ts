@@ -2,6 +2,8 @@ import path from 'path'
 
 import { existsSync, readdirSync } from 'fs-extra'
 
+import { getGatsbyRoot } from './config'
+
 function getCacheDirs(publish) {
   return [publish, normalizedCacheDir(publish)]
 }
@@ -37,5 +39,5 @@ export async function restoreCache({ publish, utils }): Promise<void> {
 }
 
 export function normalizedCacheDir(publish: string): string {
-  return path.normalize(`${publish}/../.cache`)
+  return path.join(getGatsbyRoot(publish), `.cache`)
 }
