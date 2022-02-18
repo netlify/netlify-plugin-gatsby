@@ -198,6 +198,7 @@ export const createResponseObject = ({ onResEnd }) => {
     res.writableEnded = true
     // Call onResEnd handler with the response object
     onResEnd(response)
+    return res
   }
 
   // Gatsby Functions additions
