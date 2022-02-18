@@ -23,7 +23,10 @@ export async function gatsbyFunction(
   req: AugmentedGatsbyFunctionRequest,
   res: AugmentedGatsbyFunctionResponse,
   event: HandlerEvent,
+  appDir: string,
 ) {
+  const functionsDir = path.join(appDir, '.cache', 'functions')
+
   // Multipart form data middleware. because co-body can't handle it
   await new Promise((resolve) => {
     // As we're using a fake Express handler we need to ignore the type to keep multer happy
@@ -47,7 +50,7 @@ export async function gatsbyFunction(
 
   let functions
   try {
-    functions = require('../../../.cache/functions/manifest.json')
+    functions = require(path.join(functionsDir, 'manifest.json'))
   } catch {
     return {
       statusCode: 404,
@@ -91,16 +94,7 @@ export async function gatsbyFunction(
     // During develop, the absolute path is correct, otherwise we need to use a relative path, as we're in a lambda
     const pathToFunction = process.env.NETLIFY_DEV
       ? functionObj.absoluteCompiledFilePath
-      : path.join(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          // ...We got there in the end
-          '.cache',
-          'functions',
-          functionObj.relativeCompiledFilePath,
-        )
+      : path.join(functionsDir, functionObj.relativeCompiledFilePath)
 
     if (process.env.NETLIFY_DEV && !existsSync(pathToFunction)) {
       // Functions are sometimes lazily-compiled, so we check and proxy the request if needed
