@@ -24,7 +24,7 @@ export async function onPreBuild({
   netlifyConfig,
 }): Promise<void> {
   // Print a helpful message if the publish dir is misconfigured
-  if (!PUBLISH_DIR || process.cwd() === PUBLISH_DIR) {
+  if (!PUBLISH_DIR || process.cwd() === path.resolve(PUBLISH_DIR)) {
     utils.build.failBuild(
       `Gatsby sites must publish the "public" directory, but your site’s publish directory is set to “${PUBLISH_DIR}”. Please set your publish directory to your Gatsby site’s "public" directory.`,
     )
