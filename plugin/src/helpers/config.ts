@@ -38,8 +38,11 @@ export async function spliceConfig({
   return fs.writeFile(fileName, out)
 }
 
-function loadGatsbyConfig(utils): GatsbyConfig | never {
-  const gatsbyConfigFile = path.resolve(process.cwd(), 'gatsby-config.js')
+function loadGatsbyConfig({ utils, publish }): GatsbyConfig | never {
+  const gatsbyConfigFile = path.resolve(
+    getGatsbyRoot(publish),
+    'gatsby-config.js',
+  )
   if (!existsSync(gatsbyConfigFile)) {
     return {}
   }
@@ -64,7 +67,10 @@ function hasPlugin(plugins: PluginRef[], pluginName: string): boolean {
 
 export function checkGatsbyConfig({ utils, netlifyConfig }): void {
   // warn if gatsby-plugin-netlify is missing
-  const gatsbyConfig = loadGatsbyConfig(utils)
+  const gatsbyConfig = loadGatsbyConfig({
+    utils,
+    publish: netlifyConfig.build.publish,
+  })
 
   if (!hasPlugin(gatsbyConfig.plugins, 'gatsby-plugin-netlify')) {
     console.error(
@@ -151,4 +157,8 @@ export function shouldSkipFunctions(cacheDir: string): boolean {
   }
 
   return false
+}
+
+export function getGatsbyRoot(publish: string): string {
+  return path.resolve(path.dirname(publish))
 }
