@@ -17,4 +17,4 @@ node_modules
 public
 .DS_Store
 .parcel-cache
-node_modules
+package-lock.json
