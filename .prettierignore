@@ -1,4 +1,5 @@
 plugin/lib
+plugin/CHANGELOG.md
 .netlify
 *~
 *.swp
