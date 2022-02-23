@@ -59,8 +59,8 @@ export const findModuleFromBase = ({ paths, candidates }): string | null => {
       if (modulePath) {
         return dirname(modulePath)
       }
-    } catch (error) {
-      console.error(error)
+    } catch {
+      // Ignore error
     }
   }
   return null
