@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.0.4](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.0.3...plugin-gatsby-v2.0.4) (2022-02-23)
+
+
+### Bug Fixes
+
+* remove confusing error log ([#292](https://github.com/netlify/netlify-plugin-gatsby/issues/292)) ([ed5ab59](https://github.com/netlify/netlify-plugin-gatsby/commit/ed5ab59cc44ac6d5ac3a20524f96b0d61bcc35ac))
+
 ### [2.0.3](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.0.2...plugin-gatsby-v2.0.3) (2022-02-21)
 
 ### Bug Fixes
