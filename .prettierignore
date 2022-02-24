@@ -1,5 +1,6 @@
 plugin/lib
 plugin/CHANGELOG.md
+plugin/README.md
 .netlify
 *~
 *.swp
