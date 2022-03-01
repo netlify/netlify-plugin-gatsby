@@ -54,6 +54,10 @@ export const writeFunctions = async ({
   })
 
   await writeApiFunction({ appDir, functionDir })
+  await copyFile(
+    join(__dirname, '..', '..', 'src', 'templates', 'ipx.ts'),
+    join(INTERNAL_FUNCTIONS_SRC, '_ipx.ts'),
+  )
 }
 
 export const deleteFunctions = async ({
