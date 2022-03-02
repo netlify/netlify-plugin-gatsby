@@ -69,7 +69,7 @@ export const setupImageCdn = async ({
 }) => {
   const { GATSBY_CLOUD_IMAGE_CDN } = netlifyConfig.build.environment
 
-  if (GATSBY_CLOUD_IMAGE_CDN === '0' || GATSBY_CLOUD_IMAGE_CDN === 'false') {
+  if (GATSBY_CLOUD_IMAGE_CDN !== '1' && GATSBY_CLOUD_IMAGE_CDN !== 'true') {
     return
   }
 

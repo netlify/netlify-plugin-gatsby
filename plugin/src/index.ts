@@ -33,8 +33,6 @@ export async function onPreBuild({
   await restoreCache({ utils, publish: PUBLISH_DIR })
 
   checkGatsbyConfig({ utils, netlifyConfig })
-  // eslint-disable-next-line no-param-reassign
-  netlifyConfig.build.environment.GATSBY_CLOUD_IMAGE_CDN ||= '1'
 }
 
 export async function onBuild({
