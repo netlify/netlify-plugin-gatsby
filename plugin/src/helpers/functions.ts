@@ -78,11 +78,18 @@ export const setupImageCdn = async ({
     join(constants.INTERNAL_FUNCTIONS_SRC, '_ipx.ts'),
   )
 
-  netlifyConfig.redirects.push({
-    from: '/_gatsby/image/*',
-    to: '/.netlify/builders/_ipx',
-    status: 200,
-  })
+  netlifyConfig.redirects.push(
+    {
+      from: '/_gatsby/image/*',
+      to: '/.netlify/builders/_ipx',
+      status: 200,
+    },
+    {
+      from: '/_gatsby/file/*',
+      to: '/.netlify/functions/_ipx',
+      status: 200,
+    },
+  )
 }
 
 export const deleteFunctions = async ({
