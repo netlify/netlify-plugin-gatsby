@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.1.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.1.0...plugin-gatsby-v2.1.1) (2022-03-02)
+
+
+### Bug Fixes
+
+* update image CDN docs and defaults ([#307](https://github.com/netlify/netlify-plugin-gatsby/issues/307)) ([0a7b223](https://github.com/netlify/netlify-plugin-gatsby/commit/0a7b223c4cf49b18261213b147d64c27ab60f9cd))
+
 ## [2.1.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.0.4...plugin-gatsby-v2.1.0) (2022-03-02)
 
 
