@@ -8,13 +8,3 @@ package = "../plugin/src/index.ts"
 
 [[plugins]]
 package = "@netlify/plugin-local-install-core"
-
-[[redirects]]
-from = "/dog"
-to = "/.netlify/functions/__ssr"
-status = 200
-
-[[redirects]]
-from = "/page-data/dog/page-data.json"
-to = "/.netlify/functions/__ssr"
-status = 200

@@ -13,11 +13,11 @@
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "test": "jest"
+    "test": "npm run build && jest"
   },
   "license": "0BSD",
   "dependencies": {
-    "gatsby": "latest",
+    "gatsby": "next",
     "gatsby-plugin-netlify-cache": "^1.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"

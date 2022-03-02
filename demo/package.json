@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@netlify/functions": "latest",
+    "@netlify/ipx": "latest",
     "co-body": "^6.1.0",
     "cookie": "^0.4.1",
     "download": "^8.0.0",
