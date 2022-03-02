@@ -19,10 +19,11 @@ import { checkZipSize } from './helpers/verification'
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
 
 export async function onPreBuild({
-  constants: { PUBLISH_DIR },
+  constants,
   utils,
   netlifyConfig,
 }): Promise<void> {
+  const { PUBLISH_DIR } = constants
   // Print a helpful message if the publish dir is misconfigured
   if (!PUBLISH_DIR || process.cwd() === path.resolve(PUBLISH_DIR)) {
     utils.build.failBuild(
@@ -33,7 +34,7 @@ export async function onPreBuild({
 
   checkGatsbyConfig({ utils, netlifyConfig })
   // eslint-disable-next-line no-param-reassign
-  netlifyConfig.build.environment.GATSBY_CLOUD_IMAGE_CDN = '1'
+  netlifyConfig.build.environment.GATSBY_CLOUD_IMAGE_CDN ||= '1'
 }
 
 export async function onBuild({
@@ -65,7 +66,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   }
   const compiledFunctionsDir = path.join(cacheDir, '/functions')
 
-  await writeFunctions(constants)
+  await writeFunctions({ constants, netlifyConfig })
 
   mutateConfig({ netlifyConfig, cacheDir, compiledFunctionsDir })
 
@@ -81,18 +82,11 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     fileName: join(netlifyConfig.build.publish, '_redirects'),
   })
 
-  netlifyConfig.redirects.push(
-    {
-      from: '/_gatsby/image/*',
-      to: '/.netlify/builders/_ipx',
-      status: 200,
-    },
-    {
-      from: '/*',
-      to: '/.netlify/builders/__dsg',
-      status: 200,
-    },
-  )
+  netlifyConfig.redirects.push({
+    from: '/*',
+    to: '/.netlify/builders/__dsg',
+    status: 200,
+  })
 }
 
 export async function onPostBuild({
