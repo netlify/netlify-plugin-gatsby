@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.0.4...plugin-gatsby-v2.1.0) (2022-03-02)
+
+
+### Features
+
+* add support for `/_gatsby/file/*` redirects ([#305](https://github.com/netlify/netlify-plugin-gatsby/issues/305)) ([d071712](https://github.com/netlify/netlify-plugin-gatsby/commit/d07171265f41a527405a280e618934a3c243803e))
+* image cdn support ([#303](https://github.com/netlify/netlify-plugin-gatsby/issues/303)) ([77b5aa4](https://github.com/netlify/netlify-plugin-gatsby/commit/77b5aa4a3b0e8d0ecbd6bf2935d4348324066ce0))
+
+
+### Bug Fixes
+
+* **deps:** update dependency fs-extra to v10.0.1 ([#299](https://github.com/netlify/netlify-plugin-gatsby/issues/299)) ([2e0c8fb](https://github.com/netlify/netlify-plugin-gatsby/commit/2e0c8fb116a6c9af19cbcb96d92f4cfb6963bf84))
+
 ### [2.0.4](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.0.3...plugin-gatsby-v2.0.4) (2022-02-23)
 
 
