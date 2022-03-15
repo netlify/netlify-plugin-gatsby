@@ -16,23 +16,27 @@ const RELOCATABLE_BINARIES = [
 ]
 
 /**
- * Sadly we need to manually patch the bundle because the default build doesn't work on Lambda.
+ * Manually patching the bundle to work around various incompatibilities in some versions.
  */
 export const patchFile = async (baseDir): Promise<void> => {
   /* eslint-disable no-template-curly-in-string */
   const replacements = [
-    // Gatsby puts its cache db in a location that is readonly in functions
+    // Older versions of Gatsby put its cache db in a location that is readonly in functions
     [
       'process.cwd(), `.cache/${cacheDbFile}`',
       "require('os').tmpdir(), 'gatsby', `.cache/${cacheDbFile}`",
     ],
-    // If we're compiling on newer versions of Node, we need to use the binary that supports the older ABI version
+    // If we're compiling on newer versions of Node, we need to use the binary that supports the older ABI version because lambda
     [
-      'Object.assign(exports, require(__webpack_require__.ab + "prebuilds/linux-x64/node.abi93.node"))',
-      'Object.assign(exports, require(__webpack_require__.ab + "prebuilds/linux-x64/node.abi83.node"))',
+      'require(__webpack_require__.ab + "prebuilds/linux-x64/node.abi93.node")',
+      'require(__webpack_require__.ab + "prebuilds/linux-x64/node.abi83.node")',
+    ],
+    // Newer versions of lmdb do this
+    [
+      'require(__webpack_require__.ab + "prebuilds/linux-x64/node.abi93.glibc.node")',
+      'require(__webpack_require__.ab + "prebuilds/linux-x64/node.abi83.glibc.node")',
     ],
   ]
-
   /* eslint-enable no-template-curly-in-string */
 
   const bundleFile = join(baseDir, '.cache', 'query-engine', 'index.js')
