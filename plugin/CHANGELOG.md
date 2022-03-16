@@ -1,5 +1,13 @@
 # Changelog
 
+### [2.1.3](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.1.1...plugin-gatsby-v2.1.3) (2022-03-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @netlify/ipx to ^1.0.1 ([#318](https://github.com/netlify/netlify-plugin-gatsby/issues/318)) ([f9e7a88](https://github.com/netlify/netlify-plugin-gatsby/commit/f9e7a8858ca91cbcd4572f5a9a403e1b602b4ba2))
+* patch new lmdb binary location ([#322](https://github.com/netlify/netlify-plugin-gatsby/issues/322)) ([0abc3f9](https://github.com/netlify/netlify-plugin-gatsby/commit/0abc3f9492e56aa7070fb7c657046fcf873ac368))
+
 ### [2.1.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.1.0...plugin-gatsby-v2.1.1) (2022-03-02)
 
 
