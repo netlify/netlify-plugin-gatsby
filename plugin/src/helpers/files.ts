@@ -104,14 +104,23 @@ export const relocateBinaries = async (baseDir: string): Promise<void> => {
     return
   }
 
-  const lmdbPath = findModuleFromBase({
+  let lmdbPath = findModuleFromBase({
     paths: [gatsbyPath, baseDir],
-    candidates: ['lmdb-store', 'lmdb'],
+    candidates: ['lmdb-store'],
   })
 
   if (!lmdbPath) {
-    console.log(`Could not find lmdb module in ${gatsbyPath}`)
-    return
+    const modulePath = findModuleFromBase({
+      paths: [gatsbyPath, baseDir],
+      candidates: ['lmdb'],
+    })
+    if (modulePath) {
+      // The lmdb package resolves to a subdirectory of the module, and we need the root
+      lmdbPath = dirname(modulePath)
+    } else {
+      console.log(`Could not find lmdb module in ${gatsbyPath}`)
+      return
+    }
   }
 
   console.log(
@@ -135,6 +144,8 @@ export const relocateBinaries = async (baseDir: string): Promise<void> => {
     if (existsSync(from) && !existsSync(to)) {
       console.log(`Copying ${from} to ${to}`)
       await copyFile(from, to)
+    } else {
+      console.log(`Skipping ${from}`)
     }
   }
 }
