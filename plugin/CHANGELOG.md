@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.1.4](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.1.3...plugin-gatsby-v2.1.4) (2022-03-21)
+
+
+### Bug Fixes
+
+* resolve lmdb binaries correctly ([#327](https://github.com/netlify/netlify-plugin-gatsby/issues/327)) ([c6c162b](https://github.com/netlify/netlify-plugin-gatsby/commit/c6c162bc11b76cbe5ea63ff78f45f0f8dff626a5))
+
 ### [2.1.3](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.1.1...plugin-gatsby-v2.1.3) (2022-03-16)
 
 
