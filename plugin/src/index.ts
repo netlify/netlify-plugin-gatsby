@@ -79,12 +79,6 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     contents: '/api/* /.netlify/functions/__api 200',
     fileName: join(netlifyConfig.build.publish, '_redirects'),
   })
-
-  netlifyConfig.redirects.push({
-    from: '/*',
-    to: '/.netlify/builders/__dsg',
-    status: 200,
-  })
 }
 
 export async function onPostBuild({
