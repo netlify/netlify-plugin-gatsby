@@ -6,6 +6,8 @@ import { stripIndent } from 'common-tags'
 import fs, { existsSync } from 'fs-extra'
 import type { GatsbyConfig, PluginRef } from 'gatsby'
 
+import { checkPackageVersion } from './files'
+
 export async function spliceConfig({
   startMarker,
   endMarker,
@@ -38,11 +40,9 @@ export async function spliceConfig({
   return fs.writeFile(fileName, out)
 }
 
-function loadGatsbyConfig({ utils, publish }): GatsbyConfig | never {
-  const gatsbyConfigFile = path.resolve(
-    getGatsbyRoot(publish),
-    'gatsby-config.js',
-  )
+function loadGatsbyConfig({ gatsbyRoot, utils }): GatsbyConfig | never {
+  const gatsbyConfigFile = path.resolve(gatsbyRoot, 'gatsby-config.js')
+
   if (!existsSync(gatsbyConfigFile)) {
     return {}
   }
@@ -65,14 +65,25 @@ function hasPlugin(plugins: PluginRef[], pluginName: string): boolean {
   )
 }
 
-export function checkGatsbyConfig({ utils, netlifyConfig }): void {
+export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
+  const gatsbyRoot = getGatsbyRoot(netlifyConfig.build.publish)
+
   // warn if gatsby-plugin-netlify is missing
   const gatsbyConfig = loadGatsbyConfig({
     utils,
-    publish: netlifyConfig.build.publish,
+    gatsbyRoot,
   })
 
-  if (!hasPlugin(gatsbyConfig.plugins, 'gatsby-plugin-netlify')) {
+  if (hasPlugin(gatsbyConfig.plugins, 'gatsby-plugin-netlify')) {
+    if (
+      // prettier-ignore
+      !(await checkPackageVersion(gatsbyRoot, 'gatsby-plugin-netlify', '>=4.2.0',))
+    ) {
+      console.error(
+        'The plugin `gatsby-plugin-netlify` does not support DSG, please update to >=4.2.0',
+      )
+    }
+  } else {
     console.error(
       'Please install `gatsby-plugin-netlify` and enable it in your gatsby-config.js. https://www.gatsbyjs.com/plugins/gatsby-plugin-netlify/',
     )

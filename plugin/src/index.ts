@@ -7,7 +7,7 @@ import { existsSync } from 'fs-extra'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {
-  checkGatsbyConfig,
+  checkConfig,
   mutateConfig,
   shouldSkipFunctions,
   spliceConfig,
@@ -32,7 +32,7 @@ export async function onPreBuild({
   }
   await restoreCache({ utils, publish: PUBLISH_DIR })
 
-  checkGatsbyConfig({ utils, netlifyConfig })
+  await checkConfig({ utils, netlifyConfig })
 }
 
 export async function onBuild({

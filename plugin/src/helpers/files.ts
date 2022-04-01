@@ -1,8 +1,16 @@
 import os from 'os'
 import process from 'process'
 
-import { copyFile, ensureDir, existsSync, readFile, writeFile } from 'fs-extra'
+import {
+  copyFile,
+  ensureDir,
+  existsSync,
+  readFile,
+  writeFile,
+  readJson,
+} from 'fs-extra'
 import { dirname, join, resolve } from 'pathe'
+import semver from 'semver'
 
 const DEFAULT_LAMBDA_PLATFORM = 'linux'
 const DEFAULT_LAMBDA_ABI = '83'
@@ -68,6 +76,26 @@ export const findModuleFromBase = ({ paths, candidates }): string | null => {
     }
   }
   return null
+}
+
+export async function checkPackageVersion(
+  root: string,
+  name: string,
+  version: string,
+): Promise<boolean> {
+  const packagePath = findModuleFromBase({
+    paths: [root],
+    candidates: [name],
+  })
+
+  let packageObj: { version: string }
+  try {
+    packageObj = await readJson(`${packagePath}/package.json`)
+  } catch {
+    return false
+  }
+
+  return semver.satisfies(packageObj.version, version)
 }
 
 /**
