@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { EOL } from 'os'
 import path from 'path'
 import process from 'process'
@@ -76,8 +77,11 @@ export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
 
   if (hasPlugin(gatsbyConfig.plugins, 'gatsby-plugin-netlify')) {
     if (
-      // prettier-ignore
-      !(await checkPackageVersion(gatsbyRoot, 'gatsby-plugin-netlify', '>=4.2.0',))
+      !(await checkPackageVersion(
+        gatsbyRoot,
+        'gatsby-plugin-netlify',
+        '>=4.2.0',
+      ))
     ) {
       console.error(
         'The plugin `gatsby-plugin-netlify` does not support DSG, please update to >=4.2.0',
@@ -173,3 +177,4 @@ export function shouldSkipFunctions(cacheDir: string): boolean {
 export function getGatsbyRoot(publish: string): string {
   return path.resolve(path.dirname(publish))
 }
+/* eslint-enable max-lines */
