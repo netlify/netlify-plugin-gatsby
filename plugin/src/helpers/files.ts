@@ -83,19 +83,15 @@ export async function checkPackageVersion(
   name: string,
   version: string,
 ): Promise<boolean> {
-  const packagePath = findModuleFromBase({
-    paths: [root],
-    candidates: [name],
-  })
-
-  let packageObj: { version: string }
   try {
-    packageObj = await readJson(`${packagePath}/package.json`)
+    const packagePath = require.resolve(`${name}/package.json`, {
+      paths: [root],
+    })
+    const packageObj = await readJson(packagePath)
+    return semver.satisfies(packageObj.version, version)
   } catch {
     return false
   }
-
-  return semver.satisfies(packageObj.version, version)
 }
 
 /**
