@@ -7,7 +7,7 @@ import { existsSync } from 'fs-extra'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {
-  checkGatsbyConfig,
+  checkConfig,
   mutateConfig,
   shouldSkipFunctions,
   spliceConfig,
@@ -32,7 +32,7 @@ export async function onPreBuild({
   }
   await restoreCache({ utils, publish: PUBLISH_DIR })
 
-  checkGatsbyConfig({ utils, netlifyConfig })
+  await checkConfig({ utils, netlifyConfig })
 }
 
 export async function onBuild({
@@ -78,12 +78,6 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     endMarker: '# @netlify/plugin-gatsby redirects end',
     contents: '/api/* /.netlify/functions/__api 200',
     fileName: join(netlifyConfig.build.publish, '_redirects'),
-  })
-
-  netlifyConfig.redirects.push({
-    from: '/*',
-    to: '/.netlify/builders/__dsg',
-    status: 200,
   })
 }
 

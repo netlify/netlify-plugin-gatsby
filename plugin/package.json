@@ -54,6 +54,7 @@
     "node-stream-zip": "^1.15.0",
     "pathe": "^0.2.0",
     "pretty-bytes": "^5.6.0",
+    "semver": "^7.3.5",
     "tempy": "^1.0.0"
   },
   "devDependencies": {
@@ -61,6 +62,7 @@
     "@netlify/build": "^26.5.1",
     "@types/fs-extra": "^9.0.12",
     "@types/multer": "^1.4.7",
+    "@types/semver": "^7.3.9",
     "gatsby": "^4.9.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",

@@ -45,7 +45,7 @@ manually, you have two options:
 
 You should also install the Gatsby plugin
 [gatsby-plugin-netlify](https://www.gatsbyjs.org/plugins/gatsby-plugin-netlify/).
-This is required for SSR pages, and adds support for Gatsby redirects and asset
+This is required for SSR and DSG pages, and adds support for Gatsby redirects and asset
 caching rules:
 
 1. Add the package as a dependency:
