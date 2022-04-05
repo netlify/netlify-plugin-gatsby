@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.1.4...plugin-gatsby-v3.0.0) (2022-04-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove catch-all DSG redirect and handle discretely (#334)
+
+### Bug Fixes
+
+* remove catch-all DSG redirect and handle discretely ([#334](https://github.com/netlify/netlify-plugin-gatsby/issues/334)) ([21773dd](https://github.com/netlify/netlify-plugin-gatsby/commit/21773ddd241b8f764104ef3841f55b43581cac03))
+
 ### [2.1.4](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.1.3...plugin-gatsby-v2.1.4) (2022-03-21)
 
 
