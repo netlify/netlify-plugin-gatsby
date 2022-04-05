@@ -30,7 +30,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: |
             **/package-lock.json
-            test/fixtures/**/package-lock.json
+            plugin/test/fixtures/**/package-lock.json
       - run: npm install
       - run: cd plugin && npm install && npm run build
       - run: npm test
