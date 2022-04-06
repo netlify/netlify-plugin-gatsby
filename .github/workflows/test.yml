@@ -30,6 +30,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: |
             **/package-lock.json
+      - run: npm install -g netlify-cli
       - run: npm ci --cache ~/.npm
       - run: cd plugin && npm ci --cache ~/.npm && npm run build
       - run: npm test
