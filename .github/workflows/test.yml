@@ -35,22 +35,20 @@ jobs:
           path: ~/.npm
           key:
             ${{ matrix.os }}-build-${{ env.cache-name }}-${{
-            hashFiles('**/package-lock.json') }}
-            ${{ matrix.os }}-build-${{ env.cache-name }}-
-            ${{ matrix.os }}-build-
-            ${{ matrix.os }}-
+            hashFiles('**/package-lock.json') }} ${{ matrix.os }}-build-${{
+            env.cache-name }}- ${{ matrix.os }}-build- ${{ matrix.os }}-
 
       - name: Test fixture dependency cache
         uses: actions/cache@v3
         with:
           path: plugin/test/fixtures/**/node_modules
           key:
-            ${{ matrix.os }}-build-${{ env.cache-name }}-${{ 
-              hashFiles('plugin/test/fixtures/**/package.json') }}-node-modules
+            ${{ matrix.os }}-build-${{ env.cache-name }}-${{
+            hashFiles('plugin/test/fixtures/**/package.json') }}-node-modules
           restore-keys: |
             ${{ matrix.os }}-build-${{ env.cache-name }}-${{ 
               hashFiles('plugin/test/fixtures/**/package.json') }}
-      
+
       - run: npm install -g netlify-cli
       - run: cd plugin && npm ci && npm run build
       - run: npm test
