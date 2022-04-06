@@ -3,3 +3,4 @@ node_modules/
 public
 .netlify/cache
 .netlify/functions
+package-lock.json
