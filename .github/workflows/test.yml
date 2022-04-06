@@ -50,5 +50,6 @@ jobs:
               hashFiles('plugin/test/fixtures/**/package.json') }}
 
       - run: npm install -g netlify-cli
+      - run: npm run ci
       - run: cd plugin && npm ci && npm run build
       - run: npm test
