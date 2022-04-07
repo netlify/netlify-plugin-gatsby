@@ -34,7 +34,6 @@ jobs:
 
   build-mac:
     runs-on: macOS-latest
-    needs: build-ubuntu
     if: github.ref_name == 'main'
     steps:
       - uses: actions/checkout@v3
