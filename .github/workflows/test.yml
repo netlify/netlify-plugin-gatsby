@@ -5,52 +5,58 @@ on:
     branches: [main]
   pull_request:
 
-env:
-  workflowTriggeredByMainBranch: ${{ github.ref_name == 'main' }}
-
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest] #, windows-latest] # TODO add an e2etest.bat file
-        node-version: ['*']
-        include:
-          - ${{ env.workflowTriggeredByMainBranch }}: true
-            os: macOS-latest
-      fail-fast: false
-
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    node-version: '*'
     steps:
       - uses: actions/checkout@v3
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-          check-latest: '*'
-
+          node-version: '*'
       - name: Global Node packages cache
         uses: actions/cache@v3
         with:
           path: ~/.npm
           key:
-            ${{ matrix.os }}-build-${{ env.cache-name }}-${{
-            hashFiles('**/package-lock.json') }} ${{ matrix.os }}-build-${{
-            env.cache-name }}- ${{ matrix.os }}-build- ${{ matrix.os }}-
-
+            ubuntu--build-${{ env.cache-name }}-${{
+            hashFiles('**/package-lock.json') }}
       - name: Test fixture dependency cache
         uses: actions/cache@v3
         with:
           path: plugin/test/fixtures/**/node_modules
           key:
-            ${{ matrix.os }}-build-${{ env.cache-name }}-${{
+            ubuntu-build-${{ env.cache-name }}-${{
             hashFiles('plugin/test/fixtures/**/package.json') }}-node-modules
-          restore-keys: |
-            ${{ matrix.os }}-build-${{ env.cache-name }}-${{ 
-              hashFiles('plugin/test/fixtures/**/package.json') }}
+            - run: npm install -g netlify-cli
+      - run: npm ci
+      - run: cd plugin && npm ci && npm run build
+      - run: npm test
 
-      - run: npm install -g netlify-cli
+  build-mac:
+    runs-on: macOS-latest
+    needs: build-ubuntu
+    if: github.ref_name == 'main'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '*'
+      - name: Global Node packages cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key:
+            macOS-build-${{ env.cache-name }}-${{
+            hashFiles('**/package-lock.json') }}
+      - name: Test fixture dependency cache
+        uses: actions/cache@v3
+        with:
+          path: plugin/test/fixtures/**/node_modules
+          key:
+            macOS-build-${{ env.cache-name }}-${{
+            hashFiles('plugin/test/fixtures/**/package.json') }}-node-modules
+            - run: npm install -g netlify-cli
       - run: npm ci
       - run: cd plugin && npm ci && npm run build
       - run: npm test
