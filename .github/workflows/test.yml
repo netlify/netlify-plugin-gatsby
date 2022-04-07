@@ -11,17 +11,13 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest] #, windows-latest] # TODO add an e2etest.bat file
+        os: [ubuntu-latest, macOS-latest] #, windows-latest] # TODO add an e2etest.bat file
         node-version: ['*']
-        if: github.ref == 'refs/heads/main'
-        include:
-          - os: macOS-latest
-            node-version: '*'
+        isMainBranch:
+          - ${{ github.ref == 'refs/heads/main' }}
         exclude:
-          - os: macOS-latest
-            node-version: 14.15.0
-          # - os: windows-latest
-          #   node-version: 14.15.0
+          - isMainBranch: true
+            os: macOS-latest
       fail-fast: false
 
     steps:
