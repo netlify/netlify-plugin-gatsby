@@ -6,27 +6,54 @@ on:
   pull_request:
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macOS-latest] #, windows-latest] # TODO add an e2etest.bat file
-        node-version: ['*']
-        exclude:
-          - os: macOS-latest
-            node-version: 14.15.0
-          # - os: windows-latest
-          #   node-version: 14.15.0
-      fail-fast: false
-
+  build-ubuntu:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-          check-latest: '*'
+          node-version: '*'
+      - name: Global Node packages cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key:
+            ubuntu--build-${{ env.cache-name }}-${{
+            hashFiles('**/package-lock.json') }}
+      - name: Test fixture dependency cache
+        uses: actions/cache@v3
+        with:
+          path: plugin/test/fixtures/**/node_modules
+          key:
+            ubuntu-build-${{ env.cache-name }}-${{
+            hashFiles('plugin/test/fixtures/**/package.json') }}-node-modules
+      - run: npm install -g netlify-cli
+      - run: npm ci
+      - run: cd plugin && npm ci && npm run build
+      - run: npm test
+
+  build-mac:
+    runs-on: macOS-latest
+    if: github.ref_name == 'main'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '*'
+      - name: Global Node packages cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key:
+            macOS-build-${{ env.cache-name }}-${{
+            hashFiles('**/package-lock.json') }}
+      - name: Test fixture dependency cache
+        uses: actions/cache@v3
+        with:
+          path: plugin/test/fixtures/**/node_modules
+          key:
+            macOS-build-${{ env.cache-name }}-${{
+            hashFiles('plugin/test/fixtures/**/package.json') }}-node-modules
       - run: npm install -g netlify-cli
       - run: npm ci
       - run: cd plugin && npm ci && npm run build
