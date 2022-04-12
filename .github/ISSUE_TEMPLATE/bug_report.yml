@@ -119,6 +119,26 @@ body:
         </details>
 
   - type: textarea
+    id: gatsby-info
+    attributes:
+      label: Gatsby info
+      description: |
+        Enter the following command in a terminal and copy/paste its output:
+
+        ```bash
+        gatsby info
+        ```
+      value: |
+        <details>
+          <summary>gatsby info</summary>
+          
+        ```
+        # Paste output from `gatsby info` here.
+        ```
+
+        </details>
+
+  - type: textarea
     id: redirects-file
     attributes:
       label: Your _redirects file
@@ -153,8 +173,8 @@ body:
     attributes:
       label: Function logs
       description:
-        If it is a runtime error with DSG, SSR or API pages, please provide a copy of the relevant function log
-        logs.
+        If it is a runtime error with DSG, SSR or API pages, please provide a
+        copy of the relevant function log logs.
       value: |
         <details>
           <summary>Function logs</summary>
