@@ -127,7 +127,7 @@ const links = [
   },
   {
     text: 'Client-only route with named splat route',
-    url: 'splat-named/dog/cat/123',
+    url: 'splat-named/dog/cat/1234',
   },
 ]
 
