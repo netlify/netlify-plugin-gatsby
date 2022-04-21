@@ -43,7 +43,11 @@ const links = [
     url: 'bad-dog',
     description: 'SSR page that throws an error',
   },
-
+  {
+    text: 'Posts',
+    url: 'posts',
+    description: 'SSR Collection Routes',
+  },
   {
     text: 'I Am Capitalized',
     url: 'api/I-Am-Capitalized',
@@ -112,6 +116,18 @@ const links = [
     text: 'Named params',
     url: 'api/users/123/hello world',
     description: 'Captures named path params',
+  },
+  {
+    text: 'Client-only route with dynamic params',
+    url: 'params/dog/cat',
+  },
+  {
+    text: 'Client-only route with splat route',
+    url: 'splat/dog/cat/123',
+  },
+  {
+    text: 'Client-only route with named splat route',
+    url: 'splat-named/dog/cat/123',
   },
 ]
 
