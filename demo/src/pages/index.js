@@ -85,6 +85,11 @@ const links = [
     url: 'api/redirect-me',
     description: 'Redirects back to this page',
   },
+  {
+    text: 'SSR Redirect',
+    url: '/redirect',
+    description: 'Redirects to the blog page using the SSR response',
+  },
   { text: 'Whitespace in URL', url: 'api/some whitespace' },
   { text: 'Accented characters', url: 'api/some-àè-french' },
   { text: 'Non-latin characters', url: 'api/some-אודות' },
