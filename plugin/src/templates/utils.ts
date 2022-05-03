@@ -1,9 +1,9 @@
 import fs, {createWriteStream} from 'fs'
+import https from 'https'
 import os from 'os'
-import { pipeline } from 'stream'
 import { join } from 'path'
 import process from 'process'
-import https from 'https'
+import { pipeline } from 'stream'
 import { promisify} from 'util'
 
 import { HandlerResponse } from '@netlify/functions'
@@ -47,7 +47,7 @@ export function prepareFilesystem(cacheDir: string): void {
   // Gatsby uses this instead of fs if present
   // eslint-disable-next-line no-underscore-dangle
   global._fsWrapper = lfs
-
+  console.log('Starting to prepare data directory')
   if (!process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
     const dir = 'data'
     if (!process.env.NETLIFY_LOCAL && existsSync(join(TEMP_CACHE_DIR, dir))) {
@@ -59,13 +59,14 @@ export function prepareFilesystem(cacheDir: string): void {
     console.log(`End copying ${dir}`)  
   } else {
     // Fetch the file and stream it directly to the tmp directory
+    console.log('Starting to stream data file')
     const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')    
     new Promise((resolve, reject) => {
       readJSON(dataMetadataPath).then((res: {fileName: string, url: string}) => {
-        const fileName = res.fileName;
+        const {fileName} = res;
         const url = `${res.url}/${fileName}`;
 
-        const req = https.get(url, { timeout: 10000 }, (response) => {
+        const req = https.get(url, { timeout: 10_000 }, (response) => {
           if (response.statusCode < 200 || response.statusCode > 299) {
             reject(new Error(`Failed to download ${url}: ${response.statusCode} ${response.statusMessage || ''}`))
             return

@@ -66,7 +66,8 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   }
   const compiledFunctionsDir = path.join(cacheDir, '/functions')
 
-  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {    
+  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) { 
+    console.log('Creating site data metadata file')   
     const data = join(getGatsbyRoot(PUBLISH_DIR), '.cache/data')
     const uniqueDataDirName = `data-${uuidv4()}`
     ensureDirSync(`${PUBLISH_DIR}/${uniqueDataDirName}`)

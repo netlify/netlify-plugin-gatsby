@@ -138,9 +138,9 @@ export function mutateConfig({
   }
 
   if (!process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
-    netlifyConfig.functions.__dsg['included_files'].push(path.posix.join(cacheDir, 'data', '**'))
+    netlifyConfig.functions.__dsg.included_files.push('public/dataMetadata.json')
   } else {
-    netlifyConfig.functions.__dsg['included_files'].push('public/dataMetadata.json')
+    netlifyConfig.functions.__dsg.included_files.push(path.posix.join(cacheDir, 'data', '**'))
   }
   
 
