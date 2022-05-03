@@ -10,7 +10,8 @@ import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
 
 // Alias in the temp directory so it's writable
-export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
+export const TEMP_GATSBY_ROOT = join(os.tmpdir(), 'gatsby')
+export const TEMP_CACHE_DIR = join(TEMP_GATSBY_ROOT, '.cache')
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -20,29 +21,31 @@ declare global {
     }
   }
 }
+// eslint-disable-next-line no-underscore-dangle
+global.__GATSBY = { root: TEMP_GATSBY_ROOT }
 
 /**
  * Hacks to deal with the fact that functions execute on a readonly filesystem
  */
 export function prepareFilesystem(cacheDir: string): void {
-  console.log('Preparing Gatsby filesystem')
-  const rewrites = [
-    [join(cacheDir, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
-    [join(cacheDir, 'caches-lmdb'), join(TEMP_CACHE_DIR, 'caches-lmdb')],
-    [join(cacheDir, 'data'), join(TEMP_CACHE_DIR, 'data')],
-  ]
-  // Alias the cache dir paths to the temp dir
-  const lfs = link(fs, rewrites) as typeof import('fs')
+  // console.log('Preparing Gatsby filesystem')
+  // const rewrites = [
+  //   [join(cacheDir, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
+  //   [join(cacheDir, 'caches-lmdb'), join(TEMP_CACHE_DIR, 'caches-lmdb')],
+  //   [join(cacheDir, 'data'), join(TEMP_CACHE_DIR, 'data')],
+  // ]
+  // // Alias the cache dir paths to the temp dir
+  // const lfs = link(fs, rewrites) as typeof import('fs')
 
-  // linkfs doesn't pass across the `native` prop, which graceful-fs needs
-  for (const key in lfs) {
-    if (Object.hasOwnProperty.call(fs[key], 'native')) {
-      lfs[key].native = fs[key].native
-    }
-  }
+  // // linkfs doesn't pass across the `native` prop, which graceful-fs needs
+  // for (const key in lfs) {
+  //   if (Object.hasOwnProperty.call(fs[key], 'native')) {
+  //     lfs[key].native = fs[key].native
+  //   }
+  // }
   // Gatsby uses this instead of fs if present
   // eslint-disable-next-line no-underscore-dangle
-  global._fsWrapper = lfs
+  // global._fsWrapper = lfs
   const dir = 'data'
   if (!process.env.NETLIFY_LOCAL && existsSync(join(TEMP_CACHE_DIR, dir))) {
     console.log('directory already exists')
