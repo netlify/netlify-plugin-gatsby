@@ -1,4 +1,3 @@
-import fs from 'fs'
 import os from 'os'
 import { join } from 'path'
 import process from 'process'
@@ -7,7 +6,6 @@ import { HandlerResponse } from '@netlify/functions'
 import etag from 'etag'
 import { existsSync, copySync, readFileSync } from 'fs-extra'
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
-import { link } from 'linkfs'
 
 // Alias in the temp directory so it's writable
 export const TEMP_GATSBY_ROOT = join(os.tmpdir(), 'gatsby')
@@ -44,7 +42,6 @@ export function prepareFilesystem(cacheDir: string): void {
   //   }
   // }
   // Gatsby uses this instead of fs if present
-  // eslint-disable-next-line no-underscore-dangle
   // global._fsWrapper = lfs
   const dir = 'data'
   if (!process.env.NETLIFY_LOCAL && existsSync(join(TEMP_CACHE_DIR, dir))) {
