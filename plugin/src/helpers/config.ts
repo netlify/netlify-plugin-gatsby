@@ -129,7 +129,6 @@ export function mutateConfig({
     included_files: [
       'public/404.html',
       'public/500.html',
-      path.posix.join(cacheDir, 'data', '**'),
       path.posix.join(cacheDir, 'query-engine', '**'),
       path.posix.join(cacheDir, 'page-ssr', '**'),
       '!**/*.js.map',
@@ -137,6 +136,13 @@ export function mutateConfig({
     external_node_modules: ['msgpackr-extract'],
     node_bundler: 'esbuild',
   }
+
+  if (!process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
+    netlifyConfig.functions.__dsg['included_files'].push(path.posix.join(cacheDir, 'data', '**'))
+  } else {
+    netlifyConfig.functions.__dsg['included_files'].push('public/dataMetadata.json')
+  }
+  
 
   netlifyConfig.functions.__ssr = { ...netlifyConfig.functions.__dsg }
   /* eslint-enable no-underscore-dangle, no-param-reassign */

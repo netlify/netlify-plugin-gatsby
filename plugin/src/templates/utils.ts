@@ -1,16 +1,20 @@
-import fs from 'fs'
+import fs, {createWriteStream} from 'fs'
 import os from 'os'
+import { pipeline } from 'stream'
 import { join } from 'path'
 import process from 'process'
+import https from 'https'
+import { promisify} from 'util'
 
 import { HandlerResponse } from '@netlify/functions'
 import etag from 'etag'
-import { existsSync, copySync, readFileSync } from 'fs-extra'
+import { existsSync, copySync, readFileSync, readJSON } from 'fs-extra'
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
 
 // Alias in the temp directory so it's writable
 export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
+const streamPipeline = promisify(pipeline);
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -43,14 +47,45 @@ export function prepareFilesystem(cacheDir: string): void {
   // Gatsby uses this instead of fs if present
   // eslint-disable-next-line no-underscore-dangle
   global._fsWrapper = lfs
-  const dir = 'data'
-  if (!process.env.NETLIFY_LOCAL && existsSync(join(TEMP_CACHE_DIR, dir))) {
-    console.log('directory already exists')
-    return
+
+  if (!process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
+    const dir = 'data'
+    if (!process.env.NETLIFY_LOCAL && existsSync(join(TEMP_CACHE_DIR, dir))) {
+      console.log('directory already exists')
+      return
+    }
+    console.log(`Start copying ${dir}`)
+    copySync(join(cacheDir, dir), join(TEMP_CACHE_DIR, dir))
+    console.log(`End copying ${dir}`)  
+  } else {
+    // Fetch the file and stream it directly to the tmp directory
+    const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')    
+    new Promise((resolve, reject) => {
+      readJSON(dataMetadataPath).then((res: {fileName: string, url: string}) => {
+        const fileName = res.fileName;
+        const url = `${res.url}/${fileName}`;
+
+        const req = https.get(url, { timeout: 10000 }, (response) => {
+          if (response.statusCode < 200 || response.statusCode > 299) {
+            reject(new Error(`Failed to download ${url}: ${response.statusCode} ${response.statusMessage || ''}`))
+            return
+          }
+          const fileStream = createWriteStream(join(TEMP_CACHE_DIR, 'data'))
+          streamPipeline(response, fileStream)
+            .then(resolve)
+            .catch((error) => {
+              console.log(`Error downloading ${url}`, error)
+              reject(error)
+            })
+        });
+
+        req.on('error', (error) => {
+          console.log(`Error downloading ${url}`, error)
+          reject(error)
+        })
+      })
+    })
   }
-  console.log(`Start copying ${dir}`)
-  copySync(join(cacheDir, dir), join(TEMP_CACHE_DIR, dir))
-  console.log(`End copying ${dir}`)
 }
 
 // Inlined from gatsby-core-utils

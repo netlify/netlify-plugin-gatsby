@@ -3,11 +3,13 @@ import process from 'process'
 
 import { NetlifyPluginOptions } from '@netlify/build'
 import { stripIndent } from 'common-tags'
-import { existsSync } from 'fs-extra'
+import { existsSync, copySync, ensureDirSync, writeJSON, ensureFileSync } from 'fs-extra'
+import { v4 as uuidv4 } from 'uuid';
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {
   checkConfig,
+  getGatsbyRoot,
   mutateConfig,
   shouldSkipFunctions,
   spliceConfig,
@@ -63,6 +65,17 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     return
   }
   const compiledFunctionsDir = path.join(cacheDir, '/functions')
+
+  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {    
+    const data = join(getGatsbyRoot(PUBLISH_DIR), '.cache/data')
+    const uniqueDataDirName = `data-${uuidv4()}`
+    ensureDirSync(`${PUBLISH_DIR}/${uniqueDataDirName}`)
+    copySync(data, `${PUBLISH_DIR}/${uniqueDataDirName}`)
+
+    const payload = {fileName: uniqueDataDirName, url: process.env.URL}
+    ensureFileSync(`${PUBLISH_DIR}/dataMetadata.json`)
+    await writeJSON(`${PUBLISH_DIR}/dataMetadata.json`, payload)
+  }
 
   await writeFunctions({ constants, netlifyConfig })
 
