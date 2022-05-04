@@ -171,8 +171,8 @@ export const makeHandler = async (appDir: string, renderMode: RenderMode): Promi
     const pageRoot = resolve(__dirname, "${appDir}");
     exports.handler = ${
       renderMode === 'DSG'
-        ? `builder((${(await getHandler).toString()})("${renderMode}", pageRoot))`
-        : `((${(await getHandler).toString()})("${renderMode}", pageRoot))`
+        ? `builder((${await getHandler.toString()})("${renderMode}", pageRoot))`
+        : `((${await getHandler.toString()})("${renderMode}", pageRoot))`
     }
 `
 
