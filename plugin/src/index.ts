@@ -68,12 +68,12 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) { 
     console.log('Creating site data metadata file')   
-    const data = join(getGatsbyRoot(PUBLISH_DIR), '.cache/data')
-    const uniqueDataDirName = `data-${uuidv4()}`
-    ensureDirSync(`${PUBLISH_DIR}/${uniqueDataDirName}`)
-    copySync(data, `${PUBLISH_DIR}/${uniqueDataDirName}`)
+    const data = join(getGatsbyRoot(PUBLISH_DIR), '.cache/data/datastore/data.mdb')
+    const uniqueDataFileName = `data-${uuidv4()}.mdb`
+    ensureFileSync(`${PUBLISH_DIR}/${uniqueDataFileName}`)
+    copySync(data, `${PUBLISH_DIR}/${uniqueDataFileName}`)
 
-    const payload = {fileName: uniqueDataDirName, url: process.env.URL}
+    const payload = {fileName: uniqueDataFileName, url: process.env.URL}
     ensureFileSync(`${PUBLISH_DIR}/dataMetadata.json`)
     await writeJSON(`${PUBLISH_DIR}/dataMetadata.json`, payload)
   }
