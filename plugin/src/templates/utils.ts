@@ -63,25 +63,26 @@ export async function prepareFilesystem(cacheDir: string): Promise<void> {
     const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')    
     const { fileName, url } = await readJSON(dataMetadataPath)
     const downloadUrl = `${url}/${fileName}`
+    console.log('Downloading data file from', downloadUrl)
     
     return new Promise((resolve, reject) => {
       // TODO: Move into a separate function
       const req = https.get(downloadUrl, { timeout: 10_000 }, (response) => {
         if (response.statusCode < 200 || response.statusCode > 299) {
-          reject(new Error(`Failed to download ${url}: ${response.statusCode} ${response.statusMessage || ''}`))
+          reject(new Error(`Failed to download ${downloadUrl}: ${response.statusCode} ${response.statusMessage || ''}`))
           return
         }
         const fileStream = createWriteStream(join(TEMP_CACHE_DIR, 'data'))
         streamPipeline(response, fileStream)
           .then(resolve)
           .catch((error) => {
-            console.log(`Error downloading ${url}`, error)
+            console.log(`Error downloading ${downloadUrl}`, error)
             reject(error)
           })
       });
 
       req.on('error', (error) => {
-        console.log(`Error downloading ${url}`, error)
+        console.log(`Error downloading ${downloadUrl}`, error)
         reject(error)
       })
     })
