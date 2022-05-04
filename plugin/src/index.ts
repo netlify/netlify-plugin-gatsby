@@ -3,16 +3,15 @@ import process from 'process'
 
 import { NetlifyPluginOptions } from '@netlify/build'
 import { stripIndent } from 'common-tags'
-import { existsSync, copySync, ensureDirSync, writeJSON, ensureFileSync } from 'fs-extra'
-import { v4 as uuidv4 } from 'uuid';
+import { existsSync } from 'fs-extra'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {
   checkConfig,
-  getGatsbyRoot,
   mutateConfig,
   shouldSkipFunctions,
   spliceConfig,
+  createDatastoreMetadataFile,
 } from './helpers/config'
 import { patchFile, relocateBinaries } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
@@ -37,6 +36,7 @@ export async function onPreBuild({
   await checkConfig({ utils, netlifyConfig })
 }
 
+// eslint-disable-next-line max-statements
 export async function onBuild({
   constants,
   netlifyConfig,
@@ -66,16 +66,9 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   }
   const compiledFunctionsDir = path.join(cacheDir, '/functions')
 
-  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) { 
-    console.log('Creating site data metadata file')   
-    const data = join(getGatsbyRoot(PUBLISH_DIR), '.cache/data/datastore/data.mdb')
-    const uniqueDataFileName = `data-${uuidv4()}.mdb`
-    ensureFileSync(`${PUBLISH_DIR}/${uniqueDataFileName}`)
-    copySync(data, `${PUBLISH_DIR}/${uniqueDataFileName}`)
-
-    const payload = {fileName: uniqueDataFileName, url: process.env.URL}
-    ensureFileSync(`${PUBLISH_DIR}/dataMetadata.json`)
-    await writeJSON(`${PUBLISH_DIR}/dataMetadata.json`, payload)
+  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
+    console.log('Creating site data metadata file')
+    await createDatastoreMetadataFile(PUBLISH_DIR)
   }
 
   await writeFunctions({ constants, netlifyConfig })

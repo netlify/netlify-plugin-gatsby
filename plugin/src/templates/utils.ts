@@ -1,20 +1,26 @@
-import fs, {createWriteStream} from 'fs'
+import fs, { createWriteStream } from 'fs'
 import https from 'https'
 import os from 'os'
 import { join } from 'path'
 import process from 'process'
 import { pipeline } from 'stream'
-import { promisify} from 'util'
+import { promisify } from 'util'
 
 import { HandlerResponse } from '@netlify/functions'
 import etag from 'etag'
-import { existsSync, copySync, readFileSync, readJSON, ensureFileSync } from 'fs-extra'
+import {
+  existsSync,
+  copySync,
+  readFileSync,
+  readJSON,
+  ensureFileSync,
+} from 'fs-extra'
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
 
 // Alias in the temp directory so it's writable
 export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
-const streamPipeline = promisify(pipeline);
+const streamPipeline = promisify(pipeline)
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -24,6 +30,51 @@ declare global {
     }
   }
 }
+
+/**
+ * Downloads a file from the CDN to the local aliased filesystem. This is a fallback, because in most cases we'd expect
+ * files required at runtime to not be sent to the CDN.
+ *
+ * Mirrors functionality in our NextJS plugin
+ * https://github.com/netlify/netlify-plugin-nextjs/blob/8f5648c848d4a4d42ac772e7a8a2a50fdc632220/plugin/src/templates/handlerUtils.ts#L19-L43
+ * @param downloadUrl
+ * @param filePath
+ * @returns
+ */
+export const downloadFile = (
+  downloadUrl: string,
+  filePath: string,
+): Promise<void> =>
+  new Promise((resolve, reject) => {
+    // eslint-disable-next-line no-magic-numbers
+    const req = https.get(downloadUrl, { timeout: 10_000 }, (response) => {
+      // eslint-disable-next-line no-magic-numbers
+      if (response.statusCode < 200 || response.statusCode > 299) {
+        reject(
+          new Error(
+            `Failed to download ${downloadUrl}: ${response.statusCode} ${
+              response.statusMessage || ''
+            }`,
+          ),
+        )
+        return
+      }
+      const fileStream = createWriteStream(filePath)
+      /* eslint-disable promise/prefer-await-to-callbacks, promise/prefer-await-to-then */
+      streamPipeline(response, fileStream)
+        .then(resolve)
+        .catch((error) => {
+          console.log(`Error downloading ${downloadUrl}`, error)
+          reject(error)
+        })
+      /* eslint-enable */
+    })
+
+    req.on('error', (error) => {
+      console.log(`Error downloading ${downloadUrl}`, error)
+      reject(error)
+    })
+  })
 
 /**
  * Hacks to deal with the fact that functions execute on a readonly filesystem
@@ -47,52 +98,33 @@ export async function prepareFilesystem(cacheDir: string): Promise<void> {
   // Gatsby uses this instead of fs if present
   // eslint-disable-next-line no-underscore-dangle
   global._fsWrapper = lfs
+
   console.log('Starting to prepare data directory')
-  if (!process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
-    const dir = 'data'
-    if (!process.env.NETLIFY_LOCAL && existsSync(join(TEMP_CACHE_DIR, dir))) {
-      console.log('directory already exists')
-      return
-    }
-    console.log(`Start copying ${dir}`)
-    copySync(join(cacheDir, dir), join(TEMP_CACHE_DIR, dir))
-    console.log(`End copying ${dir}`)  
-  } else {
-    // Fetch the file and stream it directly to the tmp directory
+
+  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
     console.log('Starting to stream data file')
-    const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')    
+
+    const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')
     const { fileName, url } = await readJSON(dataMetadataPath)
     const downloadUrl = `${url}/${fileName}`
+
     console.log('Downloading data file from', downloadUrl)
-    
+
     // Ensure the file to copy the downloaded file into exists
-    const file = join(TEMP_CACHE_DIR, 'data', 'datastore', 'data.mdb')
-    if (!existsSync(file)) {
-      ensureFileSync(file);
+    const filePath = join(TEMP_CACHE_DIR, 'data', 'datastore', 'data.mdb')
+    if (!existsSync(filePath)) {
+      ensureFileSync(filePath)
     }
-
-    return new Promise((resolve, reject) => {
-      // TODO: Move into a separate function
-      const req = https.get(downloadUrl, { timeout: 10_000 }, (response) => {
-        if (response.statusCode < 200 || response.statusCode > 299) {
-          reject(new Error(`Failed to download ${downloadUrl}: ${response.statusCode} ${response.statusMessage || ''}`))
-          return
-        }
-        const fileStream = createWriteStream(file)
-        streamPipeline(response, fileStream)
-          .then(resolve)
-          .catch((error) => {
-            console.log(`Error downloading ${downloadUrl}`, error)
-            reject(error)
-          })
-      });
-
-      req.on('error', (error) => {
-        console.log(`Error downloading ${downloadUrl}`, error)
-        reject(error)
-      })
-    })
+    return downloadFile(downloadUrl, filePath)
   }
+  const dir = 'data'
+  if (!process.env.NETLIFY_LOCAL && existsSync(join(TEMP_CACHE_DIR, dir))) {
+    console.log('directory already exists')
+    return
+  }
+  console.log(`Start copying ${dir}`)
+  copySync(join(cacheDir, dir), join(TEMP_CACHE_DIR, dir))
+  console.log(`End copying ${dir}`)
 }
 
 // Inlined from gatsby-core-utils

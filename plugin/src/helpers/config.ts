@@ -1,11 +1,12 @@
 /* eslint-disable max-lines */
 import { EOL } from 'os'
-import path from 'path'
+import path, { join } from 'path'
 import process from 'process'
 
 import { stripIndent } from 'common-tags'
-import fs, { existsSync } from 'fs-extra'
+import fs, { existsSync, copySync, writeJSON, ensureFileSync } from 'fs-extra'
 import type { GatsbyConfig, PluginRef } from 'gatsby'
+import { v4 as uuidv4 } from 'uuid'
 
 import { checkPackageVersion } from './files'
 
@@ -114,6 +115,21 @@ export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
   }
 }
 
+export async function createDatastoreMetadataFile(
+  publishDir: string,
+): Promise<void> {
+  const data = join(getGatsbyRoot(publishDir), '.cache/data/datastore/data.mdb')
+  const uniqueDataFileName = `data-${uuidv4()}.mdb`
+
+  ensureFileSync(`${publishDir}/${uniqueDataFileName}`)
+  copySync(data, `${publishDir}/${uniqueDataFileName}`)
+
+  const payload = { fileName: uniqueDataFileName, url: process.env.URL }
+  ensureFileSync(`${publishDir}/dataMetadata.json`)
+
+  await writeJSON(`${publishDir}/dataMetadata.json`, payload)
+}
+
 export function mutateConfig({
   netlifyConfig,
   compiledFunctionsDir,
@@ -138,11 +154,14 @@ export function mutateConfig({
   }
 
   if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
-    netlifyConfig.functions.__dsg.included_files.push('public/dataMetadata.json')
+    netlifyConfig.functions.__dsg.included_files.push(
+      'public/dataMetadata.json',
+    )
   } else {
-    netlifyConfig.functions.__dsg.included_files.push(path.posix.join(cacheDir, 'data', '**'))
+    netlifyConfig.functions.__dsg.included_files.push(
+      path.posix.join(cacheDir, 'data', '**'),
+    )
   }
-  
 
   netlifyConfig.functions.__ssr = { ...netlifyConfig.functions.__dsg }
   /* eslint-enable no-underscore-dangle, no-param-reassign */

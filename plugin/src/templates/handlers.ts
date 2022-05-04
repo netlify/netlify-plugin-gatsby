@@ -52,10 +52,6 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
   const DATA_PREFIX = '/page-data/'
   const cacheDir = join(appDir, '.cache')
 
-  // TODO: Use graphqlEngine as a flag to determine whether to run prepareFileSystem within the handler itself
-  // prepareFilesystem(cacheDir)
-  
-  // TODO: Might need to move this in as well
   // Requiring this dynamically so esbuild doesn't re-bundle it
   const { getData, renderHTML, renderPageData }: PageSSR = require(join(
     cacheDir,
@@ -63,7 +59,7 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
   ))
 
   // const graphqlEngine = getGraphQLEngine(cacheDir)
-  let graphqlEngine: GraphQLEngine;
+  let graphqlEngine: GraphQLEngine
 
   return async function handler(event: HandlerEvent) {
     if (!graphqlEngine) {
