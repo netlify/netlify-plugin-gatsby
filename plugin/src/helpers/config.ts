@@ -137,7 +137,7 @@ export function mutateConfig({
     node_bundler: 'esbuild',
   }
 
-  if (!process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
+  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
     netlifyConfig.functions.__dsg.included_files.push('public/dataMetadata.json')
   } else {
     netlifyConfig.functions.__dsg.included_files.push(path.posix.join(cacheDir, 'data', '**'))
