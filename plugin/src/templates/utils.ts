@@ -62,7 +62,7 @@ export async function prepareFilesystem(cacheDir: string): Promise<void> {
     console.log('Starting to stream data file')
     const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')    
     const { fileName, url } = await readJSON(dataMetadataPath)
-    const downloadUrl = `${url}/${join(process.cwd(), 'public')}/${fileName}`
+    const downloadUrl = `${url}/public/${fileName}`
     console.log('Downloading data file from', downloadUrl)
 
     return new Promise((resolve, reject) => {
