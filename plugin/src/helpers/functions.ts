@@ -12,7 +12,7 @@ const writeFunction = async ({
   appDir,
   functionsSrc,
 }) => {
-  const source = makeHandler(appDir, renderMode)
+  const source = await makeHandler(appDir, renderMode)
   await ensureDir(join(functionsSrc, handlerName))
   await writeFile(join(functionsSrc, handlerName, `${handlerName}.js`), source)
   await copyFile(

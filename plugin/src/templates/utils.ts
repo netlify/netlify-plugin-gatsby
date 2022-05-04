@@ -28,7 +28,7 @@ declare global {
 /**
  * Hacks to deal with the fact that functions execute on a readonly filesystem
  */
-export function prepareFilesystem(cacheDir: string): void {
+export async function prepareFilesystem(cacheDir: string): Promise<void> {
   console.log('Preparing Gatsby filesystem')
   const rewrites = [
     [join(cacheDir, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
@@ -61,29 +61,27 @@ export function prepareFilesystem(cacheDir: string): void {
     // Fetch the file and stream it directly to the tmp directory
     console.log('Starting to stream data file')
     const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')    
-    new Promise((resolve, reject) => {
-      readJSON(dataMetadataPath).then((res: {fileName: string, url: string}) => {
-        const {fileName} = res;
-        const url = `${res.url}/${fileName}`;
+    const { fileName, url } = await readJSON(dataMetadataPath)
+    const downloadUrl = `${url}/${fileName}`
+    
+    return new Promise((resolve, reject) => {
+      const req = https.get(downloadUrl, { timeout: 10_000 }, (response) => {
+        if (response.statusCode < 200 || response.statusCode > 299) {
+          reject(new Error(`Failed to download ${url}: ${response.statusCode} ${response.statusMessage || ''}`))
+          return
+        }
+        const fileStream = createWriteStream(join(TEMP_CACHE_DIR, 'data'))
+        streamPipeline(response, fileStream)
+          .then(resolve)
+          .catch((error) => {
+            console.log(`Error downloading ${url}`, error)
+            reject(error)
+          })
+      });
 
-        const req = https.get(url, { timeout: 10_000 }, (response) => {
-          if (response.statusCode < 200 || response.statusCode > 299) {
-            reject(new Error(`Failed to download ${url}: ${response.statusCode} ${response.statusMessage || ''}`))
-            return
-          }
-          const fileStream = createWriteStream(join(TEMP_CACHE_DIR, 'data'))
-          streamPipeline(response, fileStream)
-            .then(resolve)
-            .catch((error) => {
-              console.log(`Error downloading ${url}`, error)
-              reject(error)
-            })
-        });
-
-        req.on('error', (error) => {
-          console.log(`Error downloading ${url}`, error)
-          reject(error)
-        })
+      req.on('error', (error) => {
+        console.log(`Error downloading ${url}`, error)
+        reject(error)
       })
     })
   }

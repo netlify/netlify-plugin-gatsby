@@ -45,14 +45,14 @@ export type RenderMode = 'SSR' | 'DSG'
  * It isn't used directly, but rather has `toString()` called on it to generate
  * the actual handler code, with the correct paths and render mode injected.
  */
-const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
+const getHandler = async (renderMode: RenderMode, appDir: string): Promise<Handler> => {
   process.chdir(appDir)
 
   const DATA_SUFFIX = '/page-data.json'
   const DATA_PREFIX = '/page-data/'
   const cacheDir = join(appDir, '.cache')
 
-  prepareFilesystem(cacheDir)
+  await prepareFilesystem(cacheDir)
   // Requiring this dynamically so esbuild doesn't re-bundle it
   const { getData, renderHTML, renderPageData }: PageSSR = require(join(
     cacheDir,
@@ -160,7 +160,7 @@ const getApiHandler = (appDir: string): Handler =>
     })
   }
 
-export const makeHandler = (appDir: string, renderMode: RenderMode): string =>
+export const makeHandler = async (appDir: string, renderMode: RenderMode): Promise<string> =>
   // This is a string, but if you have the right editor plugin it should format as js
   javascript`
     const { readFileSync } = require('fs');
@@ -171,8 +171,8 @@ export const makeHandler = (appDir: string, renderMode: RenderMode): string =>
     const pageRoot = resolve(__dirname, "${appDir}");
     exports.handler = ${
       renderMode === 'DSG'
-        ? `builder((${getHandler.toString()})("${renderMode}", pageRoot))`
-        : `((${getHandler.toString()})("${renderMode}", pageRoot))`
+        ? `builder((${(await getHandler).toString()})("${renderMode}", pageRoot))`
+        : `((${(await getHandler).toString()})("${renderMode}", pageRoot))`
     }
 `
 
