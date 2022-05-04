@@ -8,7 +8,7 @@ import { promisify} from 'util'
 
 import { HandlerResponse } from '@netlify/functions'
 import etag from 'etag'
-import { existsSync, copySync, readFileSync, readJSON, ensureDirSync } from 'fs-extra'
+import { existsSync, copySync, readFileSync, readJSON, ensureFileSync } from 'fs-extra'
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
 
@@ -65,10 +65,10 @@ export async function prepareFilesystem(cacheDir: string): Promise<void> {
     const downloadUrl = `${url}/${fileName}`
     console.log('Downloading data file from', downloadUrl)
     
-    // Ensure the directory to copy the downloaded file into exists
-    const dir = join(TEMP_CACHE_DIR, 'data', 'datastore')
-    if (!existsSync(dir)) {
-      ensureDirSync(dir);
+    // Ensure the file to copy the downloaded file into exists
+    const file = join(TEMP_CACHE_DIR, 'data', 'datastore', 'data.mdb')
+    if (!existsSync(file)) {
+      ensureFileSync(file);
     }
 
     return new Promise((resolve, reject) => {
@@ -78,7 +78,7 @@ export async function prepareFilesystem(cacheDir: string): Promise<void> {
           reject(new Error(`Failed to download ${downloadUrl}: ${response.statusCode} ${response.statusMessage || ''}`))
           return
         }
-        const fileStream = createWriteStream(dir)
+        const fileStream = createWriteStream(file)
         streamPipeline(response, fileStream)
           .then(resolve)
           .catch((error) => {
