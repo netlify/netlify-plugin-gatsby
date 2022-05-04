@@ -65,6 +65,7 @@ export async function prepareFilesystem(cacheDir: string): Promise<void> {
     const downloadUrl = `${url}/${fileName}`
     
     return new Promise((resolve, reject) => {
+      // TODO: Move into a separate function
       const req = https.get(downloadUrl, { timeout: 10_000 }, (response) => {
         if (response.statusCode < 200 || response.statusCode > 299) {
           reject(new Error(`Failed to download ${url}: ${response.statusCode} ${response.statusMessage || ''}`))

@@ -11,7 +11,7 @@ import type {
   renderHTML as renderHTMLType,
   renderPageData as renderPageDataType,
 } from 'gatsby/cache-dir/page-ssr'
-import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
+import type { GraphQLEngine, IGatsbyPage } from 'gatsby/cache-dir/query-engine'
 
 // These are "require()"d rather than imported so the symbol names are not munged,
 // as we need them to match the hard-coded values
@@ -45,23 +45,32 @@ export type RenderMode = 'SSR' | 'DSG'
  * It isn't used directly, but rather has `toString()` called on it to generate
  * the actual handler code, with the correct paths and render mode injected.
  */
-const getHandler = async (renderMode: RenderMode, appDir: string): Promise<Handler> => {
+const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
   process.chdir(appDir)
 
   const DATA_SUFFIX = '/page-data.json'
   const DATA_PREFIX = '/page-data/'
   const cacheDir = join(appDir, '.cache')
 
-  await prepareFilesystem(cacheDir)
+  // TODO: Use graphqlEngine as a flag to determine whether to run prepareFileSystem within the handler itself
+  // prepareFilesystem(cacheDir)
+  
+  // TODO: Might need to move this in as well
   // Requiring this dynamically so esbuild doesn't re-bundle it
   const { getData, renderHTML, renderPageData }: PageSSR = require(join(
     cacheDir,
     'page-ssr',
   ))
 
-  const graphqlEngine = getGraphQLEngine(cacheDir)
+  // const graphqlEngine = getGraphQLEngine(cacheDir)
+  let graphqlEngine: GraphQLEngine;
 
   return async function handler(event: HandlerEvent) {
+    if (!graphqlEngine) {
+      await prepareFilesystem(cacheDir)
+      graphqlEngine = getGraphQLEngine(cacheDir)
+    }
+
     // Gatsby expects cwd to be the site root
     process.chdir(appDir)
     const eventPath = event.path
@@ -160,7 +169,7 @@ const getApiHandler = (appDir: string): Handler =>
     })
   }
 
-export const makeHandler = async (appDir: string, renderMode: RenderMode): Promise<string> =>
+export const makeHandler = (appDir: string, renderMode: RenderMode): string =>
   // This is a string, but if you have the right editor plugin it should format as js
   javascript`
     const { readFileSync } = require('fs');
@@ -171,8 +180,8 @@ export const makeHandler = async (appDir: string, renderMode: RenderMode): Promi
     const pageRoot = resolve(__dirname, "${appDir}");
     exports.handler = ${
       renderMode === 'DSG'
-        ? `builder((${await getHandler.toString()})("${renderMode}", pageRoot))`
-        : `((${await getHandler.toString()})("${renderMode}", pageRoot))`
+        ? `builder((${getHandler.toString()})("${renderMode}", pageRoot))`
+        : `((${getHandler.toString()})("${renderMode}", pageRoot))`
     }
 `
 
