@@ -105,7 +105,7 @@ export async function onSuccess({
   // Pre-warm the lambdas as downloading the datastore file can take a while
   if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
     for (const func of ['api', 'dsg', 'ssr']) {
-      const url = path.join(process.env.URL, FUNCTIONS_DIST, `__${func}`)
+      const url = path.join(process.env.URL, '.netlify/functions', `__${func}`)
       console.log(`Sending pre-warm request to: ${url}`)
       https.get(url, {timeout: 1000})
     }  
