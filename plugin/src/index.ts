@@ -16,6 +16,7 @@ import {
 import { patchFile, relocateBinaries } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
+import https from 'https'
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
 
@@ -106,7 +107,7 @@ export async function onSuccess({
     for (const func of ['api', 'dsg', 'ssr']) {
       const url = path.join(process.env.URL, FUNCTIONS_DIST, `__${func}`)
       console.log(`Sending pre-warm request to: ${url}`)
-      fetch(url)
+      https.get(url, {timeout: 1000})
     }  
   }
 }
