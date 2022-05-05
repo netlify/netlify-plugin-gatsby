@@ -118,8 +118,8 @@ export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
 /**
  * Copies the contents of the Gatsby datastore file to the public directory in order
  * to be uploaded to the CDN.
- * 
- * @param publishDir 
+ *
+ * @param publishDir
  */
 export async function createDatastoreMetadataFile(
   publishDir: string,

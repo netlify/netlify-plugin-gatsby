@@ -4,6 +4,7 @@ import process from 'process'
 import { NetlifyPluginOptions } from '@netlify/build'
 import { stripIndent } from 'common-tags'
 import { existsSync } from 'fs-extra'
+import fetch from 'node-fetch'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {
@@ -16,7 +17,6 @@ import {
 import { patchFile, relocateBinaries } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
-import fetch from 'node-fetch'
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
 
@@ -105,8 +105,8 @@ export async function onSuccess() {
     for (const func of ['api', 'dsg', 'ssr']) {
       const url = path.join(process.env.URL, '.netlify/functions', `__${func}`)
       console.log(`Sending pre-warm request to: ${url}`)
-      const response = await fetch(url)
-      console.log(`Response received: ${response.status}`)
-    }  
+
+      await fetch(url)
+    }
   }
 }
