@@ -97,3 +97,16 @@ export async function onPostBuild({
     await checkZipSize(path.join(FUNCTIONS_DIST, `__${func}.zip`))
   }
 }
+
+export async function onSuccess({
+  constants: {FUNCTIONS_DIST}
+}) {
+  // Pre-warm the lambdas as downloading the datastore file can take a while
+  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
+    for (const func of ['api', 'dsg', 'ssr']) {
+      const url = path.join(process.env.URL, FUNCTIONS_DIST, `__${func}`)
+      console.log(`Sending pre-warm request to: ${url}`)
+      fetch(url)
+    }  
+  }
+}
