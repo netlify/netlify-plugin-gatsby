@@ -16,7 +16,7 @@ import {
 import { patchFile, relocateBinaries } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
-import https from 'https'
+import fetch from 'node-fetch'
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
 
@@ -99,15 +99,14 @@ export async function onPostBuild({
   }
 }
 
-export async function onSuccess({
-  constants: {FUNCTIONS_DIST}
-}) {
+export async function onSuccess() {
   // Pre-warm the lambdas as downloading the datastore file can take a while
   if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
     for (const func of ['api', 'dsg', 'ssr']) {
       const url = path.join(process.env.URL, '.netlify/functions', `__${func}`)
       console.log(`Sending pre-warm request to: ${url}`)
-      https.get(url, {timeout: 1000})
+      const response = await fetch(url)
+      console.log(`Response received: ${response.status}`)
     }  
   }
 }
