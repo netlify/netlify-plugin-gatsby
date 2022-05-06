@@ -1,7 +1,9 @@
-import { downloadFile } from '../../../src/templates/utils'
-import { ensureDir, existsSync, readFileSync, unlink } from 'fs-extra'
-import { join, dirname } from 'path'
 import { tmpdir } from 'os'
+import { join, dirname } from 'path'
+
+import { ensureDir, existsSync, readFileSync, unlink } from 'fs-extra'
+
+import { downloadFile } from '../../../src/templates/utils'
 
 describe('downloadFile', () => {
   it('downloadFile can download a file', async () => {
