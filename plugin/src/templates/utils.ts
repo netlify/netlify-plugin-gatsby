@@ -1,6 +1,6 @@
 import fs, { createWriteStream } from 'fs'
-import https from 'https'
-import os from 'os'
+import { get } from 'https'
+import { tmpdir } from 'os'
 import { join } from 'path'
 import process from 'process'
 import { pipeline } from 'stream'
@@ -19,7 +19,7 @@ import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
 
 // Alias in the temp directory so it's writable
-export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
+export const TEMP_CACHE_DIR = join(tmpdir(), 'gatsby', '.cache')
 const streamPipeline = promisify(pipeline)
 
 declare global {
@@ -47,7 +47,7 @@ export const downloadFile = (
 ): Promise<void> =>
   new Promise((resolve, reject) => {
     // eslint-disable-next-line no-magic-numbers
-    const req = https.get(downloadUrl, { timeout: 10_000 }, (response) => {
+    const req = get(downloadUrl, { timeout: 10_000 }, (response) => {
       // eslint-disable-next-line no-magic-numbers
       if (response.statusCode < 200 || response.statusCode > 299) {
         reject(
