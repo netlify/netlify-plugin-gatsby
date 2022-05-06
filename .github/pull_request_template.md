@@ -1,34 +1,23 @@
-🎉 Thanks for sending this pull request! 🎉
+<!--Please tag yourself as the Assignee and netlify/frameworks as the Reviewer -->
 
-Please make sure the title is clear and descriptive.
+### Summary
 
-If you are fixing a typo or documentation, please skip these instructions.
+<!-- Provide a brief summary of the change. -->
 
-Otherwise please fill in the sections below.
+### Test plan
 
-**Which problem is this pull request solving?**
+1. Visit the Deploy Preview ([insert link to specific page]()) ...
 
-Example: I'm always frustrated when [...]
+### Relevant links (GitHub issues, Notion docs, etc.) or a picture of cute animal
 
-**List other issues or pull requests related to this problem**
+### Standard checks:
 
-Example: This fixes #5012
+<!-- Please delete any options that reviewers shouldn't check. -->
 
-**Describe the solution you've chosen**
+- [ ] Check the Deploy Preview's Demo site for your PR's functionality
+- [ ] Add docs when necessary
 
-Example: I've fixed this by [...]
+---
 
-**Describe alternatives you've considered**
-
-Example: Another solution would be [...]
-
-**Checklist**
-
-Please add a `x` inside each checkbox:
-
-- [ ] I have read the [contribution guidelines](../blob/master/CONTRIBUTING.md).
-- [ ] I have added tests (we are enforcing 100% test coverage).
-- [ ] I have added documentation in the `README.md`, the `docs` directory (if
-      any) and the `examples` directory (if any).
-- [ ] The status checks are successful (continuous integration). Those can be
-      seen below.
+🧪 Once merged, make sure to update the version if needed and that it was
+published correctly.
