@@ -6,6 +6,8 @@ import { makeApiHandler, makeHandler } from '../templates/handlers'
 
 import { getGatsbyRoot } from './config'
 
+export type FunctionList = Array<'API' | 'SSR' | 'DSG'>
+
 const writeFunction = async ({
   renderMode,
   handlerName,
@@ -38,7 +40,7 @@ export const writeFunctions = async ({
 }: {
   constants: NetlifyPluginConstants
   netlifyConfig: NetlifyConfig
-  neededFunctions: Array<string>
+  neededFunctions: FunctionList
 }): Promise<void> => {
   const { PUBLISH_DIR, INTERNAL_FUNCTIONS_SRC } = constants
   const siteRoot = getGatsbyRoot(PUBLISH_DIR)
@@ -63,8 +65,9 @@ export const writeFunctions = async ({
     })
   }
 
+  await setupImageCdn({ constants, netlifyConfig })
+
   if (neededFunctions.includes('API')) {
-    await setupImageCdn({ constants, netlifyConfig })
     await writeApiFunction({ appDir, functionDir })
   }
 }
