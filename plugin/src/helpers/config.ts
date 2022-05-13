@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { EOL } from 'os'
-import path, { join } from 'path'
+import { dirname, posix, resolve, join } from 'path'
 import process from 'process'
 
 import { stripIndent } from 'common-tags'
@@ -43,7 +43,7 @@ export async function spliceConfig({
 }
 
 function loadGatsbyConfig({ gatsbyRoot, utils }): GatsbyConfig | never {
-  const gatsbyConfigFile = path.resolve(gatsbyRoot, 'gatsby-config.js')
+  const gatsbyConfigFile = resolve(gatsbyRoot, 'gatsby-config.js')
 
   if (!existsSync(gatsbyConfigFile)) {
     return {}
@@ -143,7 +143,7 @@ export function mutateConfig({
 }): void {
   /* eslint-disable no-underscore-dangle, no-param-reassign */
   netlifyConfig.functions.__api = {
-    included_files: [path.posix.join(compiledFunctionsDir, '**')],
+    included_files: [posix.join(compiledFunctionsDir, '**')],
     external_node_modules: ['msgpackr-extract'],
   }
 
@@ -151,8 +151,8 @@ export function mutateConfig({
     included_files: [
       'public/404.html',
       'public/500.html',
-      path.posix.join(cacheDir, 'query-engine', '**'),
-      path.posix.join(cacheDir, 'page-ssr', '**'),
+      posix.join(cacheDir, 'query-engine', '**'),
+      posix.join(cacheDir, 'page-ssr', '**'),
       '!**/*.js.map',
     ],
     external_node_modules: ['msgpackr-extract'],
@@ -165,7 +165,7 @@ export function mutateConfig({
     )
   } else {
     netlifyConfig.functions.__dsg.included_files.push(
-      path.posix.join(cacheDir, 'data', '**'),
+      posix.join(cacheDir, 'data', '**'),
     )
   }
 
@@ -184,14 +184,14 @@ export function shouldSkipFunctions(cacheDir: string): boolean {
     return true
   }
 
-  if (!existsSync(path.join(cacheDir, 'functions'))) {
+  if (!existsSync(join(cacheDir, 'functions'))) {
     console.log(
       `Skipping Gatsby Functions and SSR/DSG support because the site's Gatsby version does not support them`,
     )
     return true
   }
 
-  const skipFile = path.join(cacheDir, '.nf-skip-gatsby-functions')
+  const skipFile = join(cacheDir, '.nf-skip-gatsby-functions')
 
   if (existsSync(skipFile)) {
     console.log(
@@ -206,6 +206,6 @@ export function shouldSkipFunctions(cacheDir: string): boolean {
 }
 
 export function getGatsbyRoot(publish: string): string {
-  return path.resolve(path.dirname(publish))
+  return resolve(dirname(publish))
 }
 /* eslint-enable max-lines */
