@@ -3,10 +3,12 @@ import { EOL } from 'os'
 import path from 'path'
 import process from 'process'
 
+import { NetlifyConfig } from '@netlify/build'
 import fs, { existsSync } from 'fs-extra'
 import type { GatsbyConfig, PluginRef } from 'gatsby'
 
 import { checkPackageVersion } from './files'
+import type { FunctionList } from './functions'
 
 export async function spliceConfig({
   startMarker,
@@ -113,16 +115,41 @@ export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
   }
 }
 
-export function mutateConfig({
+export async function modifyConfig({
   netlifyConfig,
-  compiledFunctionsDir,
   cacheDir,
   neededFunctions,
+}: {
+  netlifyConfig: NetlifyConfig
+  cacheDir: string
+  neededFunctions: FunctionList
+}): Promise<void> {
+  mutateConfig({ netlifyConfig, cacheDir, neededFunctions })
+
+  if (neededFunctions.includes('API')) {
+    // Editing _redirects so it works with ntl dev
+    await spliceConfig({
+      startMarker: '# @netlify/plugin-gatsby redirects start',
+      endMarker: '# @netlify/plugin-gatsby redirects end',
+      contents: '/api/* /.netlify/functions/__api 200',
+      fileName: path.join(netlifyConfig.build.publish, '_redirects'),
+    })
+  }
+}
+
+export function mutateConfig({
+  netlifyConfig,
+  cacheDir,
+  neededFunctions,
+}: {
+  netlifyConfig: NetlifyConfig
+  cacheDir: string
+  neededFunctions: FunctionList
 }): void {
   /* eslint-disable no-underscore-dangle, no-param-reassign */
   if (neededFunctions.includes('API')) {
     netlifyConfig.functions.__api = {
-      included_files: [path.posix.join(compiledFunctionsDir, '**')],
+      included_files: [path.posix.join(cacheDir, 'functions', '**')],
       external_node_modules: ['msgpackr-extract'],
     }
   }
@@ -182,15 +209,18 @@ function shouldEnableFunctions(cacheDir: string) {
 
 export async function getNeededFunctions(
   cacheDir: string,
-): Promise<Array<string>> {
+): Promise<FunctionList> {
   if (shouldEnableFunctions) {
     try {
+      // read skip file from gatsby-plugin-netlify
       const funcObj = await fs.readJson(
         path.join(cacheDir, '.nf-skip-gatsby-functions'),
       )
+      // filter out true values into an array
       const funcArr = Object.keys(funcObj).filter(
         (name) => funcObj[name] === true,
-      )
+      ) as FunctionList
+      // if functions are needed, return the list
       if (funcArr.length !== 0) {
         console.log(`Enabling support for ${funcArr.join('/')}`)
         return funcArr
