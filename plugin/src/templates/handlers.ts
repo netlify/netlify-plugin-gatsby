@@ -58,7 +58,6 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
     'page-ssr',
   ))
 
-  // const graphqlEngine = getGraphQLEngine(cacheDir)
   let graphqlEngine: GraphQLEngine
 
   return async function handler(event: HandlerEvent) {

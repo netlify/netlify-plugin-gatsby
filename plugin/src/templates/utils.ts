@@ -35,7 +35,7 @@ declare global {
  * Downloads a file from the CDN to the local aliased filesystem. This is a fallback, because in most cases we'd expect
  * files required at runtime to not be sent to the CDN.
  *
- * Mirrors functionality in our NextJS plugin
+ * Mirrors functionality in the Netlify NextJS plugin
  * https://github.com/netlify/netlify-plugin-nextjs/blob/8f5648c848d4a4d42ac772e7a8a2a50fdc632220/plugin/src/templates/handlerUtils.ts#L19-L43
  * @param downloadUrl
  * @param filePath
