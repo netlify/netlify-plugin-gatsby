@@ -106,7 +106,7 @@ export async function onSuccess() {
       const url = path.join(process.env.URL, '.netlify/functions', `__${func}`)
       console.log(`Sending pre-warm request to: ${url}`)
 
-      await globalThis.fetch(url)
+      await fetch(url)
     }
   }
 }
