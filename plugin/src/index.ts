@@ -1,4 +1,4 @@
-import path, { dirname, join } from 'path'
+import path from 'path'
 import process from 'process'
 
 import { NetlifyPluginOptions } from '@netlify/build'
@@ -6,13 +6,8 @@ import { stripIndent } from 'common-tags'
 import { existsSync } from 'fs-extra'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
-import {
-  checkConfig,
-  mutateConfig,
-  getNeededFunctions,
-  spliceConfig,
-} from './helpers/config'
-import { patchFile, relocateBinaries } from './helpers/files'
+import { checkConfig, getNeededFunctions, modifyConfig } from './helpers/config'
+import { modifyFiles } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
 
@@ -62,32 +57,11 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   await deleteFunctions(constants)
 
-  const compiledFunctionsDir = path.join(cacheDir, '/functions')
-
   await writeFunctions({ constants, netlifyConfig, neededFunctions })
 
-  mutateConfig({
-    netlifyConfig,
-    cacheDir,
-    compiledFunctionsDir,
-    neededFunctions,
-  })
+  await modifyConfig({ netlifyConfig, cacheDir, neededFunctions })
 
-  if (neededFunctions.includes('DSG')) {
-    const root = dirname(netlifyConfig.build.publish)
-    await patchFile(root)
-    await relocateBinaries(root)
-  }
-
-  if (neededFunctions.includes('API')) {
-    // Editing _redirects so it works with ntl dev
-    spliceConfig({
-      startMarker: '# @netlify/plugin-gatsby redirects start',
-      endMarker: '# @netlify/plugin-gatsby redirects end',
-      contents: '/api/* /.netlify/functions/__api 200',
-      fileName: join(netlifyConfig.build.publish, '_redirects'),
-    })
-  }
+  await modifyFiles({ netlifyConfig, neededFunctions })
 }
 
 export async function onPostBuild({
