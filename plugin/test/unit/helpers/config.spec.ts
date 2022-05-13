@@ -1,4 +1,4 @@
-import process from 'node:process';
+import process from 'node:process'
 import { resolve, join } from 'path'
 
 import { copy, readJSON } from 'fs-extra'
@@ -24,8 +24,8 @@ const moveGatsbyDir = async () => {
 }
 
 describe('createDatastoreMetadataFile', () => {
-  let cleanup;
-  let restoreCwd;
+  let cleanup
+  let restoreCwd
 
   beforeEach(async () => {
     const tmpDir = await getTmpDir({ unsafeCleanup: true })
@@ -41,19 +41,26 @@ describe('createDatastoreMetadataFile', () => {
     restoreCwd()
     await cleanup()
   })
-  it('successfully creates a metadata file', async () => {
-    await moveGatsbyDir()
-    const publishDir = resolve('public')
+  it(
+    'successfully creates a metadata file',
+    async () => {
+      await moveGatsbyDir()
+      const publishDir = resolve('public')
 
-    await createDatastoreMetadataFile(publishDir)
+      await createDatastoreMetadataFile(publishDir)
 
-    const contents = await readJSON(`${publishDir}/dataMetadata.json`)
+      const contents = await readJSON(`${publishDir}/dataMetadata.json`)
 
-    const { fileName } = contents;
-    expect(fileName).toEqual(expect.stringContaining('data-'))
+      const { fileName } = contents
+      expect(fileName).toEqual(expect.stringContaining('data-'))
 
-    const uuidId = fileName.slice(fileName.indexOf('-') + 1, fileName.indexOf('.mdb'))
-    expect(validate(uuidId)).toEqual(true)
-    // Longer timeout for the test is necessary due to the copying of the demo project into the tmp dir
-  }, TEST_TIMEOUT)
+      const uuidId = fileName.slice(
+        fileName.indexOf('-') + 1,
+        fileName.indexOf('.mdb'),
+      )
+      expect(validate(uuidId)).toEqual(true)
+      // Longer timeout for the test is necessary due to the copying of the demo project into the tmp dir
+    },
+    TEST_TIMEOUT,
+  )
 })
