@@ -1,6 +1,6 @@
-import { resolve, dirname, join } from 'path'
+import { resolve, join } from 'path'
 
-import { copy, readJSON, ensureDir } from 'fs-extra'
+import { copy, readJSON } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
 import {validate} from 'uuid'
 
