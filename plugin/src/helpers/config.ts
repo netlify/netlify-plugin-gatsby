@@ -159,7 +159,7 @@ export function mutateConfig({
   /* eslint-enable no-underscore-dangle, no-param-reassign */
 }
 
-function shouldSupportFunctions(cacheDir: string) {
+function shouldEnableFunctions(cacheDir: string) {
   if (
     process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === 'true' ||
     process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === '1'
@@ -183,17 +183,17 @@ function shouldSupportFunctions(cacheDir: string) {
 export async function getNeededFunctions(
   cacheDir: string,
 ): Promise<Array<string>> {
-  if (shouldSupportFunctions) {
+  if (shouldEnableFunctions) {
     try {
-      const skipReport = await fs.readJson(
+      const funcObj = await fs.readJson(
         path.join(cacheDir, '.nf-skip-gatsby-functions'),
       )
-      const funcs = Object.keys(skipReport).filter(
-        (name) => skipReport[name] === true,
+      const funcArr = Object.keys(funcObj).filter(
+        (name) => funcObj[name] === true,
       )
-      if (funcs.length !== 0) {
-        console.log(`Enabling support for ${funcs.join('/')}`)
-        return funcs
+      if (funcArr.length !== 0) {
+        console.log(`Enabling support for ${funcArr.join('/')}`)
+        return funcArr
       }
     } catch (error) {
       if (error.code === 'ENOENT') {
