@@ -9,7 +9,7 @@ import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {
   checkConfig,
   mutateConfig,
-  shouldSkipFunctions,
+  getNeededFunctions,
   spliceConfig,
 } from './helpers/config'
 import { patchFile, relocateBinaries } from './helpers/files'
@@ -58,27 +58,36 @@ export async function onBuild({
 The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   }
 
-  if (shouldSkipFunctions(cacheDir)) {
-    await deleteFunctions(constants)
-    return
-  }
+  const neededFunctions = await getNeededFunctions(cacheDir)
+
+  await deleteFunctions(constants)
+
   const compiledFunctionsDir = path.join(cacheDir, '/functions')
 
-  await writeFunctions({ constants, netlifyConfig })
+  await writeFunctions({ constants, netlifyConfig, neededFunctions })
 
-  mutateConfig({ netlifyConfig, cacheDir, compiledFunctionsDir })
-
-  const root = dirname(netlifyConfig.build.publish)
-  await patchFile(root)
-  await relocateBinaries(root)
-
-  // Editing _redirects so it works with ntl dev
-  spliceConfig({
-    startMarker: '# @netlify/plugin-gatsby redirects start',
-    endMarker: '# @netlify/plugin-gatsby redirects end',
-    contents: '/api/* /.netlify/functions/__api 200',
-    fileName: join(netlifyConfig.build.publish, '_redirects'),
+  mutateConfig({
+    netlifyConfig,
+    cacheDir,
+    compiledFunctionsDir,
+    neededFunctions,
   })
+
+  if (neededFunctions.includes('DSG')) {
+    const root = dirname(netlifyConfig.build.publish)
+    await patchFile(root)
+    await relocateBinaries(root)
+  }
+
+  if (neededFunctions.includes('API')) {
+    // Editing _redirects so it works with ntl dev
+    spliceConfig({
+      startMarker: '# @netlify/plugin-gatsby redirects start',
+      endMarker: '# @netlify/plugin-gatsby redirects end',
+      contents: '/api/* /.netlify/functions/__api 200',
+      fileName: join(netlifyConfig.build.publish, '_redirects'),
+    })
+  }
 }
 
 export async function onPostBuild({
@@ -86,7 +95,12 @@ export async function onPostBuild({
   utils,
 }): Promise<void> {
   await saveCache({ publish: PUBLISH_DIR, utils })
-  for (const func of ['api', 'dsg', 'ssr']) {
-    await checkZipSize(path.join(FUNCTIONS_DIST, `__${func}.zip`))
+
+  const cacheDir = normalizedCacheDir(PUBLISH_DIR)
+
+  const neededFunctions = await getNeededFunctions(cacheDir)
+
+  for (const func of neededFunctions) {
+    await checkZipSize(path.join(FUNCTIONS_DIST, `__${func.toLowerCase()}.zip`))
   }
 }
