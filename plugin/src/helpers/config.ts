@@ -210,7 +210,7 @@ function shouldEnableFunctions(cacheDir: string) {
 export async function getNeededFunctions(
   cacheDir: string,
 ): Promise<FunctionList> {
-  if (shouldEnableFunctions) {
+  if (shouldEnableFunctions(cacheDir)) {
     try {
       // read skip file from gatsby-plugin-netlify
       const funcObj = await fs.readJson(
