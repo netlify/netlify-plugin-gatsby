@@ -186,58 +186,62 @@ export function mutateConfig({
   /* eslint-enable no-underscore-dangle, no-param-reassign */
 }
 
-function shouldEnableFunctions(cacheDir: string) {
-  if (
-    process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === 'true' ||
-    process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === '1'
-  ) {
-    console.log(
-      'Skipping Gatsby Functions and SSR/DSG support because the environment variable NETLIFY_SKIP_GATSBY_FUNCTIONS is set to true',
-    )
-    return false
-  }
-
-  if (!existsSync(path.join(cacheDir, 'functions'))) {
-    console.log(
-      `Skipping Gatsby Functions and SSR/DSG support because the site's Gatsby version does not support them`,
-    )
-    return false
-  }
-
-  return true
-}
-
 export async function getNeededFunctions(
   cacheDir: string,
 ): Promise<FunctionList> {
-  if (shouldEnableFunctions(cacheDir)) {
-    try {
-      // read skip file from gatsby-plugin-netlify
-      const funcObj = await fs.readJson(
-        path.join(cacheDir, '.nf-skip-gatsby-functions'),
-      )
-      // filter out true values into an array
-      const funcArr = Object.keys(funcObj).filter(
-        (name) => funcObj[name] === true,
-      ) as FunctionList
-      // if functions are needed, return the list
-      if (funcArr.length !== 0) {
-        console.log(`Enabling support for ${funcArr.join('/')}`)
-        return funcArr
-      }
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        // no skip file
-        console.log(`Enabling support for Gatsby Functions and SSR/DSG.`)
-        return ['API', 'SSR', 'DSG']
-      }
-      console.log(
-        // empty skip file (old plugin version)
-        `Skipping Gatsby Functions and SSR/DSG support because gatsby-plugin-netlify reported that this site does not use them.`,
-      )
-    }
+  if (!existsSync(path.join(cacheDir, 'functions'))) return []
+
+  const neededFunctions = overrideNeededFunctions(
+    await readFunctionSkipFile(cacheDir),
+  )
+
+  const functionList = Object.keys(neededFunctions).filter(
+    (name) => neededFunctions[name] === true,
+  ) as FunctionList
+
+  if (functionList.length === 0) {
+    console.log('Skipping Gatsby Functions and SSR/DSG support')
+  } else {
+    console.log(`Enabling Gatsby ${functionList.join('/')} support`)
   }
-  return []
+
+  return functionList
+}
+
+async function readFunctionSkipFile(cacheDir: string) {
+  try {
+    // read skip file from gatsby-plugin-netlify
+    return await fs.readJson(path.join(cacheDir, '.nf-skip-gatsby-functions'))
+  } catch (error) {
+    // missing skip file = all functions needed
+    // empty or invalid skip file = no functions needed
+    return error.code === 'ENOENT' ? { API: true, SSR: true, DSG: true } : {}
+  }
+}
+
+// eslint-disable-next-line complexity
+function overrideNeededFunctions(neededFunctions) {
+  const skipAll =
+    process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === 'true' ||
+    process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === '1'
+
+  const skipAPI =
+    process.env.NETLIFY_SKIP_API_FUNCTION === 'true' ||
+    process.env.NETLIFY_SKIP_API_FUNCTION === '1'
+
+  const skipSSR =
+    process.env.NETLIFY_SKIP_SSR_FUNCTION === 'true' ||
+    process.env.NETLIFY_SKIP_SSR_FUNCTION === '1'
+
+  const skipDSG =
+    process.env.NETLIFY_SKIP_DSG_FUNCTION === 'true' ||
+    process.env.NETLIFY_SKIP_DSG_FUNCTION === '1'
+
+  return {
+    API: skipAll || skipAPI ? false : neededFunctions.API,
+    SSR: skipAll || skipSSR ? false : neededFunctions.SSR,
+    DSG: skipAll || skipDSG ? false : neededFunctions.DSG,
+  }
 }
 
 export function getGatsbyRoot(publish: string): string {
