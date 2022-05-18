@@ -10,7 +10,7 @@
     "prepare": "husky install node_modules/@netlify/eslint-config-node/.husky/",
     "test": "run-s format build:demo test:unit test:e2e",
     "test:unit": "jest",
-    "test:e2e": "cd plugin/test/integration && ./e2e-test.sh",
+    "test:e2e": "cd plugin/test && ./e2e-test.sh",
     "format": "run-s format:check-fix:*",
     "format:ci": "run-s format:check:*",
     "format:check-fix:lint": "run-e format:check:lint format:fix:lint",
