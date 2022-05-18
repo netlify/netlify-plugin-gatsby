@@ -1,4 +1,4 @@
-import path, { dirname, join } from 'path'
+import path from 'path'
 import process from 'process'
 
 import { NetlifyPluginOptions } from '@netlify/build'
@@ -6,13 +6,8 @@ import { stripIndent } from 'common-tags'
 import { existsSync } from 'fs-extra'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
-import {
-  checkConfig,
-  mutateConfig,
-  shouldSkipFunctions,
-  spliceConfig,
-} from './helpers/config'
-import { patchFile, relocateBinaries } from './helpers/files'
+import { checkConfig, getNeededFunctions, modifyConfig } from './helpers/config'
+import { modifyFiles } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
 
@@ -58,27 +53,15 @@ export async function onBuild({
 The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   }
 
-  if (shouldSkipFunctions(cacheDir)) {
-    await deleteFunctions(constants)
-    return
-  }
-  const compiledFunctionsDir = path.join(cacheDir, '/functions')
+  const neededFunctions = await getNeededFunctions(cacheDir)
 
-  await writeFunctions({ constants, netlifyConfig })
+  await deleteFunctions(constants)
 
-  mutateConfig({ netlifyConfig, cacheDir, compiledFunctionsDir })
+  await writeFunctions({ constants, netlifyConfig, neededFunctions })
 
-  const root = dirname(netlifyConfig.build.publish)
-  await patchFile(root)
-  await relocateBinaries(root)
+  await modifyConfig({ netlifyConfig, cacheDir, neededFunctions })
 
-  // Editing _redirects so it works with ntl dev
-  spliceConfig({
-    startMarker: '# @netlify/plugin-gatsby redirects start',
-    endMarker: '# @netlify/plugin-gatsby redirects end',
-    contents: '/api/* /.netlify/functions/__api 200',
-    fileName: join(netlifyConfig.build.publish, '_redirects'),
-  })
+  await modifyFiles({ netlifyConfig, neededFunctions })
 }
 
 export async function onPostBuild({
@@ -86,7 +69,12 @@ export async function onPostBuild({
   utils,
 }): Promise<void> {
   await saveCache({ publish: PUBLISH_DIR, utils })
-  for (const func of ['api', 'dsg', 'ssr']) {
-    await checkZipSize(path.join(FUNCTIONS_DIST, `__${func}.zip`))
+
+  const cacheDir = normalizedCacheDir(PUBLISH_DIR)
+
+  const neededFunctions = await getNeededFunctions(cacheDir)
+
+  for (const func of neededFunctions) {
+    await checkZipSize(path.join(FUNCTIONS_DIST, `__${func.toLowerCase()}.zip`))
   }
 }

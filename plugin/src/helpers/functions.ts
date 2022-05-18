@@ -6,6 +6,8 @@ import { makeApiHandler, makeHandler } from '../templates/handlers'
 
 import { getGatsbyRoot } from './config'
 
+export type FunctionList = Array<'API' | 'SSR' | 'DSG'>
+
 const writeFunction = async ({
   renderMode,
   handlerName,
@@ -34,30 +36,40 @@ const writeApiFunction = async ({ appDir, functionDir }) => {
 export const writeFunctions = async ({
   constants,
   netlifyConfig,
+  neededFunctions,
 }: {
   constants: NetlifyPluginConstants
   netlifyConfig: NetlifyConfig
+  neededFunctions: FunctionList
 }): Promise<void> => {
   const { PUBLISH_DIR, INTERNAL_FUNCTIONS_SRC } = constants
   const siteRoot = getGatsbyRoot(PUBLISH_DIR)
   const functionDir = resolve(INTERNAL_FUNCTIONS_SRC, '__api')
   const appDir = relative(functionDir, siteRoot)
 
-  await writeFunction({
-    renderMode: 'SSR',
-    handlerName: '__ssr',
-    appDir,
-    functionsSrc: INTERNAL_FUNCTIONS_SRC,
-  })
+  if (neededFunctions.includes('SSR')) {
+    await writeFunction({
+      renderMode: 'SSR',
+      handlerName: '__ssr',
+      appDir,
+      functionsSrc: INTERNAL_FUNCTIONS_SRC,
+    })
+  }
 
-  await writeFunction({
-    renderMode: 'DSG',
-    handlerName: '__dsg',
-    appDir,
-    functionsSrc: INTERNAL_FUNCTIONS_SRC,
-  })
+  if (neededFunctions.includes('DSG')) {
+    await writeFunction({
+      renderMode: 'DSG',
+      handlerName: '__dsg',
+      appDir,
+      functionsSrc: INTERNAL_FUNCTIONS_SRC,
+    })
+  }
+
   await setupImageCdn({ constants, netlifyConfig })
-  await writeApiFunction({ appDir, functionDir })
+
+  if (neededFunctions.includes('API')) {
+    await writeApiFunction({ appDir, functionDir })
+  }
 }
 
 export const setupImageCdn = async ({
