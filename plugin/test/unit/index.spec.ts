@@ -2,7 +2,10 @@
 import process from 'node:process'
 import { join } from 'path'
 
-import { NetlifyPluginRunUtilOptions, NetlifyPluginRunUtilResult } from '@netlify/build/types/options/netlify_plugin_run_util'
+import {
+  NetlifyPluginRunUtilOptions,
+  NetlifyPluginRunUtilResult,
+} from '@netlify/build/types/options/netlify_plugin_run_util'
 import Chance from 'chance'
 
 import { onBuild, onSuccess } from '../../src/index'
@@ -13,7 +16,7 @@ jest.mock('node-fetch', () => ({
 }))
 
 jest.mock('../../src/helpers/config', () => {
-  const configObj = jest.requireActual('../../src/helpers/config');
+  const configObj = jest.requireActual('../../src/helpers/config')
 
   return {
     ...configObj,
@@ -24,7 +27,7 @@ jest.mock('../../src/helpers/config', () => {
 })
 
 jest.mock('../../src/helpers/functions', () => {
-  const functionsObj = jest.requireActual('../../src/helpers/functions');
+  const functionsObj = jest.requireActual('../../src/helpers/functions')
 
   return {
     ...functionsObj,
@@ -33,7 +36,7 @@ jest.mock('../../src/helpers/functions', () => {
 })
 
 jest.mock('../../src/helpers/files', () => {
-  const filesObj = jest.requireActual('../../src/helpers/files');
+  const filesObj = jest.requireActual('../../src/helpers/files')
 
   return {
     ...filesObj,
@@ -41,7 +44,6 @@ jest.mock('../../src/helpers/files', () => {
     relocateBinaries: jest.fn(),
   }
 })
-
 
 const chance = new Chance()
 
@@ -54,7 +56,7 @@ const constants = {
   EDGE_HANDLERS_DIST: 'demo/.netlify/edge-functions-dist/',
   IS_LOCAL: true,
   NETLIFY_BUILD_VERSION: '9000.0.0',
-  SITE_ID: chance.guid()
+  SITE_ID: chance.guid(),
 }
 const netlifyConfig = {
   build: {
@@ -67,25 +69,34 @@ const netlifyConfig = {
       css: {},
       js: {},
       html: {},
-      images: {}
+      images: {},
     },
   },
   functions: { '*': {} },
   redirects: [],
   headers: [],
   edge_handlers: [],
-  plugins: []
+  plugins: [],
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const mockRun = (file: string, args?: readonly string[], options?: NetlifyPluginRunUtilOptions): Promise<NetlifyPluginRunUtilResult> => 
+const mockRun = (
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  file: string,
+  args?: readonly string[],
+  options?: NetlifyPluginRunUtilOptions,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+): Promise<NetlifyPluginRunUtilResult> =>
   // eslint-disable-next-line no-void
-   Promise.resolve(void 0)
+  Promise.resolve(void 0)
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-mockRun.command = (command: string, options?: NetlifyPluginRunUtilOptions): Promise<NetlifyPluginRunUtilResult> => 
+mockRun.command = (
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  command: string,
+  options?: NetlifyPluginRunUtilOptions,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+): Promise<NetlifyPluginRunUtilResult> =>
   // eslint-disable-next-line no-void
-   Promise.resolve(void 0)
+  Promise.resolve(void 0)
 
 const utils = {
   build: {
@@ -106,10 +117,10 @@ const utils = {
     restore: jest.fn(),
     list: jest.fn(),
     remove: jest.fn(),
-    has: jest.fn()
+    has: jest.fn(),
   },
   status: {
-    show: jest.fn()
+    show: jest.fn(),
   },
   git: {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -118,13 +129,13 @@ const utils = {
     createdFiles: [],
     deletedFiles: [],
     commits: [],
-    linesOfCode: () => Promise.resolve(chance.number())
+    linesOfCode: () => Promise.resolve(chance.number()),
   },
   functions: {
     add: jest.fn(),
     list: jest.fn(),
-    listAll: jest.fn()
-  }
+    listAll: jest.fn(),
+  },
 }
 
 const defaultArgs = {
@@ -153,14 +164,22 @@ describe('plugin', () => {
       await onBuild(defaultArgs)
 
       expect(createDatastoreMetadataFile).toHaveBeenCalled()
-      expect(createDatastoreMetadataFile).toHaveBeenCalledWith(constants.PUBLISH_DIR)
+      expect(createDatastoreMetadataFile).toHaveBeenCalledWith(
+        constants.PUBLISH_DIR,
+      )
 
       delete process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN
     })
 
     it('does not create the metadata file for the Gatsby datastore when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is disabled', async () => {
       process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'false'
-      createDatastoreMetadataFile.mockImplementation(() => Promise.reject(new Error('createDatastoreMetadataFile should not be called in this test')))
+      createDatastoreMetadataFile.mockImplementation(() =>
+        Promise.reject(
+          new Error(
+            'createDatastoreMetadataFile should not be called in this test',
+          ),
+        ),
+      )
 
       await onBuild(defaultArgs)
 
@@ -170,12 +189,17 @@ describe('plugin', () => {
     })
 
     it('does not create the metadata file for the Gatsby datastore when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is not defined', async () => {
-      createDatastoreMetadataFile.mockImplementation(() => Promise.reject(new Error('createDatastoreMetadataFile should not be called in this test')))
+      createDatastoreMetadataFile.mockImplementation(() =>
+        Promise.reject(
+          new Error(
+            'createDatastoreMetadataFile should not be called in this test',
+          ),
+        ),
+      )
 
       await onBuild(defaultArgs)
 
       expect(createDatastoreMetadataFile).not.toHaveBeenCalled()
-
     })
   })
 
