@@ -101,7 +101,7 @@ export async function prepareFilesystem(cacheDir: string): Promise<void> {
 
   console.log('Starting to prepare data directory')
 
-  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
+  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
     console.log('Starting to stream data file')
 
     const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')
