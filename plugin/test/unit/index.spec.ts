@@ -1,3 +1,4 @@
+/* eslint-disable max-nested-callbacks, max-lines */
 import process from 'node:process'
 import { join } from 'path'
 
@@ -76,12 +77,16 @@ const netlifyConfig = {
   plugins: []
 }
 
-const mockRun = function (file: string, args?: readonly string[], options?: NetlifyPluginRunUtilOptions): Promise<NetlifyPluginRunUtilResult> {
-  return Promise.resolve(void 0)
-}
-mockRun.command = function (command: string, options?: NetlifyPluginRunUtilOptions): Promise<NetlifyPluginRunUtilResult> {
-  return Promise.resolve(void 0)
-}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const mockRun = (file: string, args?: readonly string[], options?: NetlifyPluginRunUtilOptions): Promise<NetlifyPluginRunUtilResult> => 
+  // eslint-disable-next-line no-void
+   Promise.resolve(void 0)
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+mockRun.command = (command: string, options?: NetlifyPluginRunUtilOptions): Promise<NetlifyPluginRunUtilResult> => 
+  // eslint-disable-next-line no-void
+   Promise.resolve(void 0)
+
 const utils = {
   build: {
     failBuild(message) {
@@ -107,6 +112,7 @@ const utils = {
     show: jest.fn()
   },
   git: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     fileMatch: (globPattern: string) => [],
     modifiedFiles: [],
     createdFiles: [],
@@ -130,13 +136,14 @@ const defaultArgs = {
 }
 
 describe('plugin', () => {
-
   afterEach(() => {
     jest.clearAllMocks()
     jest.resetAllMocks()
   })
 
   describe('onBuild', () => {
+    // Importing here rather than at the top of the file allows us to import the mocked function
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
     const { createDatastoreMetadataFile } = require('../../src/helpers/config')
 
     it('creates the metadata file for the Gatsby datastore when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is enabled', async () => {
@@ -153,7 +160,7 @@ describe('plugin', () => {
 
     it('does not create the metadata file for the Gatsby datastore when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is disabled', async () => {
       process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'false'
-      createDatastoreMetadataFile.mockImplementation(() => Promise.reject())
+      createDatastoreMetadataFile.mockImplementation(() => Promise.reject(new Error('createDatastoreMetadataFile should not be called in this test')))
 
       await onBuild(defaultArgs)
 
@@ -163,7 +170,7 @@ describe('plugin', () => {
     })
 
     it('does not create the metadata file for the Gatsby datastore when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is not defined', async () => {
-      createDatastoreMetadataFile.mockImplementation(() => Promise.reject())
+      createDatastoreMetadataFile.mockImplementation(() => Promise.reject(new Error('createDatastoreMetadataFile should not be called in this test')))
 
       await onBuild(defaultArgs)
 
@@ -221,4 +228,4 @@ describe('plugin', () => {
     })
   })
 })
-
+/* eslint-enable max-nested-callbacks, max-lines */
