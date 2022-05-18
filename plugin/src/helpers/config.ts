@@ -221,27 +221,20 @@ async function readFunctionSkipFile(cacheDir: string) {
 
 // eslint-disable-next-line complexity
 function overrideNeededFunctions(neededFunctions) {
-  const skipAll =
-    process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === 'true' ||
-    process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === '1'
-
-  const skipAPI =
-    process.env.NETLIFY_SKIP_API_FUNCTION === 'true' ||
-    process.env.NETLIFY_SKIP_API_FUNCTION === '1'
-
-  const skipSSR =
-    process.env.NETLIFY_SKIP_SSR_FUNCTION === 'true' ||
-    process.env.NETLIFY_SKIP_SSR_FUNCTION === '1'
-
-  const skipDSG =
-    process.env.NETLIFY_SKIP_DSG_FUNCTION === 'true' ||
-    process.env.NETLIFY_SKIP_DSG_FUNCTION === '1'
+  const skipAll = isEnvSet('NETLIFY_SKIP_GATSBY_FUNCTIONS')
+  const skipAPI = isEnvSet('NETLIFY_SKIP_API_FUNCTION')
+  const skipSSR = isEnvSet('NETLIFY_SKIP_SSR_FUNCTION')
+  const skipDSG = isEnvSet('NETLIFY_SKIP_DSG_FUNCTION')
 
   return {
     API: skipAll || skipAPI ? false : neededFunctions.API,
     SSR: skipAll || skipSSR ? false : neededFunctions.SSR,
     DSG: skipAll || skipDSG ? false : neededFunctions.DSG,
   }
+}
+
+function isEnvSet(envVar: string) {
+  return process.env[envVar] === 'true' || process.env[envVar] === '1'
 }
 
 export function getGatsbyRoot(publish: string): string {
