@@ -67,7 +67,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   }
   const compiledFunctionsDir = path.join(cacheDir, '/functions')
 
-  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
+  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
     console.log('Creating site data metadata file')
     await createDatastoreMetadataFile(PUBLISH_DIR)
   }
@@ -101,7 +101,7 @@ export async function onPostBuild({
 
 export async function onSuccess() {
   // Pre-warm the lambdas as downloading the datastore file can take a while
-  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN) {
+  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
     for (const func of ['api', 'dsg', 'ssr']) {
       const url = path.join(process.env.URL, '.netlify/functions', `__${func}`)
       console.log(`Sending pre-warm request to: ${url}`)
