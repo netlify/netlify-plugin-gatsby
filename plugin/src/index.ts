@@ -102,11 +102,22 @@ export async function onPostBuild({
 export async function onSuccess() {
   // Pre-warm the lambdas as downloading the datastore file can take a while
   if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
+    const controller =  new globalThis.AbortController()
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 5000);
+
     for (const func of ['api', 'dsg', 'ssr']) {
       const url = path.join(process.env.URL, '.netlify/functions', `__${func}`)
       console.log(`Sending pre-warm request to: ${url}`)
 
-      await fetch(url)
+      try {
+        await fetch(url, {signal: controller.signal})
+      } catch(err) {
+        console.log('Pre-warm request was aborted', err);
+      } finally {
+        clearTimeout(timeout);
+      }
     }
   }
 }

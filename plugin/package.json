@@ -25,7 +25,7 @@
     "test": "test"
   },
   "engines": {
-    "node": ">=12.13.0"
+    "node": ">=14.17.0"
   },
   "bugs": {
     "url": "https://github.com/netlify/netlify-plugin-gatsby/issues"
