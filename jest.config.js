@@ -2,5 +2,5 @@
 module.exports = {
   preset: 'ts-jest',
   verbose: true,
-  testMatch: ['<rootDir>/plugin/test/unit/helpers/config.spec.ts'],
+  testMatch: ['<rootDir>/plugin/test/unit/**/*.spec.ts'],
 }
