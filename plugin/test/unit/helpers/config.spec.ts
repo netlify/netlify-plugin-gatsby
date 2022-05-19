@@ -5,7 +5,10 @@ import { copy, readJSON } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
 import { validate } from 'uuid'
 
-import { createDatastoreMetadataFile } from '../../../src/helpers/config'
+import {
+  createDatastoreMetadataFile,
+  mutateConfig,
+} from '../../../src/helpers/config'
 
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
 const TEST_TIMEOUT = 20_000
@@ -22,6 +25,108 @@ const changeCwd = (cwd) => {
 const moveGatsbyDir = async () => {
   await copy(SAMPLE_PROJECT_DIR, join(process.cwd()))
 }
+
+/* eslint-disable no-underscore-dangle */
+describe('mutateConfig', () => {
+  const cacheDir = '.cache'
+  const compiledFunctionsDir = `${cacheDir}/functions`
+  let netlifyConfig, defaultArgs
+
+  beforeEach(() => {
+    netlifyConfig = {
+      functions: {
+        __api: null,
+        __dsg: null,
+        __ssr: null,
+      },
+    }
+    defaultArgs = {
+      netlifyConfig,
+      compiledFunctionsDir,
+      cacheDir,
+    }
+  })
+
+  afterEach(() => {
+    delete process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN
+  })
+
+  it('includes the dataMetadata file containing gatsby datastore info when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is enabled', () => {
+    process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'true'
+    mutateConfig(defaultArgs)
+
+    expect(netlifyConfig.functions.__api).toStrictEqual({
+      included_files: [`${compiledFunctionsDir}/**`],
+      external_node_modules: ['msgpackr-extract'],
+    })
+    expect(netlifyConfig.functions.__ssr).toStrictEqual(
+      netlifyConfig.functions.__dsg,
+    )
+
+    expect(netlifyConfig.functions.__dsg).toStrictEqual({
+      included_files: [
+        'public/404.html',
+        'public/500.html',
+        `${cacheDir}/query-engine/**`,
+        `${cacheDir}/page-ssr/**`,
+        '!**/*.js.map',
+        'public/dataMetadata.json',
+      ],
+      external_node_modules: ['msgpackr-extract'],
+      node_bundler: 'esbuild',
+    })
+  })
+
+  it('does not include the dataMetadata file containing gatsby datastore info when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is disabled and bundles datastore into lambdas', () => {
+    process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'false'
+    mutateConfig(defaultArgs)
+
+    expect(netlifyConfig.functions.__api).toStrictEqual({
+      included_files: [`${compiledFunctionsDir}/**`],
+      external_node_modules: ['msgpackr-extract'],
+    })
+    expect(netlifyConfig.functions.__ssr).toStrictEqual(
+      netlifyConfig.functions.__dsg,
+    )
+    expect(netlifyConfig.functions.__dsg).toStrictEqual({
+      included_files: [
+        'public/404.html',
+        'public/500.html',
+        `${cacheDir}/query-engine/**`,
+        `${cacheDir}/page-ssr/**`,
+        '!**/*.js.map',
+        `${cacheDir}/data/**`,
+      ],
+      external_node_modules: ['msgpackr-extract'],
+      node_bundler: 'esbuild',
+    })
+  })
+
+  it('does not include the dataMetadata file containing gatsby datastore info when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is undefined and bundles datastore into lambdas', () => {
+    mutateConfig(defaultArgs)
+
+    expect(netlifyConfig.functions.__api).toStrictEqual({
+      included_files: [`${compiledFunctionsDir}/**`],
+      external_node_modules: ['msgpackr-extract'],
+    })
+    expect(netlifyConfig.functions.__ssr).toStrictEqual(
+      netlifyConfig.functions.__dsg,
+    )
+    expect(netlifyConfig.functions.__dsg).toStrictEqual({
+      included_files: [
+        'public/404.html',
+        'public/500.html',
+        `${cacheDir}/query-engine/**`,
+        `${cacheDir}/page-ssr/**`,
+        '!**/*.js.map',
+        `${cacheDir}/data/**`,
+      ],
+      external_node_modules: ['msgpackr-extract'],
+      node_bundler: 'esbuild',
+    })
+  })
+})
+/* eslint-enable no-underscore-dangle */
 
 describe('createDatastoreMetadataFile', () => {
   let cleanup
