@@ -62,7 +62,7 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
 
   return async function handler(event: HandlerEvent) {
     if (!graphqlEngine) {
-      await prepareFilesystem(cacheDir)
+      await prepareFilesystem(cacheDir, event.rawUrl)
       graphqlEngine = getGraphQLEngine(cacheDir)
     }
 

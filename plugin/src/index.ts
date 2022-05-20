@@ -12,7 +12,7 @@ import {
   checkConfig,
   getNeededFunctions,
   modifyConfig,
-  shouldSkipBundlingDatastore
+  shouldSkipBundlingDatastore,
 } from './helpers/config'
 import { modifyFiles } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'

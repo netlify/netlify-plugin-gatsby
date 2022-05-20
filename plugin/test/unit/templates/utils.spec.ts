@@ -1,12 +1,14 @@
 import { tmpdir } from 'os'
 import { resolve, join, dirname } from 'path'
 
+import Chance from 'chance'
 import { copy, ensureDir, existsSync, readFileSync, unlink } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
 
 // eslint-disable-next-line import/no-namespace
 import * as templateUtils from '../../../src/templates/utils'
 
+const chance = new Chance()
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
 const TEST_TIMEOUT = 20_000
 
@@ -59,7 +61,7 @@ describe('prepareFilesystem', () => {
       await moveGatsbyDir()
 
       const cacheDir = resolve('.cache')
-      await templateUtils.prepareFilesystem(cacheDir)
+      await templateUtils.prepareFilesystem(cacheDir, chance.url())
 
       expect(downloadFileSpy).toHaveBeenCalled()
     },
@@ -73,7 +75,7 @@ describe('prepareFilesystem', () => {
       await moveGatsbyDir()
 
       const cacheDir = resolve('.cache')
-      await templateUtils.prepareFilesystem(cacheDir)
+      await templateUtils.prepareFilesystem(cacheDir, chance.url())
 
       expect(downloadFileSpy).not.toHaveBeenCalled()
     },
@@ -86,7 +88,7 @@ describe('prepareFilesystem', () => {
       await moveGatsbyDir()
 
       const cacheDir = resolve('.cache')
-      await templateUtils.prepareFilesystem(cacheDir)
+      await templateUtils.prepareFilesystem(cacheDir, chance.url())
 
       expect(downloadFileSpy).not.toHaveBeenCalled()
     },

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import process from 'node:process'
 import { resolve, join } from 'path'
 
@@ -8,7 +9,7 @@ import { validate } from 'uuid'
 import {
   createMetadataFileAndCopyDatastore,
   mutateConfig,
-  shouldSkipBundlingDatastore
+  shouldSkipBundlingDatastore,
 } from '../../../src/helpers/config'
 
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
@@ -32,7 +33,7 @@ describe('shouldSkipBundlingDatastore', () => {
     delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
   })
 
-  it("returns true", () => {
+  it('returns true', () => {
     process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
     expect(shouldSkipBundlingDatastore()).toEqual(true)
 
@@ -40,7 +41,7 @@ describe('shouldSkipBundlingDatastore', () => {
     expect(shouldSkipBundlingDatastore()).toEqual(true)
   })
 
-  it("returns false", () => {
+  it('returns false', () => {
     process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'false'
     expect(shouldSkipBundlingDatastore()).toEqual(false)
 
@@ -195,3 +196,4 @@ describe('createMetadataFileAndCopyDatastore', () => {
     TEST_TIMEOUT,
   )
 })
+/* eslint-enable max-lines */

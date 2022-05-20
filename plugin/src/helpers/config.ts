@@ -15,7 +15,10 @@ import type { FunctionList } from './functions'
  * Checks to see if GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled
  */
 export function shouldSkipBundlingDatastore(): boolean {
-  return process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === 'true' || process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === '1'
+  return (
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === 'true' ||
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === '1'
+  )
 }
 
 export async function spliceConfig({
@@ -138,7 +141,7 @@ export async function createMetadataFileAndCopyDatastore(
   ensureFileSync(`${publishDir}/${uniqueDataFileName}`)
   copySync(data, `${publishDir}/${uniqueDataFileName}`)
 
-  const payload = { fileName: uniqueDataFileName, url: process.env.URL }
+  const payload = { fileName: uniqueDataFileName }
   ensureFileSync(`${publishDir}/dataMetadata.json`)
 
   await writeJSON(`${publishDir}/dataMetadata.json`, payload)

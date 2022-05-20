@@ -77,7 +77,10 @@ export const downloadFile = (
 /**
  * Hacks to deal with the fact that functions execute on a readonly filesystem
  */
-export async function prepareFilesystem(cacheDir: string): Promise<void> {
+export async function prepareFilesystem(
+  cacheDir: string,
+  siteUrl: string,
+): Promise<void> {
   console.log('Preparing Gatsby filesystem')
   const rewrites = [
     [join(cacheDir, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
@@ -103,8 +106,8 @@ export async function prepareFilesystem(cacheDir: string): Promise<void> {
     console.log('Starting to stream data file')
 
     const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')
-    const { fileName, url } = await readJSON(dataMetadataPath)
-    const downloadUrl = `${url}/${fileName}`
+    const { fileName } = await readJSON(dataMetadataPath)
+    const downloadUrl = `${siteUrl}/${fileName}`
 
     console.log('Downloading data file from', downloadUrl)
 

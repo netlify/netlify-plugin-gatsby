@@ -1,6 +1,5 @@
 /* eslint-disable max-nested-callbacks, max-lines */
 import process from 'node:process'
-import { join } from 'path'
 
 import {
   NetlifyPluginRunUtilOptions,
@@ -154,12 +153,16 @@ describe('plugin', () => {
 
   describe('onBuild', () => {
     // Importing here rather than at the top of the file allows us to import the mocked function
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
-    const { createMetadataFileAndCopyDatastore } = require('../../src/helpers/config')
+    const {
+      createMetadataFileAndCopyDatastore,
+      // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
+    } = require('../../src/helpers/config')
 
     it('creates the metadata file for the Gatsby datastore when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', async () => {
       process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
-      createMetadataFileAndCopyDatastore.mockImplementation(() => Promise.resolve())
+      createMetadataFileAndCopyDatastore.mockImplementation(() =>
+        Promise.resolve(),
+      )
 
       await onBuild(defaultArgs)
 
