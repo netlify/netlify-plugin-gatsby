@@ -29,7 +29,7 @@ const moveGatsbyDir = async () => {
 /* eslint-disable no-underscore-dangle */
 describe('mutateConfig', () => {
   const cacheDir = '.cache'
-  const compiledFunctionsDir = `${cacheDir}/functions`
+  const neededFunctions = ['API', 'DSG', 'SSR']
   let netlifyConfig, defaultArgs
 
   beforeEach(() => {
@@ -42,7 +42,7 @@ describe('mutateConfig', () => {
     }
     defaultArgs = {
       netlifyConfig,
-      compiledFunctionsDir,
+      neededFunctions,
       cacheDir,
     }
   })
@@ -56,7 +56,7 @@ describe('mutateConfig', () => {
     mutateConfig(defaultArgs)
 
     expect(netlifyConfig.functions.__api).toStrictEqual({
-      included_files: [`${compiledFunctionsDir}/**`],
+      included_files: [`${cacheDir}/functions/**`],
       external_node_modules: ['msgpackr-extract'],
     })
     expect(netlifyConfig.functions.__ssr).toStrictEqual(
@@ -82,7 +82,7 @@ describe('mutateConfig', () => {
     mutateConfig(defaultArgs)
 
     expect(netlifyConfig.functions.__api).toStrictEqual({
-      included_files: [`${compiledFunctionsDir}/**`],
+      included_files: [`${cacheDir}/functions/**`],
       external_node_modules: ['msgpackr-extract'],
     })
     expect(netlifyConfig.functions.__ssr).toStrictEqual(
@@ -106,7 +106,7 @@ describe('mutateConfig', () => {
     mutateConfig(defaultArgs)
 
     expect(netlifyConfig.functions.__api).toStrictEqual({
-      included_files: [`${compiledFunctionsDir}/**`],
+      included_files: [`${cacheDir}/functions/**`],
       external_node_modules: ['msgpackr-extract'],
     })
     expect(netlifyConfig.functions.__ssr).toStrictEqual(

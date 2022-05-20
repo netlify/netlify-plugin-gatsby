@@ -61,7 +61,7 @@ const constants = {
 const netlifyConfig = {
   build: {
     command: 'npm run build',
-    publish: 'publish',
+    publish: 'demo/publish',
     base: '.',
     environment: {},
     services: {},
@@ -220,18 +220,21 @@ describe('plugin', () => {
 
     it('makes requests to pre-warm the lambdas if LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is enabled', async () => {
       await onSuccess()
-
+      const controller = new globalThis.AbortController()
       expect(fetch).toHaveBeenNthCalledWith(
         1,
         join(process.env.URL, '.netlify/functions/__api'),
+        { signal: controller.signal },
       )
       expect(fetch).toHaveBeenNthCalledWith(
         2,
         join(process.env.URL, '.netlify/functions/__dsg'),
+        { signal: controller.signal },
       )
       expect(fetch).toHaveBeenNthCalledWith(
         3,
         join(process.env.URL, '.netlify/functions/__ssr'),
+        { signal: controller.signal },
       )
     })
 
