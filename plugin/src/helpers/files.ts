@@ -1,6 +1,7 @@
 import os from 'os'
 import process from 'process'
 
+import { NetlifyConfig } from '@netlify/build'
 import {
   copyFile,
   ensureDir,
@@ -12,6 +13,8 @@ import {
 import { dirname, join, resolve } from 'pathe'
 import semver from 'semver'
 
+import type { FunctionList } from './functions'
+
 const DEFAULT_LAMBDA_PLATFORM = 'linux'
 const DEFAULT_LAMBDA_ABI = '83'
 const DEFAULT_LAMBDA_ARCH = 'x64'
@@ -22,6 +25,20 @@ const RELOCATABLE_BINARIES = [
   `node.abi${DEFAULT_LAMBDA_ABI}.node`,
   `node.abi${DEFAULT_LAMBDA_ABI}.glibc.node`,
 ]
+
+export const modifyFiles = async ({
+  netlifyConfig,
+  neededFunctions,
+}: {
+  netlifyConfig: NetlifyConfig
+  neededFunctions: FunctionList
+}): Promise<void> => {
+  if (neededFunctions.includes('SSR') || neededFunctions.includes('DSG')) {
+    const root = dirname(netlifyConfig.build.publish)
+    await patchFile(root)
+    await relocateBinaries(root)
+  }
+}
 
 /**
  * Manually patching the bundle to work around various incompatibilities in some versions.

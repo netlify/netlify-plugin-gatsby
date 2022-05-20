@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.1.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.0.0...plugin-gatsby-v3.1.0) (2022-05-19)
+
+
+### Features
+
+* enable API, SSR and DSG functions individually as required ([#375](https://github.com/netlify/netlify-plugin-gatsby/issues/375)) ([aa36bc2](https://github.com/netlify/netlify-plugin-gatsby/commit/aa36bc230898a8a43aeaf6175173ef02256bc338))
+
+
+### Bug Fixes
+
+* **deps:** update dependency cookie to ^0.5.0 ([#356](https://github.com/netlify/netlify-plugin-gatsby/issues/356)) ([40f0f85](https://github.com/netlify/netlify-plugin-gatsby/commit/40f0f85616bf7cb91224936bca065304727b7d83))
+* **deps:** update dependency fs-extra to v10.1.0 ([#357](https://github.com/netlify/netlify-plugin-gatsby/issues/357)) ([c0c9bfc](https://github.com/netlify/netlify-plugin-gatsby/commit/c0c9bfc00b8ffeca76b30afeb26f84d7506f6c52))
+* **deps:** update dependency semver to v7.3.6 ([#347](https://github.com/netlify/netlify-plugin-gatsby/issues/347)) ([93d951b](https://github.com/netlify/netlify-plugin-gatsby/commit/93d951b5ab20f9cd0236aa596ede514676ad380c))
+* **deps:** update dependency semver to v7.3.7 ([#354](https://github.com/netlify/netlify-plugin-gatsby/issues/354)) ([a3f9b23](https://github.com/netlify/netlify-plugin-gatsby/commit/a3f9b239f97d03f1acf8033b919b729e9310167c))
+
 ## [3.0.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v2.1.4...plugin-gatsby-v3.0.0) (2022-04-04)
 
 

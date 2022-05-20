@@ -3,12 +3,13 @@ import { EOL } from 'os'
 import { dirname, posix, resolve, join } from 'path'
 import process from 'process'
 
-import { stripIndent } from 'common-tags'
+import { NetlifyConfig } from '@netlify/build'
 import fs, { existsSync, copySync, writeJSON, ensureFileSync } from 'fs-extra'
 import type { GatsbyConfig, PluginRef } from 'gatsby'
 import { v4 as uuidv4 } from 'uuid'
 
 import { checkPackageVersion } from './files'
+import type { FunctionList } from './functions'
 
 export async function spliceConfig({
   startMarker,
@@ -136,73 +137,144 @@ export async function createDatastoreMetadataFile(
   await writeJSON(`${publishDir}/dataMetadata.json`, payload)
 }
 
+export async function modifyConfig({
+  netlifyConfig,
+  cacheDir,
+  neededFunctions,
+}: {
+  netlifyConfig: NetlifyConfig
+  cacheDir: string
+  neededFunctions: FunctionList
+}): Promise<void> {
+  mutateConfig({ netlifyConfig, cacheDir, neededFunctions })
+
+  if (neededFunctions.includes('API')) {
+    // Editing _redirects so it works with ntl dev
+    await spliceConfig({
+      startMarker: '# @netlify/plugin-gatsby redirects start',
+      endMarker: '# @netlify/plugin-gatsby redirects end',
+      contents: '/api/* /.netlify/functions/__api 200',
+      fileName: join(netlifyConfig.build.publish, '_redirects'),
+    })
+  }
+}
+
 export function mutateConfig({
   netlifyConfig,
-  compiledFunctionsDir,
   cacheDir,
+  neededFunctions,
+}: {
+  netlifyConfig: NetlifyConfig
+  cacheDir: string
+  neededFunctions: FunctionList
 }): void {
   /* eslint-disable no-underscore-dangle, no-param-reassign */
-  netlifyConfig.functions.__api = {
-    included_files: [posix.join(compiledFunctionsDir, '**')],
-    external_node_modules: ['msgpackr-extract'],
+  if (neededFunctions.includes('API')) {
+    netlifyConfig.functions.__api = {
+      included_files: [posix.join(cacheDir, 'functions', '**')],
+      external_node_modules: ['msgpackr-extract'],
+    }
   }
 
-  netlifyConfig.functions.__dsg = {
-    included_files: [
-      'public/404.html',
-      'public/500.html',
-      posix.join(cacheDir, 'query-engine', '**'),
-      posix.join(cacheDir, 'page-ssr', '**'),
-      '!**/*.js.map',
-    ],
-    external_node_modules: ['msgpackr-extract'],
-    node_bundler: 'esbuild',
+  if (neededFunctions.includes('DSG')) {
+    netlifyConfig.functions.__dsg = {
+      included_files: [
+        'public/404.html',
+        'public/500.html',
+        posix.join(cacheDir, 'query-engine', '**'),
+        posix.join(cacheDir, 'page-ssr', '**'),
+        '!**/*.js.map',
+      ],
+      external_node_modules: ['msgpackr-extract'],
+      node_bundler: 'esbuild',
+    }
+
+    if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
+      netlifyConfig.functions.__dsg.included_files.push(
+        'public/dataMetadata.json',
+      )
+    } else {
+      netlifyConfig.functions.__dsg.included_files.push(
+        posix.join(cacheDir, 'data', '**'),
+      )
+    }
   }
 
-  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
-    netlifyConfig.functions.__dsg.included_files.push(
-      'public/dataMetadata.json',
-    )
-  } else {
-    netlifyConfig.functions.__dsg.included_files.push(
-      posix.join(cacheDir, 'data', '**'),
-    )
-  }
+  if (neededFunctions.includes('SSR')) {
+    netlifyConfig.functions.__ssr = {
+      included_files: [
+        'public/404.html',
+        'public/500.html',
+        posix.join(cacheDir, 'query-engine', '**'),
+        posix.join(cacheDir, 'page-ssr', '**'),
+        '!**/*.js.map',
+      ],
+      external_node_modules: ['msgpackr-extract'],
+      node_bundler: 'esbuild',
+    }
 
-  netlifyConfig.functions.__ssr = { ...netlifyConfig.functions.__dsg }
+    if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
+      netlifyConfig.functions.__ssr.included_files.push(
+        'public/dataMetadata.json',
+      )
+    } else {
+      netlifyConfig.functions.__ssr.included_files.push(
+        posix.join(cacheDir, 'data', '**'),
+      )
+    }
+  }
   /* eslint-enable no-underscore-dangle, no-param-reassign */
 }
 
-export function shouldSkipFunctions(cacheDir: string): boolean {
-  if (
-    process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === 'true' ||
-    process.env.NETLIFY_SKIP_GATSBY_FUNCTIONS === '1'
-  ) {
-    console.log(
-      'Skipping Gatsby Functions and SSR/DSG support because the environment variable NETLIFY_SKIP_GATSBY_FUNCTIONS is set to true',
-    )
-    return true
+export async function getNeededFunctions(
+  cacheDir: string,
+): Promise<FunctionList> {
+  if (!existsSync(join(cacheDir, 'functions'))) return []
+
+  const neededFunctions = overrideNeededFunctions(
+    await readFunctionSkipFile(cacheDir),
+  )
+
+  const functionList = Object.keys(neededFunctions).filter(
+    (name) => neededFunctions[name] === true,
+  ) as FunctionList
+
+  if (functionList.length === 0) {
+    console.log('Skipping Gatsby Functions and SSR/DSG support')
+  } else {
+    console.log(`Enabling Gatsby ${functionList.join('/')} support`)
   }
 
-  if (!existsSync(join(cacheDir, 'functions'))) {
-    console.log(
-      `Skipping Gatsby Functions and SSR/DSG support because the site's Gatsby version does not support them`,
-    )
-    return true
+  return functionList
+}
+
+async function readFunctionSkipFile(cacheDir: string) {
+  try {
+    // read skip file from gatsby-plugin-netlify
+    return await fs.readJson(join(cacheDir, '.nf-skip-gatsby-functions'))
+  } catch (error) {
+    // missing skip file = all functions needed
+    // empty or invalid skip file = no functions needed
+    return error.code === 'ENOENT' ? { API: true, SSR: true, DSG: true } : {}
   }
+}
 
-  const skipFile = join(cacheDir, '.nf-skip-gatsby-functions')
+// eslint-disable-next-line complexity
+function overrideNeededFunctions(neededFunctions) {
+  const skipAll = isEnvSet('NETLIFY_SKIP_GATSBY_FUNCTIONS')
+  const skipAPI = isEnvSet('NETLIFY_SKIP_API_FUNCTION')
+  const skipSSR = isEnvSet('NETLIFY_SKIP_SSR_FUNCTION')
+  const skipDSG = isEnvSet('NETLIFY_SKIP_DSG_FUNCTION')
 
-  if (existsSync(skipFile)) {
-    console.log(
-      stripIndent`
-      Skipping Gatsby Functions and SSR/DSG support because gatsby-plugin-netlify reported that this site does not use them. 
-      If this is incorrect, remove the file "${skipFile}" and try again.`,
-    )
-    return true
+  return {
+    API: skipAll || skipAPI ? false : neededFunctions.API,
+    SSR: skipAll || skipSSR ? false : neededFunctions.SSR,
+    DSG: skipAll || skipDSG ? false : neededFunctions.DSG,
   }
+}
 
-  return false
+function isEnvSet(envVar: string) {
+  return process.env[envVar] === 'true' || process.env[envVar] === '1'
 }
 
 export function getGatsbyRoot(publish: string): string {
