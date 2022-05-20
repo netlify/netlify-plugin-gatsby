@@ -2,7 +2,7 @@
 import process from 'node:process'
 import { resolve, join } from 'path'
 
-import { copy, readJSON } from 'fs-extra'
+import { copy, readJSON, readdir } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
 import { validate } from 'uuid'
 
@@ -14,6 +14,13 @@ import {
 
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
 const TEST_TIMEOUT = 20_000
+
+const findDatastoreFilesinPublishDir = async (publishDir) => {
+  const files = await readdir(resolve(publishDir))
+  return files.filter(
+    (file) => file.startsWith('data-') && file.endsWith('.mdb'),
+  )
+}
 
 const changeCwd = (cwd) => {
   const originalCwd = process.cwd()
@@ -193,6 +200,32 @@ describe('createMetadataFileAndCopyDatastore', () => {
       )
       expect(validate(uuidId)).toEqual(true)
       // Longer timeout for the test is necessary due to the copying of the demo project into the tmp dir
+    },
+    TEST_TIMEOUT,
+  )
+
+  it(
+    'reuses the metadata filename if a datastore file already exists in the pubish directory',
+    async () => {
+      await moveGatsbyDir()
+      const publishDir = resolve('public')
+      const cacheDir = resolve('.cache')
+
+      // Initial copying of the datastore file
+      await createMetadataFileAndCopyDatastore(publishDir, cacheDir)
+
+      const contents = await readJSON(`${cacheDir}/dataMetadata.json`)
+      const matches = await findDatastoreFilesinPublishDir(publishDir)
+
+      expect(matches.length).toEqual(1)
+      expect(matches[0]).toEqual(contents.fileName)
+
+      await createMetadataFileAndCopyDatastore(publishDir, cacheDir)
+      const updatedMatches = await findDatastoreFilesinPublishDir(publishDir)
+
+      // There should continue to be only 1 file
+      expect(updatedMatches.length).toEqual(1)
+      expect(updatedMatches[0]).toEqual(contents.fileName)
     },
     TEST_TIMEOUT,
   )

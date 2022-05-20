@@ -4,7 +4,13 @@ import { dirname, posix, resolve, join } from 'path'
 import process from 'process'
 
 import { NetlifyConfig } from '@netlify/build'
-import fs, { existsSync, copySync, writeJSON, ensureFileSync } from 'fs-extra'
+import fs, {
+  readdir,
+  existsSync,
+  copySync,
+  writeJSON,
+  ensureFileSync,
+} from 'fs-extra'
 import type { GatsbyConfig, PluginRef } from 'gatsby'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -126,6 +132,15 @@ export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
   }
 }
 
+async function getPreviouslyCopiedDatastoreFileName(publishDir: string) {
+  const files = await readdir(resolve(publishDir))
+  const match = files.filter(
+    (file) => file.startsWith('data-') && file.endsWith('.mdb'),
+  )
+
+  // eslint-disable-next-line unicorn/explicit-length-check
+  return match.length > 0 ? match[0] : null
+}
 /**
  * Copies the contents of the Gatsby datastore file to the public directory in order
  * to be uploaded to the CDN.
@@ -136,12 +151,15 @@ export async function createMetadataFileAndCopyDatastore(
   cacheDir: string,
 ): Promise<void> {
   const data = join(`${cacheDir}/data/datastore/data.mdb`)
-  const uniqueDataFileName = `data-${uuidv4()}.mdb`
+  const previousFileName = await getPreviouslyCopiedDatastoreFileName(
+    publishDir,
+  )
+  const fileName = previousFileName || `data-${uuidv4()}.mdb`
 
-  ensureFileSync(`${publishDir}/${uniqueDataFileName}`)
-  copySync(data, `${publishDir}/${uniqueDataFileName}`)
+  ensureFileSync(`${publishDir}/${fileName}`)
+  copySync(data, `${publishDir}/${fileName}`)
 
-  const payload = { fileName: uniqueDataFileName }
+  const payload = { fileName }
   ensureFileSync(`${cacheDir}/dataMetadata.json`)
 
   await writeJSON(`${cacheDir}/dataMetadata.json`, payload)
