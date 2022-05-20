@@ -96,7 +96,7 @@ describe('prepareFilesystem', () => {
 /* eslint-enable node/prefer-global/process */
 
 describe('downloadFile', () => {
-  it('downloadFile can download a file', async () => {
+  it('can download a file', async () => {
     const url =
       'https://raw.githubusercontent.com/netlify/netlify-plugin-gatsby/cc33cf55913eca9e81f5a4c8face96312ac29ee6/plugin/manifest.yml'
     const tmpFile = join(tmpdir(), 'gatsby-test', 'downloadfile.txt')
