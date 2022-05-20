@@ -21,7 +21,7 @@ jest.mock('../../src/helpers/config', () => {
   return {
     ...configObj,
     mutateConfig: jest.fn(),
-    createDatastoreMetadataFile: jest.fn(),
+    createMetadataFileAndCopyDatastore: jest.fn(),
     spliceConfig: jest.fn(),
   }
 })
@@ -155,51 +155,51 @@ describe('plugin', () => {
   describe('onBuild', () => {
     // Importing here rather than at the top of the file allows us to import the mocked function
     // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
-    const { createDatastoreMetadataFile } = require('../../src/helpers/config')
+    const { createMetadataFileAndCopyDatastore } = require('../../src/helpers/config')
 
-    it('creates the metadata file for the Gatsby datastore when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is enabled', async () => {
-      process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'true'
-      createDatastoreMetadataFile.mockImplementation(() => Promise.resolve())
+    it('creates the metadata file for the Gatsby datastore when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', async () => {
+      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
+      createMetadataFileAndCopyDatastore.mockImplementation(() => Promise.resolve())
 
       await onBuild(defaultArgs)
 
-      expect(createDatastoreMetadataFile).toHaveBeenCalled()
-      expect(createDatastoreMetadataFile).toHaveBeenCalledWith(
+      expect(createMetadataFileAndCopyDatastore).toHaveBeenCalled()
+      expect(createMetadataFileAndCopyDatastore).toHaveBeenCalledWith(
         constants.PUBLISH_DIR,
       )
 
-      delete process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN
+      delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
     })
 
-    it('does not create the metadata file for the Gatsby datastore when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is disabled', async () => {
-      process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'false'
-      createDatastoreMetadataFile.mockImplementation(() =>
+    it('does not create the metadata file for the Gatsby datastore when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is disabled', async () => {
+      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'false'
+      createMetadataFileAndCopyDatastore.mockImplementation(() =>
         Promise.reject(
           new Error(
-            'createDatastoreMetadataFile should not be called in this test',
+            'createMetadataFileAndCopyDatastore should not be called in this test',
           ),
         ),
       )
 
       await onBuild(defaultArgs)
 
-      expect(createDatastoreMetadataFile).not.toHaveBeenCalled()
+      expect(createMetadataFileAndCopyDatastore).not.toHaveBeenCalled()
 
-      delete process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN
+      delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
     })
 
-    it('does not create the metadata file for the Gatsby datastore when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is not defined', async () => {
-      createDatastoreMetadataFile.mockImplementation(() =>
+    it('does not create the metadata file for the Gatsby datastore when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is not defined', async () => {
+      createMetadataFileAndCopyDatastore.mockImplementation(() =>
         Promise.reject(
           new Error(
-            'createDatastoreMetadataFile should not be called in this test',
+            'createMetadataFileAndCopyDatastore should not be called in this test',
           ),
         ),
       )
 
       await onBuild(defaultArgs)
 
-      expect(createDatastoreMetadataFile).not.toHaveBeenCalled()
+      expect(createMetadataFileAndCopyDatastore).not.toHaveBeenCalled()
     })
   })
 
@@ -209,45 +209,45 @@ describe('plugin', () => {
 
     beforeEach(() => {
       fetch.mockImplementation(mockFetchMethod)
-      process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'true'
+      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
       process.env.URL = chance.url()
     })
 
     afterEach(() => {
-      delete process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN
+      delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
       delete process.env.URL
     })
 
-    it('makes requests to pre-warm the lambdas if LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is enabled', async () => {
+    it('makes requests to pre-warm the lambdas if GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', async () => {
       await onSuccess()
       const controller = new globalThis.AbortController()
       expect(fetch).toHaveBeenNthCalledWith(
         1,
-        join(process.env.URL, '.netlify/functions/__api'),
+        `${process.env.URL}/.netlify/functions/__api`,
         { signal: controller.signal },
       )
       expect(fetch).toHaveBeenNthCalledWith(
         2,
-        join(process.env.URL, '.netlify/functions/__dsg'),
+        `${process.env.URL}/.netlify/functions/__dsg`,
         { signal: controller.signal },
       )
       expect(fetch).toHaveBeenNthCalledWith(
         3,
-        join(process.env.URL, '.netlify/functions/__ssr'),
+        `${process.env.URL}/.netlify/functions/__ssr`,
         { signal: controller.signal },
       )
     })
 
-    it('does not make requests to pre-warm the lambdas if LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is disabled', async () => {
-      process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'false'
+    it('does not make requests to pre-warm the lambdas if GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is disabled', async () => {
+      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'false'
 
       await onSuccess()
 
       expect(fetch).toBeCalledTimes(0)
     })
 
-    it('does not make requests to pre-warm the lambdas if process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is not defined', async () => {
-      delete process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN
+    it('does not make requests to pre-warm the lambdas if process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is not defined', async () => {
+      delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
 
       await onSuccess()
 

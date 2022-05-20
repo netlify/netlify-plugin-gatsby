@@ -49,13 +49,13 @@ describe('prepareFilesystem', () => {
     jest.clearAllMocks()
     jest.resetAllMocks()
     jest.restoreAllMocks()
-    delete process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN
+    delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
   })
 
   it(
-    'downloads file from the CDN when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is enabled',
+    'downloads file from the CDN when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled',
     async () => {
-      process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'true'
+      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
       await moveGatsbyDir()
 
       const cacheDir = resolve('.cache')
@@ -67,9 +67,9 @@ describe('prepareFilesystem', () => {
   )
 
   it(
-    'does not download file from the CDN when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is not enabled',
+    'does not download file from the CDN when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is not enabled',
     async () => {
-      process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'false'
+      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'false'
       await moveGatsbyDir()
 
       const cacheDir = resolve('.cache')
@@ -81,7 +81,7 @@ describe('prepareFilesystem', () => {
   )
 
   it(
-    'does not download file from the CDN when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is undefined',
+    'does not download file from the CDN when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is undefined',
     async () => {
       await moveGatsbyDir()
 

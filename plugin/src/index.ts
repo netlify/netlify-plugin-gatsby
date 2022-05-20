@@ -8,10 +8,11 @@ import fetch from 'node-fetch'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {
-  createDatastoreMetadataFile,
+  createMetadataFileAndCopyDatastore,
   checkConfig,
   getNeededFunctions,
   modifyConfig,
+  shouldSkipBundlingDatastore
 } from './helpers/config'
 import { modifyFiles } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
@@ -63,9 +64,9 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   await deleteFunctions(constants)
 
-  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
+  if (shouldSkipBundlingDatastore()) {
     console.log('Creating site data metadata file')
-    await createDatastoreMetadataFile(PUBLISH_DIR)
+    await createMetadataFileAndCopyDatastore(PUBLISH_DIR)
   }
 
   await writeFunctions({ constants, netlifyConfig, neededFunctions })
@@ -92,7 +93,7 @@ export async function onPostBuild({
 
 export async function onSuccess() {
   // Pre-warm the lambdas as downloading the datastore file can take a while
-  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
+  if (shouldSkipBundlingDatastore()) {
     const FETCH_TIMEOUT = 5000
     const controller = new globalThis.AbortController()
     const timeout = setTimeout(() => {
@@ -100,7 +101,7 @@ export async function onSuccess() {
     }, FETCH_TIMEOUT)
 
     for (const func of ['api', 'dsg', 'ssr']) {
-      const url = path.join(process.env.URL, '.netlify/functions', `__${func}`)
+      const url = `${process.env.URL}/.netlify/functions/__${func}`
       console.log(`Sending pre-warm request to: ${url}`)
 
       try {

@@ -6,8 +6,9 @@ import { dir as getTmpDir } from 'tmp-promise'
 import { validate } from 'uuid'
 
 import {
-  createDatastoreMetadataFile,
+  createMetadataFileAndCopyDatastore,
   mutateConfig,
+  shouldSkipBundlingDatastore
 } from '../../../src/helpers/config'
 
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
@@ -25,6 +26,31 @@ const changeCwd = (cwd) => {
 const moveGatsbyDir = async () => {
   await copy(SAMPLE_PROJECT_DIR, join(process.cwd()))
 }
+
+describe('shouldSkipBundlingDatastore', () => {
+  afterEach(() => {
+    delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
+  })
+
+  it("returns true", () => {
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
+    expect(shouldSkipBundlingDatastore()).toEqual(true)
+
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = '1'
+    expect(shouldSkipBundlingDatastore()).toEqual(true)
+  })
+
+  it("returns false", () => {
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'false'
+    expect(shouldSkipBundlingDatastore()).toEqual(false)
+
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = '0'
+    expect(shouldSkipBundlingDatastore()).toEqual(false)
+
+    delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
+    expect(shouldSkipBundlingDatastore()).toEqual(false)
+  })
+})
 
 /* eslint-disable no-underscore-dangle */
 describe('mutateConfig', () => {
@@ -48,11 +74,11 @@ describe('mutateConfig', () => {
   })
 
   afterEach(() => {
-    delete process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN
+    delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
   })
 
-  it('includes the dataMetadata file containing gatsby datastore info when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is enabled', () => {
-    process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'true'
+  it('includes the dataMetadata file containing gatsby datastore info when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', () => {
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
     mutateConfig(defaultArgs)
 
     expect(netlifyConfig.functions.__api).toStrictEqual({
@@ -77,8 +103,8 @@ describe('mutateConfig', () => {
     })
   })
 
-  it('does not include the dataMetadata file containing gatsby datastore info when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is disabled and bundles datastore into lambdas', () => {
-    process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN = 'false'
+  it('does not include the dataMetadata file containing gatsby datastore info when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is disabled and bundles datastore into lambdas', () => {
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'false'
     mutateConfig(defaultArgs)
 
     expect(netlifyConfig.functions.__api).toStrictEqual({
@@ -102,7 +128,7 @@ describe('mutateConfig', () => {
     })
   })
 
-  it('does not include the dataMetadata file containing gatsby datastore info when LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN is undefined and bundles datastore into lambdas', () => {
+  it('does not include the dataMetadata file containing gatsby datastore info when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is undefined and bundles datastore into lambdas', () => {
     mutateConfig(defaultArgs)
 
     expect(netlifyConfig.functions.__api).toStrictEqual({
@@ -128,7 +154,7 @@ describe('mutateConfig', () => {
 })
 /* eslint-enable no-underscore-dangle */
 
-describe('createDatastoreMetadataFile', () => {
+describe('createMetadataFileAndCopyDatastore', () => {
   let cleanup
   let restoreCwd
 
@@ -152,7 +178,7 @@ describe('createDatastoreMetadataFile', () => {
       await moveGatsbyDir()
       const publishDir = resolve('public')
 
-      await createDatastoreMetadataFile(publishDir)
+      await createMetadataFileAndCopyDatastore(publishDir)
 
       const contents = await readJSON(`${publishDir}/dataMetadata.json`)
 

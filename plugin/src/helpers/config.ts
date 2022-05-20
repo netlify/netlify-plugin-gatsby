@@ -11,6 +11,13 @@ import { v4 as uuidv4 } from 'uuid'
 import { checkPackageVersion } from './files'
 import type { FunctionList } from './functions'
 
+/**
+ * Checks to see if GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled
+ */
+export function shouldSkipBundlingDatastore(): boolean {
+  return process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === 'true' || process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === '1'
+}
+
 export async function spliceConfig({
   startMarker,
   endMarker,
@@ -122,7 +129,7 @@ export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
  *
  * @param publishDir
  */
-export async function createDatastoreMetadataFile(
+export async function createMetadataFileAndCopyDatastore(
   publishDir: string,
 ): Promise<void> {
   const data = join(getGatsbyRoot(publishDir), '.cache/data/datastore/data.mdb')
@@ -190,7 +197,7 @@ export function mutateConfig({
       node_bundler: 'esbuild',
     }
 
-    if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
+    if (shouldSkipBundlingDatastore()) {
       netlifyConfig.functions.__dsg.included_files.push(
         'public/dataMetadata.json',
       )
@@ -214,7 +221,7 @@ export function mutateConfig({
       node_bundler: 'esbuild',
     }
 
-    if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
+    if (shouldSkipBundlingDatastore()) {
       netlifyConfig.functions.__ssr.included_files.push(
         'public/dataMetadata.json',
       )

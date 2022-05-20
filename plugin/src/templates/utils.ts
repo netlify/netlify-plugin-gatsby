@@ -18,6 +18,8 @@ import {
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
 
+import { shouldSkipBundlingDatastore } from '../helpers/config'
+
 // Alias in the temp directory so it's writable
 export const TEMP_CACHE_DIR = join(tmpdir(), 'gatsby', '.cache')
 const streamPipeline = promisify(pipeline)
@@ -32,14 +34,10 @@ declare global {
 }
 
 /**
- * Downloads a file from the CDN to the local aliased filesystem. This is a fallback, because in most cases we'd expect
- * files required at runtime to not be sent to the CDN.
+ * Downloads a file from the CDN to the local aliased filesystem
  *
  * Mirrors functionality in the Netlify NextJS plugin
  * https://github.com/netlify/netlify-plugin-nextjs/blob/8f5648c848d4a4d42ac772e7a8a2a50fdc632220/plugin/src/templates/handlerUtils.ts#L19-L43
- * @param downloadUrl
- * @param filePath
- * @returns
  */
 export const downloadFile = (
   downloadUrl: string,
@@ -101,7 +99,7 @@ export async function prepareFilesystem(cacheDir: string): Promise<void> {
 
   console.log('Starting to prepare data directory')
 
-  if (process.env.LOAD_GATSBY_LMDB_DATASTORE_FROM_CDN === 'true') {
+  if (shouldSkipBundlingDatastore()) {
     console.log('Starting to stream data file')
 
     const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')
