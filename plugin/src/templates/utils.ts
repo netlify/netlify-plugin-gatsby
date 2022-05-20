@@ -18,8 +18,6 @@ import {
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
 
-import { shouldSkipBundlingDatastore } from '../helpers/config'
-
 // Alias in the temp directory so it's writable
 export const TEMP_CACHE_DIR = join(tmpdir(), 'gatsby', '.cache')
 const streamPipeline = promisify(pipeline)
@@ -102,7 +100,7 @@ export async function prepareFilesystem(
 
   console.log('Starting to prepare data directory')
 
-  if (shouldSkipBundlingDatastore()) {
+  if (process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === 'true' || process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === '1') {
     console.log('Starting to stream data file')
 
     const dataMetadataPath = join(process.cwd(), '.cache', 'dataMetadata.json')
