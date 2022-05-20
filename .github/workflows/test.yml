@@ -32,7 +32,7 @@ jobs:
       - run: npm install -g netlify-cli
       - run: npm ci
       - run: cd plugin && npm ci && npm run build
-      - run: cd ../ && npm test
+      - run: npm test
 
   build-mac:
     runs-on: macOS-latest
