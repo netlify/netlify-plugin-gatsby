@@ -10,7 +10,7 @@ import * as templateUtils from '../../../src/templates/utils'
 
 const chance = new Chance()
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
-const TEST_TIMEOUT = 20_000
+const TEST_TIMEOUT = 60_000
 
 /* eslint-disable node/prefer-global/process */
 const changeCwd = (cwd) => {
