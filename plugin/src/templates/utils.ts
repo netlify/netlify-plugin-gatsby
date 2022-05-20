@@ -100,7 +100,10 @@ export async function prepareFilesystem(
 
   console.log('Starting to prepare data directory')
 
-  if (process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === 'true' || process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === '1') {
+  if (
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === 'true' ||
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === '1'
+  ) {
     console.log('Starting to stream data file')
 
     const dataMetadataPath = join(process.cwd(), '.cache', 'dataMetadata.json')
