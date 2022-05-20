@@ -66,7 +66,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   if (shouldSkipBundlingDatastore()) {
     console.log('Creating site data metadata file')
-    await createMetadataFileAndCopyDatastore(PUBLISH_DIR)
+    await createMetadataFileAndCopyDatastore(PUBLISH_DIR, cacheDir)
   }
 
   await writeFunctions({ constants, netlifyConfig, neededFunctions })

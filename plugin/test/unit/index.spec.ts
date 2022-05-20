@@ -128,7 +128,7 @@ const utils = {
     createdFiles: [],
     deletedFiles: [],
     commits: [],
-    linesOfCode: () => Promise.resolve(chance.number()),
+    linesOfCode: () => Promise.resolve(chance.integer()),
   },
   functions: {
     add: jest.fn(),
@@ -169,6 +169,7 @@ describe('plugin', () => {
       expect(createMetadataFileAndCopyDatastore).toHaveBeenCalled()
       expect(createMetadataFileAndCopyDatastore).toHaveBeenCalledWith(
         constants.PUBLISH_DIR,
+        `${process.cwd()}/demo/.cache`,
       )
 
       delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE

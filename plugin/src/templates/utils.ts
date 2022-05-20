@@ -105,7 +105,7 @@ export async function prepareFilesystem(
   if (shouldSkipBundlingDatastore()) {
     console.log('Starting to stream data file')
 
-    const dataMetadataPath = join(process.cwd(), 'public', 'dataMetadata.json')
+    const dataMetadataPath = join(process.cwd(), '.cache', 'dataMetadata.json')
     const { fileName } = await readJSON(dataMetadataPath)
     const downloadUrl = `${siteUrl}/${fileName}`
 

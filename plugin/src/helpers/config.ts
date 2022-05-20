@@ -130,21 +130,21 @@ export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
  * Copies the contents of the Gatsby datastore file to the public directory in order
  * to be uploaded to the CDN.
  *
- * @param publishDir
  */
 export async function createMetadataFileAndCopyDatastore(
   publishDir: string,
+  cacheDir: string,
 ): Promise<void> {
-  const data = join(getGatsbyRoot(publishDir), '.cache/data/datastore/data.mdb')
+  const data = join(`${cacheDir}/data/datastore/data.mdb`)
   const uniqueDataFileName = `data-${uuidv4()}.mdb`
 
   ensureFileSync(`${publishDir}/${uniqueDataFileName}`)
   copySync(data, `${publishDir}/${uniqueDataFileName}`)
 
   const payload = { fileName: uniqueDataFileName }
-  ensureFileSync(`${publishDir}/dataMetadata.json`)
+  ensureFileSync(`${cacheDir}/dataMetadata.json`)
 
-  await writeJSON(`${publishDir}/dataMetadata.json`, payload)
+  await writeJSON(`${cacheDir}/dataMetadata.json`, payload)
 }
 
 export async function modifyConfig({
@@ -202,7 +202,7 @@ export function mutateConfig({
 
     if (shouldSkipBundlingDatastore()) {
       netlifyConfig.functions.__dsg.included_files.push(
-        'public/dataMetadata.json',
+        '.cache/dataMetadata.json',
       )
     } else {
       netlifyConfig.functions.__dsg.included_files.push(
@@ -226,7 +226,7 @@ export function mutateConfig({
 
     if (shouldSkipBundlingDatastore()) {
       netlifyConfig.functions.__ssr.included_files.push(
-        'public/dataMetadata.json',
+        '.cache/dataMetadata.json',
       )
     } else {
       netlifyConfig.functions.__ssr.included_files.push(

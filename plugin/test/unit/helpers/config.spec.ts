@@ -97,7 +97,7 @@ describe('mutateConfig', () => {
         `${cacheDir}/query-engine/**`,
         `${cacheDir}/page-ssr/**`,
         '!**/*.js.map',
-        'public/dataMetadata.json',
+        '.cache/dataMetadata.json',
       ],
       external_node_modules: ['msgpackr-extract'],
       node_bundler: 'esbuild',
@@ -178,10 +178,11 @@ describe('createMetadataFileAndCopyDatastore', () => {
     async () => {
       await moveGatsbyDir()
       const publishDir = resolve('public')
+      const cacheDir = resolve('.cache')
 
-      await createMetadataFileAndCopyDatastore(publishDir)
+      await createMetadataFileAndCopyDatastore(publishDir, cacheDir)
 
-      const contents = await readJSON(`${publishDir}/dataMetadata.json`)
+      const contents = await readJSON(`${cacheDir}/dataMetadata.json`)
 
       const { fileName } = contents
       expect(fileName).toEqual(expect.stringContaining('data-'))
