@@ -7,8 +7,9 @@
   },
   "scripts": {
     "build:demo": "cd demo && GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE=true npm run build:netlify",
+    "install:demo": "cd demo && npm install",
     "prepare": "husky install node_modules/@netlify/eslint-config-node/.husky/",
-    "test": "run-s format build:demo test:unit test:e2e",
+    "test": "run-s format install:demo build:demo test:unit test:e2e",
     "test:unit": "jest",
     "test:e2e": "cd plugin/test && ./e2e-test.sh",
     "format": "run-s format:check-fix:*",
