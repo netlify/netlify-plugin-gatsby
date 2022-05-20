@@ -29,10 +29,10 @@ jobs:
           key:
             ubuntu-build-${{ env.cache-name }}-${{
             hashFiles('plugin/test/fixtures/**/package.json') }}-node-modules
-      - run: npm install -g netlify-cli gatsby@next
+      - run: npm install -g netlify-cli
       - run: npm ci
       - run: cd plugin && npm ci && npm run build
-      - run: npm test
+      - run: cd ../ && npm test
 
   build-mac:
     runs-on: macOS-latest
@@ -56,7 +56,7 @@ jobs:
           key:
             macOS-build-${{ env.cache-name }}-${{
             hashFiles('plugin/test/fixtures/**/package.json') }}-node-modules
-      - run: npm install -g netlify-cli gatsby@next
+      - run: npm install -g netlify-cli
       - run: npm ci
       - run: cd plugin && npm ci && npm run build
       - run: npm test

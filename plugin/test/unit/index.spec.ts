@@ -61,7 +61,7 @@ const constants = {
 const netlifyConfig = {
   build: {
     command: 'npm run build',
-    publish: 'demo/publish',
+    publish: 'demo/public',
     base: '.',
     environment: {},
     services: {},
