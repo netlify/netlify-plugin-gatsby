@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build:demo": "cd demo && npm run build",
-    "install:demo": "cd demo && npm run install",
+    "install:demo": "cd demo && npm install",
     "prepare": "husky install node_modules/@netlify/eslint-config-node/.husky/",
     "test": "run-s format install:demo build:demo test:unit test:e2e",
     "test:unit": "jest",
