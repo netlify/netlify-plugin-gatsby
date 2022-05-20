@@ -159,6 +159,7 @@ export async function modifyConfig({
   }
 }
 
+// eslint-disable-next-line complexity
 export function mutateConfig({
   netlifyConfig,
   cacheDir,
