@@ -1,7 +1,7 @@
 const { overrides } = require('@netlify/eslint-config-node')
 
 module.exports = {
-  extends: '@netlify/eslint-config-node',
+  extends: ['@netlify/eslint-config-node'],
   rules: {
     // For now
     'func-style': 'off',
@@ -30,19 +30,33 @@ module.exports = {
       // Templates import files from the site itself and needs lots of dynamic requires
       files: ['plugin/src/templates/**/*'],
       rules: {
-        'node/no-unpublished-import': 'off',
+        'n/no-unpublished-import': 'off',
         '@typescript-eslint/no-var-requires': 'off',
-        'node/global-require': 'off',
+        'n/global-require': 'off',
         'import/no-dynamic-require': 'off',
         'import/no-unresolved': 'off',
-        'node/no-unpublished-require': 'off',
-        'node/no-missing-require': 'off',
+        'n/no-unpublished-require': 'off',
+        'n/no-missing-require': 'off',
+        'n/no-missing-import': 'off',
         'max-lines': 'off',
         complexity: 'off',
         'max-statements': 'off',
-        'node/prefer-global/process': 'off',
+        'n/prefer-global/process': 'off',
         'unicorn/filename-case': 'off',
       },
     },
+    {
+      files: ['plugin/test/**/*'],
+      rules: {
+        'n/no-unpublished-import': 'off',
+        'max-lines': 'off',
+        'n/no-unpublished-require': 'off',
+        'n/no-missing-require': 'off',
+        'n/no-missing-import': 'off',
+        '@typescript-eslint/no-var-requires': 'off',
+        'n/global-require': 'off',
+        'n/prefer-global/process': 'off',
+      }
+    }
   ],
 }

@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import process from 'node:process'
 import { resolve, join } from 'path'
 
@@ -260,4 +259,3 @@ describe('createMetadataFileAndCopyDatastore', () => {
     TEST_TIMEOUT,
   )
 })
-/* eslint-enable max-lines */

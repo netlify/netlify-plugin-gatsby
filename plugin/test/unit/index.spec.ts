@@ -1,4 +1,4 @@
-/* eslint-disable max-nested-callbacks, max-lines */
+/* eslint-disable max-nested-callbacks */
 import process from 'node:process'
 
 import {
@@ -155,7 +155,6 @@ describe('plugin', () => {
     // Importing here rather than at the top of the file allows us to import the mocked function
     const {
       createMetadataFileAndCopyDatastore,
-      // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
     } = require('../../src/helpers/config')
 
     it('creates the metadata file for the Gatsby datastore when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', async () => {
@@ -208,7 +207,6 @@ describe('plugin', () => {
   })
 
   describe('onSuccess', () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, node/global-require
     const fetch = require('node-fetch').default
 
     beforeEach(() => {
@@ -259,4 +257,4 @@ describe('plugin', () => {
     })
   })
 })
-/* eslint-enable max-nested-callbacks, max-lines */
+/* eslint-enable max-nested-callbacks */

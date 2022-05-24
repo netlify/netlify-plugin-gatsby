@@ -12,7 +12,6 @@ const chance = new Chance()
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
 const TEST_TIMEOUT = 60_000
 
-/* eslint-disable node/prefer-global/process */
 const changeCwd = (cwd) => {
   const originalCwd = process.cwd()
   process.chdir(cwd)
@@ -95,7 +94,6 @@ describe('prepareFilesystem', () => {
     TEST_TIMEOUT,
   )
 })
-/* eslint-enable node/prefer-global/process */
 
 describe('downloadFile', () => {
   it('can download a file', async () => {
