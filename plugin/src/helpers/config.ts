@@ -65,7 +65,7 @@ function loadGatsbyConfig({ gatsbyRoot, utils }): GatsbyConfig | never {
   }
 
   try {
-    // eslint-disable-next-line n/global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
+    // eslint-disable-next-line node/global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
     return require(gatsbyConfigFile) as GatsbyConfig
   } catch (error) {
     utils.build.failBuild('Could not load gatsby-config.js', { error })
