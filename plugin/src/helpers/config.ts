@@ -5,6 +5,7 @@ import process from 'process'
 
 import { NetlifyConfig } from '@netlify/build'
 import fs, {
+  readJSON,
   readdir,
   existsSync,
   copySync,
@@ -129,14 +130,28 @@ export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
   }
 }
 
-async function getPreviouslyCopiedDatastoreFileName(publishDir: string) {
-  const files = await readdir(resolve(publishDir))
-  const match = files.filter(
+async function getPreviouslyCopiedDatastoreFileName(
+  publishDir: string,
+  cacheDir: string,
+) {
+  const publishFiles = await readdir(resolve(publishDir))
+  const datastoreMatch = publishFiles.find(
     (file) => file.startsWith('data-') && file.endsWith('.mdb'),
   )
 
-  // eslint-disable-next-line unicorn/explicit-length-check
-  return match.length > 0 ? match[0] : null
+  if (datastoreMatch) {
+    return datastoreMatch
+  }
+
+  const cacheFiles = await readdir(resolve(cacheDir))
+  const metadataMatch = cacheFiles.find((file) => file === 'dataMetadata.json')
+
+  if (metadataMatch) {
+    const contents = await readJSON(`${cacheDir}/dataMetadata.json`)
+    return contents.fileName
+  }
+
+  return null
 }
 /**
  * Copies the contents of the Gatsby datastore file to the public directory in order
@@ -150,6 +165,7 @@ export async function createMetadataFileAndCopyDatastore(
   const data = join(`${cacheDir}/data/datastore/data.mdb`)
   const previousFileName = await getPreviouslyCopiedDatastoreFileName(
     publishDir,
+    cacheDir,
   )
   const fileName = previousFileName || `data-${uuidv4()}.mdb`
 

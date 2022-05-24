@@ -2,7 +2,7 @@
 import process from 'node:process'
 import { resolve, join } from 'path'
 
-import { copy, readJSON, readdir } from 'fs-extra'
+import { remove, copy, readJSON, readdir } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
 import { validate } from 'uuid'
 
@@ -205,7 +205,7 @@ describe('createMetadataFileAndCopyDatastore', () => {
   )
 
   it(
-    'reuses the metadata filename if a datastore file already exists in the pubish directory',
+    'reuses the datastore filename if a datastore file already exists in the pubish directory',
     async () => {
       await moveGatsbyDir()
       const publishDir = resolve('public')
@@ -220,11 +220,41 @@ describe('createMetadataFileAndCopyDatastore', () => {
       expect(matches.length).toEqual(1)
       expect(matches[0]).toEqual(contents.fileName)
 
+      // Remove dataMetadata file to confirm that datastore filename is used
+      await remove(`${cacheDir}/dataMetadata.json`)
+
       await createMetadataFileAndCopyDatastore(publishDir, cacheDir)
       const updatedMatches = await findDatastoreFilesinPublishDir(publishDir)
 
       // There should continue to be only 1 file
       expect(updatedMatches.length).toEqual(1)
+      expect(updatedMatches[0]).toEqual(contents.fileName)
+    },
+    TEST_TIMEOUT,
+  )
+
+  it(
+    'reuses the metadata filename if a datastore metadata file exists in the cache directory',
+    async () => {
+      await moveGatsbyDir()
+      const publishDir = resolve('public')
+      const cacheDir = resolve('.cache')
+
+      // Initial copying of the datastore file
+      await createMetadataFileAndCopyDatastore(publishDir, cacheDir)
+
+      const contents = await readJSON(`${cacheDir}/dataMetadata.json`)
+      const matches = await findDatastoreFilesinPublishDir(publishDir)
+
+      expect(matches.length).toEqual(1)
+      expect(matches[0]).toEqual(contents.fileName)
+
+      // Remove datastore file to confirm that dataMetadata.json filename is used
+      await remove(`${publishDir}/${contents.fileName}`)
+
+      await createMetadataFileAndCopyDatastore(publishDir, cacheDir)
+      const updatedMatches = await findDatastoreFilesinPublishDir(publishDir)
+
       expect(updatedMatches[0]).toEqual(contents.fileName)
     },
     TEST_TIMEOUT,
