@@ -134,6 +134,13 @@ async function getPreviouslyCopiedDatastoreFileName(
   publishDir: string,
   cacheDir: string,
 ) {
+  try {
+    const contents = await readJSON(`${cacheDir}/dataMetadata.json`)
+    if (contents.fileName) {
+      return contents.fileName
+    }
+  } catch {}
+
   const publishFiles = await readdir(resolve(publishDir))
   const datastoreMatch = publishFiles.find(
     (file) => file.startsWith('data-') && file.endsWith('.mdb'),
@@ -141,14 +148,6 @@ async function getPreviouslyCopiedDatastoreFileName(
 
   if (datastoreMatch) {
     return datastoreMatch
-  }
-
-  const cacheFiles = await readdir(resolve(cacheDir))
-  const metadataMatch = cacheFiles.find((file) => file === 'dataMetadata.json')
-
-  if (metadataMatch) {
-    const contents = await readJSON(`${cacheDir}/dataMetadata.json`)
-    return contents.fileName
   }
 
   return null
