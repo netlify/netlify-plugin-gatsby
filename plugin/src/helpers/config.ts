@@ -1,14 +1,29 @@
 /* eslint-disable max-lines */
 import { EOL } from 'os'
-import path from 'path'
+import { dirname, posix, resolve, join } from 'path'
 import process from 'process'
 
 import { NetlifyConfig } from '@netlify/build'
-import fs, { existsSync } from 'fs-extra'
+import fs, {
+  readJSON,
+  readdir,
+  existsSync,
+  copySync,
+  writeJSON,
+  ensureFileSync,
+} from 'fs-extra'
 import type { GatsbyConfig, PluginRef } from 'gatsby'
+import { v4 as uuidv4 } from 'uuid'
 
 import { checkPackageVersion } from './files'
 import type { FunctionList } from './functions'
+
+/**
+ * Checks to see if GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled
+ */
+export function shouldSkipBundlingDatastore(): boolean {
+  return isEnvSet('GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE')
+}
 
 export async function spliceConfig({
   startMarker,
@@ -43,14 +58,14 @@ export async function spliceConfig({
 }
 
 function loadGatsbyConfig({ gatsbyRoot, utils }): GatsbyConfig | never {
-  const gatsbyConfigFile = path.resolve(gatsbyRoot, 'gatsby-config.js')
+  const gatsbyConfigFile = resolve(gatsbyRoot, 'gatsby-config.js')
 
   if (!existsSync(gatsbyConfigFile)) {
     return {}
   }
 
   try {
-    // eslint-disable-next-line node/global-require, @typescript-eslint/no-var-requires, import/no-dynamic-require
+    // eslint-disable-next-line node/global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
     return require(gatsbyConfigFile) as GatsbyConfig
   } catch (error) {
     utils.build.failBuild('Could not load gatsby-config.js', { error })
@@ -115,6 +130,53 @@ export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
   }
 }
 
+async function getPreviouslyCopiedDatastoreFileName(
+  publishDir: string,
+  cacheDir: string,
+) {
+  try {
+    const contents = await readJSON(`${cacheDir}/dataMetadata.json`)
+    if (contents.fileName) {
+      return contents.fileName
+    }
+  } catch {}
+
+  const publishFiles = await readdir(resolve(publishDir))
+  const datastoreMatch = publishFiles.find(
+    (file) => file.startsWith('data-') && file.endsWith('.mdb'),
+  )
+
+  if (datastoreMatch) {
+    return datastoreMatch
+  }
+
+  return null
+}
+/**
+ * Copies the contents of the Gatsby datastore file to the public directory in order
+ * to be uploaded to the CDN.
+ *
+ */
+export async function createMetadataFileAndCopyDatastore(
+  publishDir: string,
+  cacheDir: string,
+): Promise<void> {
+  const data = join(`${cacheDir}/data/datastore/data.mdb`)
+  const previousFileName = await getPreviouslyCopiedDatastoreFileName(
+    publishDir,
+    cacheDir,
+  )
+  const fileName = previousFileName || `data-${uuidv4()}.mdb`
+
+  ensureFileSync(`${publishDir}/${fileName}`)
+  copySync(data, `${publishDir}/${fileName}`)
+
+  const payload = { fileName }
+  ensureFileSync(`${cacheDir}/dataMetadata.json`)
+
+  await writeJSON(`${cacheDir}/dataMetadata.json`, payload)
+}
+
 export async function modifyConfig({
   netlifyConfig,
   cacheDir,
@@ -132,11 +194,12 @@ export async function modifyConfig({
       startMarker: '# @netlify/plugin-gatsby redirects start',
       endMarker: '# @netlify/plugin-gatsby redirects end',
       contents: '/api/* /.netlify/functions/__api 200',
-      fileName: path.join(netlifyConfig.build.publish, '_redirects'),
+      fileName: join(netlifyConfig.build.publish, '_redirects'),
     })
   }
 }
 
+// eslint-disable-next-line complexity
 export function mutateConfig({
   netlifyConfig,
   cacheDir,
@@ -149,7 +212,7 @@ export function mutateConfig({
   /* eslint-disable no-underscore-dangle, no-param-reassign */
   if (neededFunctions.includes('API')) {
     netlifyConfig.functions.__api = {
-      included_files: [path.posix.join(cacheDir, 'functions', '**')],
+      included_files: [posix.join(cacheDir, 'functions', '**')],
       external_node_modules: ['msgpackr-extract'],
     }
   }
@@ -159,13 +222,22 @@ export function mutateConfig({
       included_files: [
         'public/404.html',
         'public/500.html',
-        path.posix.join(cacheDir, 'data', '**'),
-        path.posix.join(cacheDir, 'query-engine', '**'),
-        path.posix.join(cacheDir, 'page-ssr', '**'),
+        posix.join(cacheDir, 'query-engine', '**'),
+        posix.join(cacheDir, 'page-ssr', '**'),
         '!**/*.js.map',
       ],
       external_node_modules: ['msgpackr-extract'],
       node_bundler: 'esbuild',
+    }
+
+    if (shouldSkipBundlingDatastore()) {
+      netlifyConfig.functions.__dsg.included_files.push(
+        '.cache/dataMetadata.json',
+      )
+    } else {
+      netlifyConfig.functions.__dsg.included_files.push(
+        posix.join(cacheDir, 'data', '**'),
+      )
     }
   }
 
@@ -174,13 +246,22 @@ export function mutateConfig({
       included_files: [
         'public/404.html',
         'public/500.html',
-        path.posix.join(cacheDir, 'data', '**'),
-        path.posix.join(cacheDir, 'query-engine', '**'),
-        path.posix.join(cacheDir, 'page-ssr', '**'),
+        posix.join(cacheDir, 'query-engine', '**'),
+        posix.join(cacheDir, 'page-ssr', '**'),
         '!**/*.js.map',
       ],
       external_node_modules: ['msgpackr-extract'],
       node_bundler: 'esbuild',
+    }
+
+    if (shouldSkipBundlingDatastore()) {
+      netlifyConfig.functions.__ssr.included_files.push(
+        '.cache/dataMetadata.json',
+      )
+    } else {
+      netlifyConfig.functions.__ssr.included_files.push(
+        posix.join(cacheDir, 'data', '**'),
+      )
     }
   }
   /* eslint-enable no-underscore-dangle, no-param-reassign */
@@ -189,7 +270,7 @@ export function mutateConfig({
 export async function getNeededFunctions(
   cacheDir: string,
 ): Promise<FunctionList> {
-  if (!existsSync(path.join(cacheDir, 'functions'))) return []
+  if (!existsSync(join(cacheDir, 'functions'))) return []
 
   const neededFunctions = overrideNeededFunctions(
     await readFunctionSkipFile(cacheDir),
@@ -211,7 +292,7 @@ export async function getNeededFunctions(
 async function readFunctionSkipFile(cacheDir: string) {
   try {
     // read skip file from gatsby-plugin-netlify
-    return await fs.readJson(path.join(cacheDir, '.nf-skip-gatsby-functions'))
+    return await fs.readJson(join(cacheDir, '.nf-skip-gatsby-functions'))
   } catch (error) {
     // missing skip file = all functions needed
     // empty or invalid skip file = no functions needed
@@ -238,6 +319,6 @@ function isEnvSet(envVar: string) {
 }
 
 export function getGatsbyRoot(publish: string): string {
-  return path.resolve(path.dirname(publish))
+  return resolve(dirname(publish))
 }
 /* eslint-enable max-lines */

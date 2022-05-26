@@ -4,9 +4,16 @@ import process from 'process'
 import { NetlifyPluginOptions } from '@netlify/build'
 import { stripIndent } from 'common-tags'
 import { existsSync } from 'fs-extra'
+import fetch from 'node-fetch'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
-import { checkConfig, getNeededFunctions, modifyConfig } from './helpers/config'
+import {
+  createMetadataFileAndCopyDatastore,
+  checkConfig,
+  getNeededFunctions,
+  modifyConfig,
+  shouldSkipBundlingDatastore,
+} from './helpers/config'
 import { modifyFiles } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
@@ -57,6 +64,11 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   await deleteFunctions(constants)
 
+  if (shouldSkipBundlingDatastore()) {
+    console.log('Creating site data metadata file')
+    await createMetadataFileAndCopyDatastore(PUBLISH_DIR, cacheDir)
+  }
+
   await writeFunctions({ constants, netlifyConfig, neededFunctions })
 
   await modifyConfig({ netlifyConfig, cacheDir, neededFunctions })
@@ -76,5 +88,29 @@ export async function onPostBuild({
 
   for (const func of neededFunctions) {
     await checkZipSize(path.join(FUNCTIONS_DIST, `__${func.toLowerCase()}.zip`))
+  }
+}
+
+export async function onSuccess() {
+  // Pre-warm the lambdas as downloading the datastore file can take a while
+  if (shouldSkipBundlingDatastore()) {
+    const FETCH_TIMEOUT = 5000
+    const controller = new globalThis.AbortController()
+    const timeout = setTimeout(() => {
+      controller.abort()
+    }, FETCH_TIMEOUT)
+
+    for (const func of ['api', 'dsg', 'ssr']) {
+      const url = `${process.env.URL}/.netlify/functions/__${func}`
+      console.log(`Sending pre-warm request to: ${url}`)
+
+      try {
+        await fetch(url, { signal: controller.signal })
+      } catch (error) {
+        console.log('Pre-warm request was aborted', error)
+      } finally {
+        clearTimeout(timeout)
+      }
+    }
   }
 }

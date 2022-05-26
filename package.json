@@ -6,8 +6,11 @@
     "test": "test"
   },
   "scripts": {
+    "build:demo": "cd demo && GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE=true npm run build:netlify",
+    "install:demo": "cd demo && npm install",
     "prepare": "husky install node_modules/@netlify/eslint-config-node/.husky/",
-    "test": "run-s format test:e2e",
+    "test": "run-s format install:demo build:demo test:unit test:e2e",
+    "test:unit": "jest",
     "test:e2e": "cd plugin/test && ./e2e-test.sh",
     "format": "run-s format:check-fix:*",
     "format:ci": "run-s format:check:*",
@@ -34,11 +37,14 @@
     "prettier": "--loglevel=warn \"{plugin,demo,.github}/**/*.{ts,js,md,yml,json,html}\" \"*.{ts,js,yml,json,html}\" \".*.{ts,js,yml,json,html}\" \"!package-lock.json\""
   },
   "devDependencies": {
-    "@netlify/build": "27.1.3",
-    "@netlify/eslint-config-node": "latest",
+    "@netlify/build": "^27.1.3",
+    "@netlify/eslint-config-node": "4.1.3",
+    "@types/jest": "^27.5.0",
     "ava": "^4.0.0",
     "cross-env": "^7.0.2",
-    "husky": "^7.0.4"
+    "husky": "^7.0.4",
+    "jest": "^28.0.3",
+    "ts-jest": "^28.0.1"
   },
   "peerDependencies": {
     "execa": "^5.0.0"
