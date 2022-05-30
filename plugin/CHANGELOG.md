@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.2.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.1.0...plugin-gatsby-v3.2.0) (2022-05-30)
+
+
+### Features
+
+* Optionally load gatsby datastore in lambdas ([#376](https://github.com/netlify/netlify-plugin-gatsby/issues/376)) ([1c0fcea](https://github.com/netlify/netlify-plugin-gatsby/commit/1c0fcead459933ae1af3e9957d1bee9b150fb472))
+
+
+### Bug Fixes
+
+* **deps:** update dependency pathe to ^0.3.0 ([#370](https://github.com/netlify/netlify-plugin-gatsby/issues/370)) ([e283ff8](https://github.com/netlify/netlify-plugin-gatsby/commit/e283ff8cd1309328c5b51bec341f629472294043))
+
 ## [3.1.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.0.0...plugin-gatsby-v3.1.0) (2022-05-19)
 
 
