@@ -74,7 +74,7 @@ describe('prepareFilesystem', () => {
     TEST_TIMEOUT,
   )
 
-  it.only(
+  it(
     'uses the correct URLs to download file from the CDN when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled',
     async () => {
       const domain = chance.url({ path: '' })
