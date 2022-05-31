@@ -1,5 +1,5 @@
 /* eslint-disable max-nested-callbacks */
-import process from 'node:process'
+import process from 'process'
 
 import {
   NetlifyPluginRunUtilOptions,
@@ -222,7 +222,7 @@ describe('plugin', () => {
 
     it('makes requests to pre-warm the lambdas if GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', async () => {
       await onSuccess()
-      const controller = new globalThis.AbortController()
+      const controller = new AbortController()
       expect(fetch).toHaveBeenNthCalledWith(
         1,
         `${process.env.URL}/.netlify/functions/__api`,

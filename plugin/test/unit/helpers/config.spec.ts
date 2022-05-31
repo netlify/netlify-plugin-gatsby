@@ -1,5 +1,5 @@
-import process from 'node:process'
 import { resolve, join } from 'path'
+import process from 'process'
 
 import { remove, copy, readJSON, readdir } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
