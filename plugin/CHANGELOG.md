@@ -1,5 +1,13 @@
 # Changelog
 
+### [3.2.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.2.0...plugin-gatsby-v3.2.1) (2022-06-01)
+
+
+### Bug Fixes
+
+* add AbortController polyfill ([#391](https://github.com/netlify/netlify-plugin-gatsby/issues/391)) ([db412a2](https://github.com/netlify/netlify-plugin-gatsby/commit/db412a2b3089c031088bd87ba6f9a023e4fc2c0e))
+* fix downloadUrl when downloading Gatsby datastore file from CDN ([#392](https://github.com/netlify/netlify-plugin-gatsby/issues/392)) ([b455188](https://github.com/netlify/netlify-plugin-gatsby/commit/b4551886e1a2d024213a5b9a27120fc170b50dc9))
+
 ## [3.2.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.1.0...plugin-gatsby-v3.2.0) (2022-05-30)
 
 
