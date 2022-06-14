@@ -1,5 +1,6 @@
 import path from 'path'
 import process from 'process'
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
 
 import { NetlifyPluginOptions } from '@netlify/build'
 import { stripIndent } from 'common-tags'
@@ -95,7 +96,7 @@ export async function onSuccess() {
   // Pre-warm the lambdas as downloading the datastore file can take a while
   if (shouldSkipBundlingDatastore()) {
     const FETCH_TIMEOUT = 5000
-    const controller = new globalThis.AbortController()
+    const controller = new AbortController()
     const timeout = setTimeout(() => {
       controller.abort()
     }, FETCH_TIMEOUT)

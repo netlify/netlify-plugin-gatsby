@@ -1,5 +1,32 @@
 # Changelog
 
+## [3.2.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.2.1...plugin-gatsby-v3.2.2) (2022-06-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @netlify/ipx to ^1.1.0 ([#399](https://github.com/netlify/netlify-plugin-gatsby/issues/399)) ([8ae84c7](https://github.com/netlify/netlify-plugin-gatsby/commit/8ae84c73d3adebbd3f99acb15c78990bdd0d807a))
+
+### [3.2.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.2.0...plugin-gatsby-v3.2.1) (2022-06-01)
+
+
+### Bug Fixes
+
+* add AbortController polyfill ([#391](https://github.com/netlify/netlify-plugin-gatsby/issues/391)) ([db412a2](https://github.com/netlify/netlify-plugin-gatsby/commit/db412a2b3089c031088bd87ba6f9a023e4fc2c0e))
+* fix downloadUrl when downloading Gatsby datastore file from CDN ([#392](https://github.com/netlify/netlify-plugin-gatsby/issues/392)) ([b455188](https://github.com/netlify/netlify-plugin-gatsby/commit/b4551886e1a2d024213a5b9a27120fc170b50dc9))
+
+## [3.2.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.1.0...plugin-gatsby-v3.2.0) (2022-05-30)
+
+
+### Features
+
+* Optionally load gatsby datastore in lambdas ([#376](https://github.com/netlify/netlify-plugin-gatsby/issues/376)) ([1c0fcea](https://github.com/netlify/netlify-plugin-gatsby/commit/1c0fcead459933ae1af3e9957d1bee9b150fb472))
+
+
+### Bug Fixes
+
+* **deps:** update dependency pathe to ^0.3.0 ([#370](https://github.com/netlify/netlify-plugin-gatsby/issues/370)) ([e283ff8](https://github.com/netlify/netlify-plugin-gatsby/commit/e283ff8cd1309328c5b51bec341f629472294043))
+
 ## [3.1.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.0.0...plugin-gatsby-v3.1.0) (2022-05-19)
 
 

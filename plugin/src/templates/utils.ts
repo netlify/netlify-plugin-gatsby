@@ -108,7 +108,7 @@ export async function prepareFilesystem(
 
     const dataMetadataPath = join(process.cwd(), '.cache', 'dataMetadata.json')
     const { fileName } = await readJSON(dataMetadataPath)
-    const downloadUrl = `${siteUrl}/${fileName}`
+    const downloadUrl = new URL(`/${fileName}`, siteUrl).toString()
 
     console.log('Downloading data file from', downloadUrl)
 
