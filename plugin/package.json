@@ -1,6 +1,6 @@
 {
   "name": "@netlify/plugin-gatsby",
-  "version": "3.1.0",
+  "version": "3.2.2",
   "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -41,7 +41,8 @@
   },
   "dependencies": {
     "@netlify/functions": "^1.0.0",
-    "@netlify/ipx": "^1.0.1",
+    "@netlify/ipx": "^1.1.0",
+    "abortcontroller-polyfill": "^1.7.3",
     "chalk": "^4.1.2",
     "co-body": "^6.1.0",
     "cookie": "^0.5.0",

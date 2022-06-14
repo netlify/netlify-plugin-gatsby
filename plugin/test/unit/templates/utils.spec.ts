@@ -2,7 +2,14 @@ import { tmpdir } from 'os'
 import { resolve, join, dirname } from 'path'
 
 import Chance from 'chance'
-import { copy, ensureDir, existsSync, readFileSync, unlink } from 'fs-extra'
+import {
+  readJSON,
+  copy,
+  ensureDir,
+  existsSync,
+  readFileSync,
+  unlink,
+} from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
 
 // eslint-disable-next-line import/no-namespace
@@ -63,6 +70,29 @@ describe('prepareFilesystem', () => {
       await templateUtils.prepareFilesystem(cacheDir, chance.url())
 
       expect(downloadFileSpy).toHaveBeenCalled()
+    },
+    TEST_TIMEOUT,
+  )
+
+  it(
+    'uses the correct URLs to download file from the CDN when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled',
+    async () => {
+      const domain = chance.url({ path: '' })
+      const url = `${domain}${chance.word()}/${chance.word()}`
+
+      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
+      await moveGatsbyDir()
+
+      const cacheDir = resolve('.cache')
+      const contents = await readJSON(`${cacheDir}/dataMetadata.json`)
+      const datastoreFileName = contents.fileName
+
+      await templateUtils.prepareFilesystem(cacheDir, url)
+
+      expect(downloadFileSpy).toHaveBeenCalledTimes(1)
+      expect(downloadFileSpy.mock.calls[0][0]).toEqual(
+        `${domain}${datastoreFileName}`,
+      )
     },
     TEST_TIMEOUT,
   )
