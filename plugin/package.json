@@ -1,6 +1,6 @@
 {
   "name": "@netlify/plugin-gatsby",
-  "version": "3.0.0",
+  "version": "3.2.2",
   "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -25,7 +25,7 @@
     "test": "test"
   },
   "engines": {
-    "node": ">=12.13.0"
+    "node": ">=14.17.0"
   },
   "bugs": {
     "url": "https://github.com/netlify/netlify-plugin-gatsby/issues"
@@ -41,7 +41,8 @@
   },
   "dependencies": {
     "@netlify/functions": "^1.0.0",
-    "@netlify/ipx": "^1.0.1",
+    "@netlify/ipx": "^1.1.0",
+    "abortcontroller-polyfill": "^1.7.3",
     "chalk": "^4.1.2",
     "co-body": "^6.1.0",
     "cookie": "^0.5.0",
@@ -52,25 +53,28 @@
     "multer": "^1.4.2",
     "node-fetch": "^2.6.1",
     "node-stream-zip": "^1.15.0",
-    "pathe": "^0.2.0",
+    "pathe": "^0.3.0",
     "pretty-bytes": "^5.6.0",
     "semver": "^7.3.5",
-    "tempy": "^1.0.0"
+    "tempy": "^1.0.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@gatsbyjs/reach-router": "^1.3.6",
-    "@netlify/build": "^27.0.1",
+    "@netlify/build": "^27.1.5",
     "@types/fs-extra": "^9.0.12",
     "@types/multer": "^1.4.7",
     "@types/semver": "^7.3.9",
+    "chance": "^1.1.8",
+    "execa": "^5.0.0",
     "gatsby": "^4.9.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
+    "tmp-promise": "^3.0.3",
     "typescript": "^4.5.2"
   },
   "peerDependencies": {
     "@gatsbyjs/reach-router": "^1.3.6",
-    "common-tags": "^1.8.2",
-    "execa": "^5.0.0"
+    "common-tags": "^1.8.2"
   }
 }

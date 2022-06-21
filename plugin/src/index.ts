@@ -1,18 +1,21 @@
-import path, { dirname, join } from 'path'
+import path from 'path'
 import process from 'process'
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
 
 import { NetlifyPluginOptions } from '@netlify/build'
 import { stripIndent } from 'common-tags'
 import { existsSync } from 'fs-extra'
+import fetch from 'node-fetch'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {
+  createMetadataFileAndCopyDatastore,
   checkConfig,
-  mutateConfig,
-  shouldSkipFunctions,
-  spliceConfig,
+  getNeededFunctions,
+  modifyConfig,
+  shouldSkipBundlingDatastore,
 } from './helpers/config'
-import { patchFile, relocateBinaries } from './helpers/files'
+import { modifyFiles } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
 
@@ -58,27 +61,20 @@ export async function onBuild({
 The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   }
 
-  if (shouldSkipFunctions(cacheDir)) {
-    await deleteFunctions(constants)
-    return
+  const neededFunctions = await getNeededFunctions(cacheDir)
+
+  await deleteFunctions(constants)
+
+  if (shouldSkipBundlingDatastore()) {
+    console.log('Creating site data metadata file')
+    await createMetadataFileAndCopyDatastore(PUBLISH_DIR, cacheDir)
   }
-  const compiledFunctionsDir = path.join(cacheDir, '/functions')
 
-  await writeFunctions({ constants, netlifyConfig })
+  await writeFunctions({ constants, netlifyConfig, neededFunctions })
 
-  mutateConfig({ netlifyConfig, cacheDir, compiledFunctionsDir })
+  await modifyConfig({ netlifyConfig, cacheDir, neededFunctions })
 
-  const root = dirname(netlifyConfig.build.publish)
-  await patchFile(root)
-  await relocateBinaries(root)
-
-  // Editing _redirects so it works with ntl dev
-  spliceConfig({
-    startMarker: '# @netlify/plugin-gatsby redirects start',
-    endMarker: '# @netlify/plugin-gatsby redirects end',
-    contents: '/api/* /.netlify/functions/__api 200',
-    fileName: join(netlifyConfig.build.publish, '_redirects'),
-  })
+  await modifyFiles({ netlifyConfig, neededFunctions })
 }
 
 export async function onPostBuild({
@@ -86,7 +82,36 @@ export async function onPostBuild({
   utils,
 }): Promise<void> {
   await saveCache({ publish: PUBLISH_DIR, utils })
-  for (const func of ['api', 'dsg', 'ssr']) {
-    await checkZipSize(path.join(FUNCTIONS_DIST, `__${func}.zip`))
+
+  const cacheDir = normalizedCacheDir(PUBLISH_DIR)
+
+  const neededFunctions = await getNeededFunctions(cacheDir)
+
+  for (const func of neededFunctions) {
+    await checkZipSize(path.join(FUNCTIONS_DIST, `__${func.toLowerCase()}.zip`))
+  }
+}
+
+export async function onSuccess() {
+  // Pre-warm the lambdas as downloading the datastore file can take a while
+  if (shouldSkipBundlingDatastore()) {
+    const FETCH_TIMEOUT = 5000
+    const controller = new AbortController()
+    const timeout = setTimeout(() => {
+      controller.abort()
+    }, FETCH_TIMEOUT)
+
+    for (const func of ['api', 'dsg', 'ssr']) {
+      const url = `${process.env.URL}/.netlify/functions/__${func}`
+      console.log(`Sending pre-warm request to: ${url}`)
+
+      try {
+        await fetch(url, { signal: controller.signal })
+      } catch (error) {
+        console.log('Pre-warm request was aborted', error)
+      } finally {
+        clearTimeout(timeout)
+      }
+    }
   }
 }

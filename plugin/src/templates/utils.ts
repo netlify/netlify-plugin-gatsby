@@ -1,16 +1,26 @@
-import fs from 'fs'
-import os from 'os'
+import fs, { createWriteStream } from 'fs'
+import { get } from 'https'
+import { tmpdir } from 'os'
 import { join } from 'path'
 import process from 'process'
+import { pipeline } from 'stream'
+import { promisify } from 'util'
 
 import { HandlerResponse } from '@netlify/functions'
 import etag from 'etag'
-import { existsSync, copySync, readFileSync } from 'fs-extra'
+import {
+  existsSync,
+  copySync,
+  readFileSync,
+  readJSON,
+  ensureFileSync,
+} from 'fs-extra'
 import type { GraphQLEngine } from 'gatsby/cache-dir/query-engine'
 import { link } from 'linkfs'
 
 // Alias in the temp directory so it's writable
-export const TEMP_CACHE_DIR = join(os.tmpdir(), 'gatsby', '.cache')
+export const TEMP_CACHE_DIR = join(tmpdir(), 'gatsby', '.cache')
+const streamPipeline = promisify(pipeline)
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -22,9 +32,53 @@ declare global {
 }
 
 /**
+ * Downloads a file from the CDN to the local aliased filesystem
+ *
+ * Mirrors functionality in the Netlify NextJS plugin
+ * https://github.com/netlify/netlify-plugin-nextjs/blob/8f5648c848d4a4d42ac772e7a8a2a50fdc632220/plugin/src/templates/handlerUtils.ts#L19-L43
+ */
+export const downloadFile = (
+  downloadUrl: string,
+  filePath: string,
+): Promise<void> =>
+  new Promise((resolve, reject) => {
+    // eslint-disable-next-line no-magic-numbers
+    const req = get(downloadUrl, { timeout: 10_000 }, (response) => {
+      // eslint-disable-next-line no-magic-numbers
+      if (response.statusCode < 200 || response.statusCode > 299) {
+        reject(
+          new Error(
+            `Failed to download ${downloadUrl}: ${response.statusCode} ${
+              response.statusMessage || ''
+            }`,
+          ),
+        )
+        return
+      }
+      const fileStream = createWriteStream(filePath)
+      /* eslint-disable promise/prefer-await-to-callbacks, promise/prefer-await-to-then */
+      streamPipeline(response, fileStream)
+        .then(resolve)
+        .catch((error) => {
+          console.log(`Error downloading ${downloadUrl}`, error)
+          reject(error)
+        })
+      /* eslint-enable */
+    })
+
+    req.on('error', (error) => {
+      console.log(`Error downloading ${downloadUrl}`, error)
+      reject(error)
+    })
+  })
+
+/**
  * Hacks to deal with the fact that functions execute on a readonly filesystem
  */
-export function prepareFilesystem(cacheDir: string): void {
+export async function prepareFilesystem(
+  cacheDir: string,
+  siteUrl: string,
+): Promise<void> {
   console.log('Preparing Gatsby filesystem')
   const rewrites = [
     [join(cacheDir, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
@@ -43,6 +97,28 @@ export function prepareFilesystem(cacheDir: string): void {
   // Gatsby uses this instead of fs if present
   // eslint-disable-next-line no-underscore-dangle
   global._fsWrapper = lfs
+
+  console.log('Starting to prepare data directory')
+
+  if (
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === 'true' ||
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE === '1'
+  ) {
+    console.log('Starting to stream data file')
+
+    const dataMetadataPath = join(process.cwd(), '.cache', 'dataMetadata.json')
+    const { fileName } = await readJSON(dataMetadataPath)
+    const downloadUrl = new URL(`/${fileName}`, siteUrl).toString()
+
+    console.log('Downloading data file from', downloadUrl)
+
+    // Ensure the file to copy the downloaded file into exists
+    const filePath = join(TEMP_CACHE_DIR, 'data', 'datastore', 'data.mdb')
+    if (!existsSync(filePath)) {
+      ensureFileSync(filePath)
+    }
+    return downloadFile(downloadUrl, filePath)
+  }
   const dir = 'data'
   if (!process.env.NETLIFY_LOCAL && existsSync(join(TEMP_CACHE_DIR, dir))) {
     console.log('directory already exists')

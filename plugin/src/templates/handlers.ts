@@ -11,7 +11,7 @@ import type {
   renderHTML as renderHTMLType,
   renderPageData as renderPageDataType,
 } from 'gatsby/cache-dir/page-ssr'
-import type { IGatsbyPage } from 'gatsby/cache-dir/query-engine'
+import type { GraphQLEngine, IGatsbyPage } from 'gatsby/cache-dir/query-engine'
 
 // These are "require()"d rather than imported so the symbol names are not munged,
 // as we need them to match the hard-coded values
@@ -52,16 +52,20 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
   const DATA_PREFIX = '/page-data/'
   const cacheDir = join(appDir, '.cache')
 
-  prepareFilesystem(cacheDir)
   // Requiring this dynamically so esbuild doesn't re-bundle it
   const { getData, renderHTML, renderPageData }: PageSSR = require(join(
     cacheDir,
     'page-ssr',
   ))
 
-  const graphqlEngine = getGraphQLEngine(cacheDir)
+  let graphqlEngine: GraphQLEngine
 
   return async function handler(event: HandlerEvent) {
+    if (!graphqlEngine) {
+      await prepareFilesystem(cacheDir, event.rawUrl)
+      graphqlEngine = getGraphQLEngine(cacheDir)
+    }
+
     // Gatsby expects cwd to be the site root
     process.chdir(appDir)
     const eventPath = event.path
