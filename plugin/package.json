@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@netlify/functions": "^1.0.0",
-    "@netlify/ipx": "^1.1.1",
+    "@netlify/ipx": "^1.1.2",
     "abortcontroller-polyfill": "^1.7.3",
     "chalk": "^4.1.2",
     "co-body": "^6.1.0",
