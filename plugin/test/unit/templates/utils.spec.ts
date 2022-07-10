@@ -17,7 +17,7 @@ import * as templateUtils from '../../../src/templates/utils'
 
 const chance = new Chance()
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
-const TEST_TIMEOUT = 80_000
+const TEST_TIMEOUT = 60_000
 
 const changeCwd = (cwd) => {
   const originalCwd = process.cwd()

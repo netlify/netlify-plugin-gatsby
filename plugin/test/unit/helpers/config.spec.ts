@@ -12,7 +12,7 @@ import {
 } from '../../../src/helpers/config'
 
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
-const TEST_TIMEOUT = 80_000
+const TEST_TIMEOUT = 60_000
 
 const findDatastoreFilesinPublishDir = async (publishDir) => {
   const files = await readdir(resolve(publishDir))
