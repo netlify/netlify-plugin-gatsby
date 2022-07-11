@@ -58,7 +58,7 @@ describe('prepareFilesystem', () => {
     jest.resetAllMocks()
     jest.restoreAllMocks()
     delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
-  })
+  }, TEST_TIMEOUT)
 
   it(
     'downloads file from the CDN when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled',

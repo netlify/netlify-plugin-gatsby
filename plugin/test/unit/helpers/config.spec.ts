@@ -178,7 +178,7 @@ describe('createMetadataFileAndCopyDatastore', () => {
     // the current directory anymore
     restoreCwd()
     await cleanup()
-  })
+  }, TEST_TIMEOUT)
   it(
     'successfully creates a metadata file',
     async () => {
