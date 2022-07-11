@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.5](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.2.4...plugin-gatsby-v3.2.5) (2022-07-11)
+
+
+### Bug Fixes
+
+* support scoped names for platform binary packages in lmdb ([#431](https://github.com/netlify/netlify-plugin-gatsby/issues/431)) ([a34b1aa](https://github.com/netlify/netlify-plugin-gatsby/commit/a34b1aa0cb5ed2bc9e6dd71137276d7bce156476))
+
 ## [3.2.4](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.2.3...plugin-gatsby-v3.2.4) (2022-06-24)
 
 
