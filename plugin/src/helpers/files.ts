@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import os from 'os'
 import process from 'process'
 
@@ -145,38 +146,50 @@ export const relocateBinaries = async (baseDir: string): Promise<void> => {
     return
   }
 
-  let lmdbPath = findModuleFromBase({
+  // In v2.4.0 lmdb switched to scoped names for the platform binary packages (e.g: @lmdb/lmdb-linux-x64)
+  const scopedLmdbPath = findModuleFromBase({
     paths: [gatsbyPath, baseDir],
-    candidates: ['lmdb-store'],
+    candidates: [`@lmdb/lmdb-${LAMBDA_PLATFORM}`],
   })
 
-  if (!lmdbPath) {
-    const modulePath = findModuleFromBase({
+  let lmdbPath
+  if (!scopedLmdbPath) {
+    lmdbPath = findModuleFromBase({
       paths: [gatsbyPath, baseDir],
-      candidates: ['lmdb'],
+      candidates: ['lmdb-store'],
     })
-    if (modulePath) {
-      // The lmdb package resolves to a subdirectory of the module, and we need the root
-      lmdbPath = dirname(modulePath)
-    } else {
-      console.log(`Could not find lmdb module in ${gatsbyPath}`)
-      return
+
+    if (!lmdbPath) {
+      const modulePath = findModuleFromBase({
+        paths: [gatsbyPath, baseDir],
+        candidates: ['lmdb'],
+      })
+      if (modulePath) {
+        // The lmdb package resolves to a subdirectory of the module, and we need the root
+        lmdbPath = dirname(modulePath)
+      } else {
+        console.log(`Could not find lmdb module in ${gatsbyPath}`)
+        return
+      }
     }
   }
 
   console.log(
     `Copying native binaries for ${LAMBDA_PLATFORM} abi${DEFAULT_LAMBDA_ABI}`,
   )
-  const lmdbPrebuilds = resolve(lmdbPath, 'prebuilds', LAMBDA_PLATFORM)
 
-  const binaryTarget = resolve(
-    baseDir,
-    '.cache',
-    'query-engine',
-    'assets',
-    'prebuilds',
-    LAMBDA_PLATFORM,
-  )
+  const lmdbPrebuilds =
+    scopedLmdbPath || resolve(lmdbPath, 'prebuilds', LAMBDA_PLATFORM)
+  const binaryTarget = scopedLmdbPath
+    ? resolve(baseDir, '.cache', 'query-engine', 'assets', LAMBDA_PLATFORM)
+    : resolve(
+        baseDir,
+        '.cache',
+        'query-engine',
+        'assets',
+        'prebuilds',
+        LAMBDA_PLATFORM,
+      )
   await ensureDir(binaryTarget)
 
   for (const binary of RELOCATABLE_BINARIES) {
@@ -190,3 +203,4 @@ export const relocateBinaries = async (baseDir: string): Promise<void> => {
     }
   }
 }
+/* eslint-enable max-lines */
