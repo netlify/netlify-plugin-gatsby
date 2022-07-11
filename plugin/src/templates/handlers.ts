@@ -108,11 +108,12 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
       })
       if (isPageData) {
         const body = JSON.stringify(await renderPageData({ data }))
+        const etagHeader = body ? { ETag: etag(body) } : {}
         return {
-          statusCode: 200,
+          statusCode: data?.serverDataStatus || 200,
           body,
           headers: {
-            ETag: etag(body),
+            ...etagHeader,
             'Content-Type': 'application/json',
             'X-Render-Mode': renderMode,
             ...data.serverDataHeaders,
@@ -121,12 +122,12 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
       }
 
       const body = await renderHTML({ data })
-
+      const etagHeader = body ? { ETag: etag(body) } : {}
       return {
-        statusCode: 200,
+        statusCode: data?.serverDataStatus || 200,
         body,
         headers: {
-          ETag: etag(body),
+          ...etagHeader,
           'Content-Type': 'text/html; charset=utf-8',
           'X-Render-Mode': renderMode,
           ...data.serverDataHeaders,
