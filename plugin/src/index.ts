@@ -94,7 +94,7 @@ export async function onPostBuild({
 
 export async function onSuccess() {
   // Pre-warm the lambdas as downloading the datastore file can take a while
-  if (shouldSkipBundlingDatastore() && process.env.DEPLOY_PRIME_URL) {
+  if (shouldSkipBundlingDatastore()) {
     const FETCH_TIMEOUT = 5000
     const controller = new AbortController()
     const timeout = setTimeout(() => {

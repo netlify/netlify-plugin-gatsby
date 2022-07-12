@@ -1,4 +1,4 @@
-/* eslint-disable max-nested-callbacks */
+/* eslint-disable max-nested-callbacks, ava/no-import-test-files */
 import process from 'process'
 
 import {
@@ -8,6 +8,7 @@ import {
 import Chance from 'chance'
 
 import { onBuild, onSuccess } from '../../src/index'
+import { enableGatsbyExcludeDatastoreFromBundle } from '../helpers'
 
 jest.mock('node-fetch', () => ({
   __esModule: true,
@@ -158,7 +159,8 @@ describe('plugin', () => {
     } = require('../../src/helpers/config')
 
     it('creates the metadata file for the Gatsby datastore when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', async () => {
-      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
+      enableGatsbyExcludeDatastoreFromBundle()
+
       createMetadataFileAndCopyDatastore.mockImplementation(() =>
         Promise.resolve(),
       )
@@ -211,8 +213,7 @@ describe('plugin', () => {
 
     beforeEach(() => {
       fetch.mockImplementation(mockFetchMethod)
-      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
-      process.env.DEPLOY_PRIME_URL = chance.url()
+      enableGatsbyExcludeDatastoreFromBundle()
     })
 
     afterEach(() => {
@@ -265,4 +266,4 @@ describe('plugin', () => {
     })
   })
 })
-/* eslint-enable max-nested-callbacks */
+/* eslint-enable max-nested-callbacks, ava/no-import-test-files */
