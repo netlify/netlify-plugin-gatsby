@@ -256,7 +256,7 @@ describe('plugin', () => {
       expect(fetch).toBeCalledTimes(0)
     })
 
-    it.only('does not make requests to pre-warm the lambdas if process.env.DEPLOY_PRIME_URL is not defined', async () => {
+    it('does not make requests to pre-warm the lambdas if process.env.DEPLOY_PRIME_URL is not defined', async () => {
       delete process.env.DEPLOY_PRIME_URL
 
       await onSuccess()
