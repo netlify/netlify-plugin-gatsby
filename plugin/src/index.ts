@@ -94,7 +94,7 @@ export async function onPostBuild({
 
 export async function onSuccess() {
   // Pre-warm the lambdas as downloading the datastore file can take a while
-  if (shouldSkipBundlingDatastore()) {
+  if (shouldSkipBundlingDatastore() && process.env.DEPLOY_PRIME_URL) {
     const FETCH_TIMEOUT = 5000
     const controller = new AbortController()
     const timeout = setTimeout(() => {
@@ -102,7 +102,7 @@ export async function onSuccess() {
     }, FETCH_TIMEOUT)
 
     for (const func of ['api', 'dsg', 'ssr']) {
-      const url = `${process.env.URL}/.netlify/functions/__${func}`
+      const url = `${process.env.DEPLOY_PRIME_URL}/.netlify/functions/__${func}`
       console.log(`Sending pre-warm request to: ${url}`)
 
       try {
