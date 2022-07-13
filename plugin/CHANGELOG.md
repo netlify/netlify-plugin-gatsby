@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.2.5...plugin-gatsby-v3.3.0) (2022-07-13)
+
+
+### Features
+
+* do not pre-warm lambdas if DEPLOY_PRIME_URL is not set ([#435](https://github.com/netlify/netlify-plugin-gatsby/issues/435)) ([9c0e8ba](https://github.com/netlify/netlify-plugin-gatsby/commit/9c0e8ba38cc2e3666a880f5ae384c68ae17bd275))
+
 ## [3.2.5](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.2.4...plugin-gatsby-v3.2.5) (2022-07-11)
 
 
