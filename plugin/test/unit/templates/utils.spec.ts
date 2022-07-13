@@ -1,3 +1,4 @@
+/* eslint-disable ava/no-import-test-files */
 import { tmpdir } from 'os'
 import { resolve, join, dirname } from 'path'
 
@@ -14,6 +15,7 @@ import { dir as getTmpDir } from 'tmp-promise'
 
 // eslint-disable-next-line import/no-namespace
 import * as templateUtils from '../../../src/templates/utils'
+import { enableGatsbyExcludeDatastoreFromBundle } from '../../helpers'
 
 const chance = new Chance()
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
@@ -63,7 +65,7 @@ describe('prepareFilesystem', () => {
   it(
     'downloads file from the CDN when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled',
     async () => {
-      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
+      enableGatsbyExcludeDatastoreFromBundle()
       await moveGatsbyDir()
 
       const cacheDir = resolve('.cache')
@@ -80,7 +82,7 @@ describe('prepareFilesystem', () => {
       const domain = chance.url({ path: '' })
       const url = `${domain}${chance.word()}/${chance.word()}`
 
-      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
+      enableGatsbyExcludeDatastoreFromBundle()
       await moveGatsbyDir()
 
       const cacheDir = resolve('.cache')
@@ -157,3 +159,4 @@ describe('downloadFile', () => {
     )
   })
 })
+/* eslint-enable ava/no-import-test-files */

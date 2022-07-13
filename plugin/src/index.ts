@@ -102,7 +102,7 @@ export async function onSuccess() {
     }, FETCH_TIMEOUT)
 
     for (const func of ['api', 'dsg', 'ssr']) {
-      const url = `${process.env.URL}/.netlify/functions/__${func}`
+      const url = `${process.env.DEPLOY_PRIME_URL}/.netlify/functions/__${func}`
       console.log(`Sending pre-warm request to: ${url}`)
 
       try {

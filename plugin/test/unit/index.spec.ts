@@ -1,4 +1,4 @@
-/* eslint-disable max-nested-callbacks */
+/* eslint-disable max-nested-callbacks, ava/no-import-test-files */
 import process from 'process'
 
 import {
@@ -8,6 +8,7 @@ import {
 import Chance from 'chance'
 
 import { onBuild, onSuccess } from '../../src/index'
+import { enableGatsbyExcludeDatastoreFromBundle } from '../helpers'
 
 jest.mock('node-fetch', () => ({
   __esModule: true,
@@ -158,7 +159,8 @@ describe('plugin', () => {
     } = require('../../src/helpers/config')
 
     it('creates the metadata file for the Gatsby datastore when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', async () => {
-      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
+      enableGatsbyExcludeDatastoreFromBundle()
+
       createMetadataFileAndCopyDatastore.mockImplementation(() =>
         Promise.resolve(),
       )
@@ -211,13 +213,12 @@ describe('plugin', () => {
 
     beforeEach(() => {
       fetch.mockImplementation(mockFetchMethod)
-      process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
-      process.env.URL = chance.url()
+      enableGatsbyExcludeDatastoreFromBundle()
     })
 
     afterEach(() => {
       delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
-      delete process.env.URL
+      delete process.env.DEPLOY_PRIME_URL
     })
 
     it('makes requests to pre-warm the lambdas if GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', async () => {
@@ -225,17 +226,17 @@ describe('plugin', () => {
       const controller = new AbortController()
       expect(fetch).toHaveBeenNthCalledWith(
         1,
-        `${process.env.URL}/.netlify/functions/__api`,
+        `${process.env.DEPLOY_PRIME_URL}/.netlify/functions/__api`,
         { signal: controller.signal },
       )
       expect(fetch).toHaveBeenNthCalledWith(
         2,
-        `${process.env.URL}/.netlify/functions/__dsg`,
+        `${process.env.DEPLOY_PRIME_URL}/.netlify/functions/__dsg`,
         { signal: controller.signal },
       )
       expect(fetch).toHaveBeenNthCalledWith(
         3,
-        `${process.env.URL}/.netlify/functions/__ssr`,
+        `${process.env.DEPLOY_PRIME_URL}/.netlify/functions/__ssr`,
         { signal: controller.signal },
       )
     })
@@ -255,6 +256,14 @@ describe('plugin', () => {
 
       expect(fetch).toBeCalledTimes(0)
     })
+
+    it('does not make requests to pre-warm the lambdas if process.env.DEPLOY_PRIME_URL is not defined', async () => {
+      delete process.env.DEPLOY_PRIME_URL
+
+      await onSuccess()
+
+      expect(fetch).toBeCalledTimes(0)
+    })
   })
 })
-/* eslint-enable max-nested-callbacks */
+/* eslint-enable max-nested-callbacks, ava/no-import-test-files */

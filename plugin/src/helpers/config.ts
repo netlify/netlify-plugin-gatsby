@@ -22,7 +22,10 @@ import type { FunctionList } from './functions'
  * Checks to see if GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled
  */
 export function shouldSkipBundlingDatastore(): boolean {
-  return isEnvSet('GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE')
+  return (
+    isEnvSet('GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE') &&
+    Boolean(process.env.DEPLOY_PRIME_URL)
+  )
 }
 
 export async function spliceConfig({

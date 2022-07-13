@@ -1,6 +1,8 @@
+/* eslint-disable ava/no-import-test-files */
 import { resolve, join } from 'path'
 import process from 'process'
 
+import Chance from 'chance'
 import { remove, copy, readJSON, readdir } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
 import { validate } from 'uuid'
@@ -10,7 +12,9 @@ import {
   mutateConfig,
   shouldSkipBundlingDatastore,
 } from '../../../src/helpers/config'
+import { enableGatsbyExcludeDatastoreFromBundle } from '../../helpers'
 
+const chance = new Chance()
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
 const TEST_TIMEOUT = 60_000
 
@@ -35,8 +39,12 @@ const moveGatsbyDir = async () => {
 }
 
 describe('shouldSkipBundlingDatastore', () => {
+  beforeEach(() => {
+    process.env.DEPLOY_PRIME_URL = chance.url()
+  })
   afterEach(() => {
     delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
+    delete process.env.DEPLOY_PRIME_URL
   })
 
   it('returns true', () => {
@@ -55,6 +63,11 @@ describe('shouldSkipBundlingDatastore', () => {
     expect(shouldSkipBundlingDatastore()).toEqual(false)
 
     delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
+    expect(shouldSkipBundlingDatastore()).toEqual(false)
+
+    // Commonly occurs in a CI context as a DEPLOY_PRIME_URL is not set
+    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
+    delete process.env.DEPLOY_PRIME_URL
     expect(shouldSkipBundlingDatastore()).toEqual(false)
   })
 })
@@ -85,7 +98,7 @@ describe('mutateConfig', () => {
   })
 
   it('includes the dataMetadata file containing gatsby datastore info when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', () => {
-    process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'true'
+    enableGatsbyExcludeDatastoreFromBundle()
     mutateConfig(defaultArgs)
 
     expect(netlifyConfig.functions.__api).toStrictEqual({
@@ -259,3 +272,4 @@ describe('createMetadataFileAndCopyDatastore', () => {
     TEST_TIMEOUT,
   )
 })
+/* eslint-enable ava/no-import-test-files */
