@@ -216,7 +216,7 @@ export const createResponseObject = ({ onResEnd }) => {
       return res
     }
     res.setHeader('content-type', 'application/json')
-    res.send(JSON.stringify(data))
+    res.end(JSON.stringify(data))
     return res
   }
 
