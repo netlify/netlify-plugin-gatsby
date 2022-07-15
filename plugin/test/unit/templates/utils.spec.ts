@@ -63,6 +63,20 @@ describe('prepareFilesystem', () => {
   }, TEST_TIMEOUT)
 
   it(
+    'links fs.promises to ensure it is available on global._fsWrapper',
+    async () => {
+      await moveGatsbyDir()
+
+      const cacheDir = resolve('.cache')
+      await templateUtils.prepareFilesystem(cacheDir, chance.url())
+
+      // eslint-disable-next-line no-underscore-dangle
+      expect(global._fsWrapper.promises).toBeDefined()
+    },
+    TEST_TIMEOUT,
+  )
+
+  it(
     'downloads file from the CDN when GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled',
     async () => {
       enableGatsbyExcludeDatastoreFromBundle()
