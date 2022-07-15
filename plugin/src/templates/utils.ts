@@ -79,6 +79,7 @@ export async function prepareFilesystem(
   cacheDir: string,
   siteUrl: string,
 ): Promise<void> {
+  console.log('Preparing Gatsby filesystem')
   const rewrites = [
     [join(cacheDir, 'caches'), join(TEMP_CACHE_DIR, 'caches')],
     [join(cacheDir, 'caches-lmdb'), join(TEMP_CACHE_DIR, 'caches-lmdb')],
