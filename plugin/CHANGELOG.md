@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.3.0...plugin-gatsby-v3.3.1) (2022-07-15)
+
+
+### Bug Fixes
+
+* add fs.promises to linked filesystem ([#441](https://github.com/netlify/netlify-plugin-gatsby/issues/441)) ([d5be3cc](https://github.com/netlify/netlify-plugin-gatsby/commit/d5be3ccb9f0b8f3ed2a70f4f4d53ce7807953df9))
+
 ## [3.3.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.2.5...plugin-gatsby-v3.3.0) (2022-07-13)
 
 
