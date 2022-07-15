@@ -94,6 +94,12 @@ export async function prepareFilesystem(
       lfs[key].native = fs[key].native
     }
   }
+
+  // 'promises' is not initially linked within the 'linkfs'
+  // package, and is needed by underlying Gatsby code (the
+  // @graphql-tools/code-file-loader)
+  lfs.promises = link(fs.promises, rewrites)
+
   // Gatsby uses this instead of fs if present
   // eslint-disable-next-line no-underscore-dangle
   global._fsWrapper = lfs
