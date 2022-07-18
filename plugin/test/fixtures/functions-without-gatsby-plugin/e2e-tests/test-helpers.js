@@ -117,6 +117,31 @@ exports.runTests = function runTests(env, host) {
         })
         expect(res.headers.get('content-type')).toEqual('application/json')
       })
+      test(`returns json correctly via send`, async () => {
+        const res = await fetchTwice(`${host}/api/i-am-json-too`)
+        const result = await res.json()
+
+        expect(result).toEqual({
+          amIJSON: true,
+        })
+        expect(res.headers.get('content-type')).toEqual('application/json')
+      })
+      test(`returns boolean correctly via send`, async () => {
+        const res = await fetchTwice(`${host}/api/i-am-false`)
+        const result = await res.json()
+
+        expect(result).toEqual(false)
+        expect(res.headers.get('content-type')).toEqual('application/json')
+      })
+      test(`returns status correctly via send`, async () => {
+        const res = await fetchTwice(`${host}/api/i-am-status`)
+        const result = await res.text()
+
+        expect(result).toEqual('OK')
+        expect(res.headers.get('content-type')).toEqual(
+          'text/plain; charset=utf-8',
+        )
+      })
       test(`returns text correctly`, async () => {
         const res = await fetchTwice(`${host}/api/i-am-text`)
         const result = await res.text()
