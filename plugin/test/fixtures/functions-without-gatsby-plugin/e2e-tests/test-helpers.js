@@ -123,7 +123,7 @@ exports.runTests = function runTests(env, host) {
 
         expect(result).toEqual('I am text')
         expect(res.headers.get('content-type')).toEqual(
-          'text/plain; charset=utf-8',
+          'text/html; charset=utf-8',
         )
       })
     })
