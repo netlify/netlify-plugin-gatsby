@@ -95,7 +95,7 @@ describe('createMetadataFileAndCopyDatastore', () => {
     const mockFilesInDirectory = ['testFile.mdb', mockedDatastoreFile]
 
     beforeEach(() => {
-      mockReadJSON.mockResolvedValue(null)
+      mockReadJSON.mockRejectedValue(new Error('Unable to read JSON file'))
       mockReaddir.mockResolvedValue(mockFilesInDirectory)
     })
 
