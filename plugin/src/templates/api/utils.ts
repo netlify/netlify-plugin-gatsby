@@ -13,6 +13,7 @@ import cookie from 'cookie'
 import type { GatsbyFunctionResponse } from 'gatsby'
 import { GatsbyFunctionRequest } from 'gatsby'
 import fetch, { Headers } from 'node-fetch'
+import statuses from 'statuses'
 
 interface NetlifyFunctionParams {
   event: HandlerEvent
@@ -133,7 +134,7 @@ export const createResponseObject = ({ onResEnd }) => {
       response.statusCode = statusCode
     },
   })
-  res.headers = { 'content-type': 'text/plain; charset=utf-8' }
+  res.headers = { 'content-type': 'text/html; charset=utf-8' }
 
   res.writeHead = (status, headers) => {
     response.statusCode = status
@@ -207,6 +208,22 @@ export const createResponseObject = ({ onResEnd }) => {
     if (res.finished) {
       return res
     }
+
+    if (typeof data === 'number') {
+      return res
+        .status(data)
+        .setHeader('content-type', 'text/plain; charset=utf-8')
+        .end(statuses.message[data] || String(data))
+    }
+
+    if (typeof data === 'boolean' || typeof data === 'object') {
+      if (Buffer.isBuffer(data)) {
+        res.setHeader('content-type', 'application/octet-stream')
+      } else if (data !== null) {
+        return res.json(data)
+      }
+    }
+
     res.end(data)
     return res
   }
@@ -216,7 +233,7 @@ export const createResponseObject = ({ onResEnd }) => {
       return res
     }
     res.setHeader('content-type', 'application/json')
-    res.send(JSON.stringify(data))
+    res.end(JSON.stringify(data))
     return res
   }
 
