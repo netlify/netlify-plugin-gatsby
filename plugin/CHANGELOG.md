@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.3.1...plugin-gatsby-v3.4.0) (2022-07-25)
+
+
+### Features
+
+* handle number and object responses correctly in functions ([#440](https://github.com/netlify/netlify-plugin-gatsby/issues/440)) ([2335f5e](https://github.com/netlify/netlify-plugin-gatsby/commit/2335f5e13729b01ba5055b27d6d49b1b1abdc857))
+
 ## [3.3.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.3.0...plugin-gatsby-v3.3.1) (2022-07-15)
 
 
