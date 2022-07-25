@@ -202,7 +202,6 @@ export async function modifyConfig({
   }
 }
 
-// eslint-disable-next-line complexity
 export function mutateConfig({
   netlifyConfig,
   cacheDir,
@@ -303,7 +302,6 @@ async function readFunctionSkipFile(cacheDir: string) {
   }
 }
 
-// eslint-disable-next-line complexity
 function overrideNeededFunctions(neededFunctions) {
   const skipAll = isEnvSet('NETLIFY_SKIP_GATSBY_FUNCTIONS')
   const skipAPI = isEnvSet('NETLIFY_SKIP_API_FUNCTION')
