@@ -1,6 +1,5 @@
 {
   "name": "netlify-plugin-gatsby",
-  "version": "2.0.0",
   "description": "Netlify Build plugin gatsby - Run Gatsby seamlessly on Netlify.",
   "directories": {
     "test": "test"
@@ -49,5 +48,9 @@
   "peerDependencies": {
     "execa": "^5.0.0"
   },
-  "private": true
+  "private": true,
+  "workspaces": [
+    "plugin",
+    "demo"
+  ]
 }
