@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.4.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.4.1...plugin-gatsby-v3.4.2) (2022-08-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @netlify/functions to ^1.1.0 ([#475](https://github.com/netlify/netlify-plugin-gatsby/issues/475)) ([7697651](https://github.com/netlify/netlify-plugin-gatsby/commit/769765170a5c42ea563e9dfea96371f5e5cac2f0))
+* **deps:** update dependency pathe to v0.3.4 ([#478](https://github.com/netlify/netlify-plugin-gatsby/issues/478)) ([4562be8](https://github.com/netlify/netlify-plugin-gatsby/commit/4562be8a89804eedc83728960fd02565ef2ea975))
+
 ## [3.4.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.4.0...plugin-gatsby-v3.4.1) (2022-08-01)
 
 
