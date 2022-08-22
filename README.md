@@ -69,7 +69,7 @@ for more information, including optional plugin configuration.
 ### Disabling Netlify functions
 
 In order to support Gatsby Functions and DSG and SSR render modes, this plugin
-generates four Netlify Functions called `__api`, `__ssr`, `__dsg` and `_ipx`. If
+generates four Netlify Functions called `__api`, `__ssr`, `__dsg` and `_ipx`. If
 you are not using any of these modes, then you can disable the creation of these
 functions. If you are using the latest version of `gatsby-plugin-netlify` then
 this will be handled automatically, disabling functions if the site has no
@@ -101,3 +101,9 @@ When developing Gatsby Functions it is usually easier to use the built-in
 functions wrapper it will run via `netlify dev`. You should be sure to run
 `netlify build` first, so that the wrappers are generated and the functions
 copied across.
+
+## Background and Scheduled Functions
+
+In order to use [Background](https://docs.netlify.com/functions/background-functions/) or [Scheduled](https://docs.netlify.com/netlify-labs/experimental-features/scheduled-functions/) Functions in your Gatsby project, you will need to create a `netlify/functions` directory at the root of the project, and put the Functions in there.
+
+Once that's completed, the Background or Scheduled Function can be invoked like an ordinary Gatsby function.
