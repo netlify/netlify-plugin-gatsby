@@ -37,7 +37,7 @@
     "prettier": "--loglevel=warn \"{plugin,demo,.github}/**/*.{ts,js,md,yml,json,html}\" \"*.{ts,js,yml,json,html}\" \".*.{ts,js,yml,json,html}\" \"!package-lock.json\""
   },
   "devDependencies": {
-    "@netlify/build": "^27.15.6",
+    "@netlify/build": "^27.15.7",
     "@netlify/eslint-config-node": "7.0.0",
     "@types/jest": "^28.0.0",
     "ava": "^4.0.0",
