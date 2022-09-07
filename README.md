@@ -102,8 +102,8 @@ functions wrapper it will run via `netlify dev`. You should be sure to run
 `netlify build` first, so that the wrappers are generated and the functions
 copied across.
 
-## Background and Scheduled Functions
+## Netlify Background and Scheduled Functions
 
-In order to use [Background](https://docs.netlify.com/functions/background-functions/) or [Scheduled](https://docs.netlify.com/netlify-labs/experimental-features/scheduled-functions/) Functions in your Gatsby project, you will need to create a `netlify/functions` directory at the root of the project, and put the Functions in there.
+In order to use [Netlify Background](https://docs.netlify.com/functions/background-functions/) or [Netlify Scheduled](https://docs.netlify.com/netlify-labs/experimental-features/scheduled-functions/) Functions in your Gatsby project, you will need to create a `netlify/functions` directory at the root of the project, and put the Functions in there.
 
 Once that's completed, the Background or Scheduled Function can be invoked like an ordinary Gatsby function.
