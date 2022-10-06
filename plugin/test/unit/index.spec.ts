@@ -53,7 +53,7 @@ const constants = {
   INTERNAL_FUNCTIONS_SRC: 'demo/.netlify/internal-functions',
   PUBLISH_DIR: 'demo/public',
   FUNCTIONS_DIST: 'demo/.netlify/functions',
-  EDGE_HANDLERS_DIST: 'demo/.netlify/edge-functions-dist/',
+  EDGE_FUNCTIONS_DIST: 'demo/.netlify/edge-functions-dist/',
   IS_LOCAL: true,
   NETLIFY_BUILD_VERSION: '9000.0.0',
   SITE_ID: chance.guid(),
@@ -75,7 +75,7 @@ const netlifyConfig = {
   functions: { '*': {} },
   redirects: [],
   headers: [],
-  edge_handlers: [],
+  edge_functions: [],
   plugins: [],
 }
 
