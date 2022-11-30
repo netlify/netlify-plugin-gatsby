@@ -10,6 +10,7 @@ module.exports = {
     // This is a duplicate of `import/no-duplicates` but can handle "import type"
     'no-duplicate-imports': 'off',
     'max-depth': ['error', 4],
+    'n/no-missing-import': 'off',
   },
   env: {
     jest: true,
