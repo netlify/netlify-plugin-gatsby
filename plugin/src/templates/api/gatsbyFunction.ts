@@ -2,7 +2,7 @@ import { existsSync } from 'fs'
 import path from 'path'
 import process from 'process'
 
-import { match as reachMatch } from '@gatsbyjs/reach-router/lib/utils'
+import { match as reachMatch } from '@gatsbyjs/reach-router'
 import { HandlerEvent } from '@netlify/functions'
 import bodyParser from 'co-body'
 import multer from 'multer'
