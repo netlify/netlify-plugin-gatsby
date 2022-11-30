@@ -35,7 +35,7 @@
     "download": "^8.0.0",
     "form-data": "^4.0.0",
     "fs-extra": "^10.0.0",
-    "gatsby-plugin-netlify": "github:netlify/gatsby-plugin-netlify#ep/gatsby-v5-updates",
+    "gatsby-plugin-netlify": "^5.1.0",
     "jest": "^28.0.0",
     "linkfs": "^2.1.0",
     "multer": "^1.4.2",
