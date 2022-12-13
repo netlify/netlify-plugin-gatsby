@@ -1,5 +1,5 @@
 // eslint-disable-next-line node/no-unpublished-require
-const { buildSite } = require('../../../helpers')
+const { buildSite } = require('../../../../helpers')
 
 jest.setTimeout(120_000)
 
