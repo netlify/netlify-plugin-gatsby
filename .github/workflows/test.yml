@@ -35,7 +35,7 @@ jobs:
       - run: npm test
 
   build-mac:
-    runs-on: macOS-latest
+    runs-on: macos-latest
     if: github.ref_name == 'main'
     steps:
       - uses: actions/checkout@v3
