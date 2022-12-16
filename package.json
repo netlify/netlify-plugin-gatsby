@@ -42,7 +42,7 @@
     "@netlify/build": "^27.20.6",
     "@netlify/eslint-config-node": "7.0.0",
     "@types/jest": "^28.0.0",
-    "ava": "^4.0.0",
+    "ava": "^5.0.0",
     "cross-env": "^7.0.2",
     "husky": "^8.0.0",
     "jest": "^28.0.3",
