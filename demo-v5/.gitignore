@@ -1,0 +1,10 @@
+node_modules/
+.cache/
+public
+
+# Local Netlify folder
+.netlify/cache
+.netlify/functions
+
+netlify/functions/gatsby/functions
+deployment.json
