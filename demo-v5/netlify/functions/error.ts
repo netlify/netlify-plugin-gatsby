@@ -19,6 +19,25 @@ const withSentry = (
     tracesSampleRate: 1.0,
     ...sentryConfiguration
   });
+
+  // Throwing an error is the only way to get access to the stack trace
+  try{
+    throw Error()
+  } catch(err) {
+    // The string at index 2 is the function calling withSentry
+    const withSentryCallingFunction = err.stack.split('at ')[2].trim()
+    // Regex to pull the file name out of the string
+    const regex = /[^.](netlify\/functions\/.+[^\:\d])/g
+    const result = withSentryCallingFunction.match(regex)
+
+    if (result.length) {
+      const filename = result[0].split('/').pop()
+      console.log('FILENAME', filename)
+      // Configure the scope with the function file name so that transactions
+      // (in the Sentry performance context) can be grouped
+      AWSLambda.configureScope(scope => scope.setTransactionName(`netlify/functions/${filename}`));
+    }
+  }
   
   return AWSLambda.wrapHandler(handler) as FunctionHandler;
 };
