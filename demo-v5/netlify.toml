@@ -8,3 +8,6 @@ package = "../plugin/src/index.ts"
 
 [[plugins]]
 package = "@netlify/plugin-local-install-core"
+
+[functions]
+  external_node_modules = ["@sentry/serverless"]
