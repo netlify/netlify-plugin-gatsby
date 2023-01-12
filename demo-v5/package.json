@@ -20,7 +20,7 @@
     "test:jest": "jest"
   },
   "dependencies": {
-    "@sentry/gatsby": "^7.30.0",
+    "@sentry/serverless": "^7.30.0",
     "@sindresorhus/slugify": "^1.1.2",
     "gatsby": "next",
     "gatsby-source-filesystem": "next",
