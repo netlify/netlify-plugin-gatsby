@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@netlify/integrations": "^0.2.1",
+    "@netlify/functions": "latest",
     "@sentry/gatsby": "^7.30.0",
     "@sentry/serverless": "^7.30.0",
     "@sindresorhus/slugify": "^1.1.2",
@@ -31,7 +32,6 @@
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@netlify/functions": "latest",
     "@netlify/ipx": "latest",
     "co-body": "^6.1.0",
     "cookie": "^0.5.0",

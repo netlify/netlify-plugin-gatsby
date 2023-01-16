@@ -45,6 +45,7 @@ const NotFoundPage = () => {
           </>
         ) : null}
         <br />
+        <button onClick={() => {throw Error('you clicked the error button!')}}>Error button</button>
         <Link to="/">Go home</Link>.
       </p>
     </main>
