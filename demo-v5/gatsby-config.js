@@ -5,6 +5,9 @@ module.exports = {
   },
   plugins: [
     {
+      resolve: "@sentry/gatsby",
+    },
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: `${__dirname}/content/posts`,

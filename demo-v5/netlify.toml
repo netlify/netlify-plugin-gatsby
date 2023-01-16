@@ -10,4 +10,4 @@ package = "../plugin/src/index.ts"
 package = "@netlify/plugin-local-install-core"
 
 [functions]
-  external_node_modules = ["@sentry/serverless"]
+  external_node_modules = ["@sentry/serverless", "@sentry/gatsby"]
