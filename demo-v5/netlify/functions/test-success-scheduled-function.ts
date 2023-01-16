@@ -22,9 +22,9 @@ const completeSentryCheckIn = async () => {
 }
 
 const myHandler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
-  startSentryCheckIn()
+  await startSentryCheckIn()
   console.log("Received event:", event);
-  completeSentryCheckIn()
+  await completeSentryCheckIn()
 
   return {
       statusCode: 200,

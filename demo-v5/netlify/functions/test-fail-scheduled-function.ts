@@ -14,7 +14,7 @@ const startSentryCheckIn = async () => {
 }
 
 const myHandler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
-  startSentryCheckIn()
+  await startSentryCheckIn()
   console.log("Received event:", event);
 
   // By not adding a 'complete' heartbeat check to Sentry, this will be considered
