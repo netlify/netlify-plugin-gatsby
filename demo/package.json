@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@sindresorhus/slugify": "^1.1.2",
-    "gatsby": "^4.24.8",
+    "gatsby": "^5.0.0",
     "gatsby-source-filesystem": "^4.24.0",
     "gatsby-transformer-remark": "^5.24.0",
     "react": "^17.0.1",
