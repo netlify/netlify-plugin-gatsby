@@ -6,6 +6,9 @@ module.exports = {
   plugins: [
     {
       resolve: "@sentry/gatsby",
+      options: {
+        dsn: process.env.SENTRY_DSN,
+      }
     },
     {
       resolve: `gatsby-source-filesystem`,
