@@ -1,4 +1,5 @@
 import { Handler, HandlerEvent, HandlerContext, schedule } from "@netlify/functions";
+import { wrap } from "@netlify/integrations";
 
 // Todo: Can encapsulate this better
 const requestHeaders = new Headers()
@@ -21,16 +22,24 @@ const completeSentryCheckIn = async () => {
   })
 }
 
-const myHandler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
-  await startSentryCheckIn()
-  console.log("Received event:", event);
+const withSentryHandler = async (
+  handler,
+) => {
+  await startSentryCheckIn()  
+  const response = await handler()
   await completeSentryCheckIn()
+  return response
+};
 
+
+const myHandler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
+  console.log("Received event:", event);
+  
   return {
       statusCode: 200,
   };
 };
 
-const handler = schedule("@hourly", myHandler)
+const handler = schedule("@hourly", withSentryHandler)
 
 export { handler };
