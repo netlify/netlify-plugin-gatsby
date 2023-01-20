@@ -25,7 +25,7 @@ const moveGatsbyDir = async () => {
 
 const chance = new Chance()
 
-describe('createMetadataFileAndCopyDatastore', () => {
+describe('setupImageCdn', () => {
   let cleanup
   let restoreCwd
 
