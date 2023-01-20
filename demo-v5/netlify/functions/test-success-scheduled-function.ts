@@ -1,5 +1,4 @@
 import { Handler, HandlerEvent, HandlerContext, schedule } from "@netlify/functions";
-import { wrap } from "@netlify/integrations";
 
 // Todo: Can encapsulate this better
 const requestHeaders = new Headers()
@@ -7,6 +6,7 @@ requestHeaders.set('Authorization', `DSN ${process.env.SENTRY_DSN}`)
 requestHeaders.set('Content-Type', "application/json")
 
 const startSentryCheckIn = async () => {
+  console.log('Starting Sentry check in')
   await fetch(`https://sentry.io/api/0/monitors/${process.env.SENTRY_CRON_MONITOR_SUCCESS_ID}/checkins/`, {
     method: "POST",
     headers: requestHeaders,
@@ -20,6 +20,7 @@ const completeSentryCheckIn = async () => {
     headers: requestHeaders,
     body: JSON.stringify({status: "ok"})
   })
+  console.log('Sentry check in completed')
 }
 
 const withSentryHandler = (
