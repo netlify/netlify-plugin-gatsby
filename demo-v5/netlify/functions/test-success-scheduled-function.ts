@@ -15,7 +15,7 @@ const startSentryCheckIn = async () => {
 }
 
 const completeSentryCheckIn = async () => {
-  await fetch(`https://sentry.io/api/0/monitors/${process.env.SENTRY_CRON_MONITOR_SUCCESS_ID}/checkins/`, {
+  await fetch(`https://sentry.io/api/0/monitors/${process.env.SENTRY_CRON_MONITOR_SUCCESS_ID}/checkins/latest`, {
     method: "POST",
     headers: requestHeaders,
     body: JSON.stringify({status: "ok"})
@@ -34,7 +34,7 @@ const withSentryHandler = async (
 
 const myHandler: Handler = async (event: HandlerEvent, context: HandlerContext) => {
   console.log("Received event:", event);
-  
+
   return {
       statusCode: 200,
   };
