@@ -82,7 +82,9 @@ describe('createMetadataFileAndCopyDatastore', () => {
 
       await setupImageCdn({ constants, netlifyConfig })
 
-      const doesDirectoryExist = existsSync(join(process.cwd(),'demo', '.netlify', 'functions-internal'))
+      const doesDirectoryExist = existsSync(
+        join(process.cwd(), 'demo', '.netlify', 'functions-internal'),
+      )
 
       expect(doesDirectoryExist).toEqual(true)
       // Longer timeout for the test is necessary due to the copying of the demo project into the tmp dir
