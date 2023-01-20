@@ -2,7 +2,7 @@ import { join } from 'path'
 import process from 'process'
 
 import Chance from 'chance'
-import { copy, existsSync, readdir } from 'fs-extra'
+import { copy, existsSync } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
 
 import { setupImageCdn } from '../../../src/helpers/functions'
