@@ -15,7 +15,7 @@ const startSentryCheckIn = async () => {
 }
 
 const completeSentryCheckIn = async () => {
-  await fetch(`https://sentry.io/api/0/monitors/${process.env.SENTRY_CRON_MONITOR_SUCCESS_ID}/checkins/`, {
+  await fetch(`https://sentry.io/api/0/monitors/${process.env.SENTRY_CRON_MONITOR_SUCCESS_ID}/checkins/latest/`, {
     method: "POST",
     headers: requestHeaders,
     body: JSON.stringify({status: "ok", checkin_id: "latest"})
