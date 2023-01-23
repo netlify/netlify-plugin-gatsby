@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.5.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.5.0...plugin-gatsby-v3.5.1) (2023-01-23)
+
+
+### Bug Fixes
+
+* add functions-internal directory if missing ([#555](https://github.com/netlify/netlify-plugin-gatsby/issues/555)) ([8f2cf9a](https://github.com/netlify/netlify-plugin-gatsby/commit/8f2cf9a810926693d8f4c36a8389de0c229152b5))
+* **deps:** update dependency @netlify/ipx to ^1.3.3 ([#538](https://github.com/netlify/netlify-plugin-gatsby/issues/538)) ([d9a96cc](https://github.com/netlify/netlify-plugin-gatsby/commit/d9a96ccea993bb910d2deee5030334ffa2a1a2e9))
+
 ## [3.5.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.4.8...plugin-gatsby-v3.5.0) (2022-12-16)
 
 
