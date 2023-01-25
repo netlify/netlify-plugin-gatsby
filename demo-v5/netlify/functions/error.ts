@@ -1,4 +1,4 @@
-import Sentry, { AWSLambda, NodeOptions, captureException, captureMessage} from '@sentry/serverless'
+import { AWSLambda, NodeOptions, captureException, captureMessage, configureScope} from '@sentry/serverless'
 import { wrap, FunctionHandler, IntegrationHandler } from "@netlify/integrations";
 import { HandlerEvent, HandlerContext } from "@netlify/functions";
 import { basename } from 'path';
@@ -20,13 +20,12 @@ export const setDefaultTransactionName = (handler: FunctionHandler<SentryContext
   const stringifiedHander = handler.toString()
   const regex = /(async).+\{/g
   const match = stringifiedHander.match(regex)
-  const modifiedHandlerCode = `
-  const configureScope = Sentry.configureScope;  
+  const modifiedHandlerCode = `  
   return ${match}\n
     ${setTransactionNameMethod}\n
   `
-  const modifiedHandler = new Function('Sentry', stringifiedHander.replace(regex, modifiedHandlerCode))
-  return modifiedHandler(Sentry)
+  const modifiedHandler = new Function('configureScope', stringifiedHander.replace(regex, modifiedHandlerCode))
+  return modifiedHandler(configureScope)
 }
 
 export const withSentry: IntegrationHandler<SentryContext, SentryConfig> = (
@@ -51,9 +50,10 @@ export const withSentry: IntegrationHandler<SentryContext, SentryConfig> = (
   });
 
   return AWSLambda.wrapHandler(async (event, context) => {
-    const updatedHandler = setDefaultTransactionName(handler)
+    // const updatedHandler = setDefaultTransactionName(handler)
+    configureScope(scope => scope.setTransactionName(`netlify/functions/${basename(__filename)}`))
 
-    return updatedHandler(event, { ...context, sentry });
+    return handler(event, { ...context, sentry });
   }) as FunctionHandler;
 };
 
