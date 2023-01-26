@@ -14,11 +14,14 @@ const withIntegrations = wrap(withSentry)
 
 const config = {
   sentry: {
-    enableCronMonitoring: true
+    cronMonitoring: {
+      enable: true,
+      monitorId: process.env.SENTRY_CRON_MONITOR_SUCCESS_ID
+    }
   }
 }
 
-const handlerWithIntegrations = withIntegrations(myHandler, config) as Handler
+const handlerWithIntegrations = withIntegrations(myHandler, config)
 
 const handler = schedule("@hourly", handlerWithIntegrations)
 
