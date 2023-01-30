@@ -22,7 +22,7 @@
   "dependencies": {
     "@netlify/functions": "latest",
     "@netlify/integrations": "^0.4.0",
-    "@netlify/sentry": "https://github.com/netlify/netlify-plugin-gatsby/raw/ep/sentry-test/demo-v5/netlify-sentry-0.0.5.tgz",
+    "@netlify/sentry": "https://github.com/netlify/netlify-plugin-gatsby/raw/ep/sentry-test/demo-v5/netlify-sentry-0.0.1.tgz",
     "@sentry/gatsby": "^7.30.0",
     "@sentry/serverless": "^7.30.0",
     "@sindresorhus/slugify": "^1.1.2",
