@@ -16,7 +16,7 @@ import {
   shouldSkipBundlingDatastore,
 } from './helpers/config'
 import { modifyFiles } from './helpers/files'
-import { deleteFunctions, writeFunctions } from './helpers/functions'
+import { deleteFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
