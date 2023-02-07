@@ -69,9 +69,11 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     console.log('Creating site data metadata file')
     await createMetadataFileAndCopyDatastore(PUBLISH_DIR, cacheDir)
   }
-
-  await writeFunctions({ constants, netlifyConfig, neededFunctions })
-
+// Gatsby V2 does not have functions so we can skip this step
+  if (neededFunctions.length !== 0) {
+    const helperFunctions = await import('./helpers/functions')
+    await helperFunctions.writeFunctions({ constants, netlifyConfig, neededFunctions })
+  }
   await modifyConfig({ netlifyConfig, cacheDir, neededFunctions })
 
   await modifyFiles({ netlifyConfig, neededFunctions })
