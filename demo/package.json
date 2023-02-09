@@ -20,6 +20,8 @@
     "test:jest": "jest"
   },
   "dependencies": {
+    "@netlify/integrations": "^0.5.0",
+    "@netlify/sentry": "0.0.4-add-node-fetch.2",
     "@sindresorhus/slugify": "^1.1.2",
     "gatsby": "^4.24.8",
     "gatsby-source-filesystem": "^4.24.0",
