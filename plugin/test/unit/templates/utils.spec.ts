@@ -1,4 +1,3 @@
-/* eslint-disable ava/no-import-test-files */
 import { tmpdir } from 'os'
 import { resolve, join, dirname } from 'path'
 
@@ -173,4 +172,3 @@ describe('downloadFile', () => {
     )
   })
 })
-/* eslint-enable ava/no-import-test-files */

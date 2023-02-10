@@ -197,7 +197,7 @@ export async function checkPackageVersion(
  * This function ensures that the correct lmdb binaries are available.
  */
 
-// eslint-disable-next-line complexity, max-statements
+// eslint-disable-next-line max-statements
 export const relocateBinaries = async (baseDir: string): Promise<void> => {
   if (process.env.NETLIFY_LOCAL) {
     // We currently only handle CI builds

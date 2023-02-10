@@ -1,4 +1,3 @@
-/* eslint-disable ava/no-import-test-files */
 import { resolve, join } from 'path'
 import process from 'process'
 
@@ -272,4 +271,3 @@ describe('createMetadataFileAndCopyDatastore', () => {
     TEST_TIMEOUT,
   )
 })
-/* eslint-enable ava/no-import-test-files */

@@ -1,4 +1,3 @@
-/* eslint-disable max-nested-callbacks, ava/no-import-test-files */
 import process from 'process'
 
 import {
@@ -266,4 +265,3 @@ describe('plugin', () => {
     })
   })
 })
-/* eslint-enable max-nested-callbacks, ava/no-import-test-files */
