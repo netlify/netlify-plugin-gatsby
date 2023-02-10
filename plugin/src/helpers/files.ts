@@ -32,8 +32,8 @@ export const setupDecoupledSourcing = async (baseDir: string) => {
   // Use experimental decoupled sourcing
   if (
     !process.env.GATSBY_CLOUD_DATALAYER ||
-    !process.env.GATSBY_SITE_ID ||
-    !process.env.SITE_AUTH_JWT
+    !process.env.CONTENT_CLOUD_ID ||
+    !process.env.RESOURCE_AUTH_JWT
   ) {
     console.error(
       '👿 Decoupled sourcing was enabled without the required environment variables. Skipping.',

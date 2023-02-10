@@ -12,6 +12,7 @@ const SOURCE_PLUGIN_ALLOW_LIST = [
   `gatsby-source-wordpress`,
   `gatsby-source-drupal`,
   `gatsby-source-contentful`,
+  `gatsby-source-shopify`,
 ]
 
 let synchronizerCache
@@ -30,6 +31,8 @@ exports.sourceNodesApiRunner = async function sourceNodesApiRunner(args) {
   if (!usingMerlin) {
     return originalSourceNodesApiRunner.sourceNodesApiRunner(args)
   }
+
+  process.env.SITE_AUTH_JWT ||= process.env.RESOURCE_AUTH_JWT
 
   const { synchronize } = require(`@gatsby-cloud-pkg/merlin-synchronizer`)
   const { store } = require(`../redux`)
@@ -52,9 +55,9 @@ exports.sourceNodesApiRunner = async function sourceNodesApiRunner(args) {
       encoding: `string`,
     }).init()
 
-  const siteId = process.env.GATSBY_SITE_ID
+  const siteId = process.env.CONTENT_CLOUD_ID
   if (!siteId) {
-    throw new Error(`Couldn't find GATSBY_SITE_ID`)
+    throw new Error(`Couldn't find CONTENT_CLOUD_ID`)
   }
 
   const sourcePluginAllowList = SOURCE_PLUGIN_ALLOW_LIST
