@@ -39,7 +39,7 @@ export const setupDecoupledSourcing = async (baseDir: string) => {
       '👿 Decoupled sourcing was enabled without the required environment variables. Skipping.',
     )
   } else {
-    console.log('🧙‍♂️ Using experimental decoupled sourcing')
+    console.log('🧙 Using experimental decoupled sourcing')
     await replaceGatsbySourceFile({
       input: 'source-nodes-api-runner.js',
       target: 'dist/utils/source-nodes-api-runner.js',
@@ -81,10 +81,7 @@ export const replaceGatsbySourceFile = async ({
   baseDir: string
 }): Promise<boolean> => {
   const pathInGatsby = `gatsby/${target}`
-  const originalPath = findModuleFromBase({
-    paths: [baseDir],
-    candidates: [pathInGatsby],
-  })
+  const originalPath = require.resolve(pathInGatsby, { paths: [baseDir] })
 
   if (!originalPath) {
     console.warn(`Original file does not exist`)
