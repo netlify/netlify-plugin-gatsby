@@ -11,7 +11,9 @@
     "prepare": "husky install node_modules/@netlify/eslint-config-node/.husky/",
     "test": "run-s format install:demo build:demo test:unit test:e2e",
     "test:unit": "jest",
-    "test:e2e": "cd plugin/test && ./e2e-test.sh",
+    "test:e2e": "run-s test:e2e:*",
+    "test:e2e:v4": "cd plugin/test && ./v4-e2e-test.sh",
+    "test:e2e:v5": "cd plugin/test && ./v5-e2e-test.sh",
     "format": "run-s format:check-fix:*",
     "format:ci": "run-s format:check:*",
     "format:check-fix:lint": "run-e format:check:lint format:fix:lint",
@@ -39,12 +41,12 @@
   "devDependencies": {
     "@netlify/build": "^27.17.1",
     "@netlify/eslint-config-node": "7.0.0",
-    "@types/jest": "^28.0.0",
-    "ava": "^4.0.0",
+    "@types/jest": "^29.0.0",
+    "ava": "^5.0.0",
     "cross-env": "^7.0.2",
     "husky": "^8.0.0",
-    "jest": "^28.0.3",
-    "ts-jest": "^28.0.1"
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
   },
   "peerDependencies": {
     "execa": "^5.0.0"

@@ -1,5 +1,28 @@
 # Changelog
 
+## [3.5.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.5.0...plugin-gatsby-v3.5.1) (2023-01-23)
+
+
+### Bug Fixes
+
+* add functions-internal directory if missing ([#555](https://github.com/netlify/netlify-plugin-gatsby/issues/555)) ([8f2cf9a](https://github.com/netlify/netlify-plugin-gatsby/commit/8f2cf9a810926693d8f4c36a8389de0c229152b5))
+* **deps:** update dependency @netlify/ipx to ^1.3.3 ([#538](https://github.com/netlify/netlify-plugin-gatsby/issues/538)) ([d9a96cc](https://github.com/netlify/netlify-plugin-gatsby/commit/d9a96ccea993bb910d2deee5030334ffa2a1a2e9))
+
+## [3.5.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.4.8...plugin-gatsby-v3.5.0) (2022-12-16)
+
+
+### Features
+
+* support for Gatsby v5 ([#547](https://github.com/netlify/netlify-plugin-gatsby/issues/547)) ([464bfc8](https://github.com/netlify/netlify-plugin-gatsby/commit/464bfc8a571a0915c99713bf6ebc48736c20f28d))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @netlify/ipx to ^1.3.0 ([#527](https://github.com/netlify/netlify-plugin-gatsby/issues/527)) ([8688797](https://github.com/netlify/netlify-plugin-gatsby/commit/8688797deff8ce3f34d5ac1850417e35cd394a98))
+* **deps:** update dependency abortcontroller-polyfill to v1.7.5 ([#532](https://github.com/netlify/netlify-plugin-gatsby/issues/532)) ([02409ec](https://github.com/netlify/netlify-plugin-gatsby/commit/02409ec83ad14456f86b3070f0fcaf4d36fcc7f3))
+* **deps:** update dependency pathe to v0.3.9 ([#533](https://github.com/netlify/netlify-plugin-gatsby/issues/533)) ([9c2f06f](https://github.com/netlify/netlify-plugin-gatsby/commit/9c2f06f488bda23acd86f3086fdbfd6638b100c6))
+* **deps:** update dependency semver to v7.3.8 ([#534](https://github.com/netlify/netlify-plugin-gatsby/issues/534)) ([2ba54c2](https://github.com/netlify/netlify-plugin-gatsby/commit/2ba54c23e357e32fae2ea2ef986faa4960be97a1))
+
 ## [3.4.8](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.4.7...plugin-gatsby-v3.4.8) (2022-10-05)
 
 

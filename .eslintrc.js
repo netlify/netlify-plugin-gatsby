@@ -14,6 +14,7 @@ module.exports = {
     'node/no-unpublished-import': 'off',
     'max-depth': ['error', 4],
     complexity: 'off',
+    'n/no-missing-import': 'off',
   },
   env: {
     jest: true,

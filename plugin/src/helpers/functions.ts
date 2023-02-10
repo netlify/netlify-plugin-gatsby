@@ -85,6 +85,8 @@ export const setupImageCdn = async ({
     return
   }
 
+  await ensureDir(constants.INTERNAL_FUNCTIONS_SRC)
+
   await copyFile(
     join(__dirname, '..', '..', 'src', 'templates', 'ipx.ts'),
     join(constants.INTERNAL_FUNCTIONS_SRC, '_ipx.ts'),
