@@ -3,6 +3,8 @@ plugin/lib
 fixtures/
 demo
 
+plugin/src/templates/inject
+
 *~
 *.swp
 npm-debug.log

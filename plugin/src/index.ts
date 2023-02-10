@@ -6,6 +6,7 @@ import { NetlifyPluginOptions } from '@netlify/build'
 import { stripIndent } from 'common-tags'
 import { existsSync } from 'fs-extra'
 import fetch from 'node-fetch'
+import { dirname, resolve } from 'pathe'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {
@@ -15,7 +16,7 @@ import {
   modifyConfig,
   shouldSkipBundlingDatastore,
 } from './helpers/config'
-import { modifyFiles } from './helpers/files'
+import { modifyFiles, setupDecoupledSourcing } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
 
@@ -36,6 +37,12 @@ export async function onPreBuild({
   await restoreCache({ utils, publish: PUBLISH_DIR })
 
   await checkConfig({ utils, netlifyConfig })
+  if (
+    process.env.DECOUPLED_SOURCING === '1' ||
+    process.env.DECOUPLED_SOURCING === 'true'
+  ) {
+    await setupDecoupledSourcing(dirname(resolve(netlifyConfig.build.publish)))
+  }
 }
 
 export async function onBuild({

@@ -7,9 +7,11 @@ module.exports = {
     'func-style': 'off',
     // This is compiled, so we can use modern syntax
     'node/no-unsupported-features/es-syntax': 'off',
+    'node/prefer-global/process': 'off',
     // This is a duplicate of `import/no-duplicates` but can handle "import type"
     'no-duplicate-imports': 'off',
     'max-depth': ['error', 4],
+    complexity: 'off',
   },
   env: {
     jest: true,
