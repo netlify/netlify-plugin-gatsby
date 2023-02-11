@@ -15,6 +15,7 @@ module.exports = {
     'max-depth': ['error', 4],
     complexity: 'off',
     'n/no-missing-import': 'off',
+    'n/global-require': 'off',
   },
   env: {
     jest: true,
