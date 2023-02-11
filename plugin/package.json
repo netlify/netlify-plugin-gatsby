@@ -1,6 +1,6 @@
 {
   "name": "@netlify/plugin-gatsby",
-  "version": "3.5.2-merlin.3",
+  "version": "3.5.2-merlin.4",
   "description": "Netlify Build plugin - Run Gatsby seamlessly on Netlify",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -40,7 +40,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@gatsby-cloud-pkg/merlin-synchronizer": "^0.3.8",
+    "@gatsby-cloud-pkg/merlin-synchronizer": "latest",
     "@netlify/functions": "^1.3.0",
     "@netlify/ipx": "^1.3.3",
     "abortcontroller-polyfill": "^1.7.3",
