@@ -16,6 +16,7 @@ import {
   shouldSkipBundlingDatastore,
 } from './helpers/config'
 import { modifyFiles } from './helpers/files'
+import { deleteFunctions, writeFunctions } from './helpers/functions'
 import { checkZipSize } from './helpers/verification'
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
@@ -62,20 +63,15 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   const neededFunctions = await getNeededFunctions(cacheDir)
 
+  await deleteFunctions(constants)
+
   if (shouldSkipBundlingDatastore()) {
     console.log('Creating site data metadata file')
     await createMetadataFileAndCopyDatastore(PUBLISH_DIR, cacheDir)
   }
-  // Gatsby V2 does not have functions so we can skip this step
-  if (neededFunctions.length !== 0) {
-    const helperFunctions = await import('./helpers/functions')
-    await helperFunctions.deleteFunctions(constants)
-    await helperFunctions.writeFunctions({
-      constants,
-      netlifyConfig,
-      neededFunctions,
-    })
-  }
+
+  await writeFunctions({ constants, netlifyConfig, neededFunctions })
+
   await modifyConfig({ netlifyConfig, cacheDir, neededFunctions })
 
   await modifyFiles({ netlifyConfig, neededFunctions })
