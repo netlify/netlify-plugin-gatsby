@@ -135,11 +135,11 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
  * Generate an API handler
  */
 
-const apiHandler = javascript`(appDir: string): Handler =>
+const apiHandler = javascript`(appDir) =>
   function handler(
-    event: HandlerEvent,
-    context: HandlerContext,
-  ): Promise<HandlerResponse> {
+    event,
+    context,
+  ) {
     // Create a fake Gatsby/Express Request object
     const req = createRequestObject({ event, context })
 
