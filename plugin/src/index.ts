@@ -26,10 +26,7 @@ export async function onPreBuild({
   constants,
   utils,
   netlifyConfig,
-  ...rest
 }): Promise<void> {
-  console.log(process.env)
-  console.log({ constants, utils, netlifyConfig, rest })
   const { PUBLISH_DIR } = constants
   // Print a helpful message if the publish dir is misconfigured
   if (!PUBLISH_DIR || process.cwd() === path.resolve(PUBLISH_DIR)) {
