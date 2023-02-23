@@ -94,6 +94,18 @@ export const setupImageCdn = async ({
 
   netlifyConfig.redirects.push(
     {
+      from: `/_gatsby/image/*`,
+      query: { u: ':url', a: ':args' },
+      to: `/.netlify/builders/_ipx/image_query_compat/:args/:url`,
+      status: 301,
+    },
+    {
+      from: `/_gatsby/file/*`,
+      query: { u: ':url' },
+      to: `/.netlify/functions/_ipx/file_query_compat/:url`,
+      status: 301,
+    },
+    {
       from: '/_gatsby/image/*',
       to: '/.netlify/builders/_ipx',
       status: 200,
