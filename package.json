@@ -22,7 +22,8 @@
     "format:check-fix:prettier": "run-e format:check:prettier format:fix:prettier",
     "format:check:prettier": "cross-env-shell prettier --check $npm_package_config_prettier",
     "format:fix:prettier": "cross-env-shell prettier --write $npm_package_config_prettier",
-    "ava": "cross-env FORCE_COLOR=1 ava --verbose"
+    "ava": "cross-env FORCE_COLOR=1 ava --verbose",
+    "prepublishOnly": "echo 'You probably meant to publish the \"plugin\" package.' && exit 1"
   },
   "repository": {
     "type": "git",

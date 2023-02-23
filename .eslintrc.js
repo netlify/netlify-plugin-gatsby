@@ -7,10 +7,15 @@ module.exports = {
     'func-style': 'off',
     // This is compiled, so we can use modern syntax
     'node/no-unsupported-features/es-syntax': 'off',
+    'node/prefer-global/process': 'off',
+    'node/global-require': 'off',
     // This is a duplicate of `import/no-duplicates` but can handle "import type"
     'no-duplicate-imports': 'off',
+    'node/no-unpublished-import': 'off',
     'max-depth': ['error', 4],
+    complexity: 'off',
     'n/no-missing-import': 'off',
+    'n/global-require': 'off',
   },
   env: {
     jest: true,
@@ -21,15 +26,22 @@ module.exports = {
   overrides: [
     ...overrides,
     {
-      // Tests use lots of nested callbacks
-      files: ['*-test.js', '*.spec.js', '**/e2e-tests/*.js'],
+      files: [
+        '*-test.js',
+        '*.spec.js',
+        '**/e2e-tests/*.js',
+        '*-test.ts',
+        '*.spec.ts',
+        '**/e2e-tests/*.ts',
+      ],
       rules: {
         'max-nested-callbacks': 'off',
+        'ava/no-import-test-files': 'off',
       },
     },
     {
       // Templates import files from the site itself and needs lots of dynamic requires
-      files: ['plugin/src/templates/**/*'],
+      files: ['plugin/src/templates/**/*', 'plugin/test/unit/templates/**/*'],
       rules: {
         'n/no-unpublished-import': 'off',
         '@typescript-eslint/no-var-requires': 'off',

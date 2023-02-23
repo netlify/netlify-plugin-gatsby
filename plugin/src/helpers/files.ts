@@ -10,6 +10,7 @@ import {
   readFile,
   writeFile,
   readJson,
+  move,
 } from 'fs-extra'
 import { dirname, join, resolve } from 'pathe'
 import semver from 'semver'
@@ -27,6 +28,31 @@ const RELOCATABLE_BINARIES = [
   `node.abi${DEFAULT_LAMBDA_ABI}.glibc.node`,
 ]
 
+export const setupDecoupledSourcing = async (baseDir: string) => {
+  // Use experimental decoupled sourcing
+  if (
+    !process.env.GATSBY_CLOUD_DATALAYER ||
+    !process.env.CONTENT_CLOUD_ID ||
+    !process.env.RESOURCE_AUTH_JWT
+  ) {
+    console.error(
+      '👿 Decoupled sourcing was enabled without the required environment variables. Skipping.',
+    )
+  } else {
+    console.log('🧙 Using experimental decoupled sourcing')
+    await replaceGatsbySourceFile({
+      input: 'source-nodes-api-runner.js',
+      target: 'dist/utils/source-nodes-api-runner.js',
+      baseDir,
+    })
+    console.log('🪄 Patched Gatsby module source')
+  }
+}
+
+/**
+ * Perform various
+ */
+
 export const modifyFiles = async ({
   netlifyConfig,
   neededFunctions,
@@ -35,10 +61,60 @@ export const modifyFiles = async ({
   neededFunctions: FunctionList
 }): Promise<void> => {
   if (neededFunctions.includes('SSR') || neededFunctions.includes('DSG')) {
-    const root = dirname(netlifyConfig.build.publish)
-    await patchFile(root)
-    await relocateBinaries(root)
+    const baseDir = dirname(netlifyConfig.build.publish)
+    await patchFile(baseDir)
+    await relocateBinaries(baseDir)
   }
+}
+
+/**
+ * Replace a source file in the Gatsby node module. Moves the original aside, adding a `.original` suffix.
+ */
+
+export const replaceGatsbySourceFile = async ({
+  input,
+  target,
+  baseDir,
+}: {
+  input: string
+  target: string
+  baseDir: string
+}): Promise<boolean> => {
+  const pathInGatsby = `gatsby/${target}`
+  const originalPath = require.resolve(pathInGatsby, { paths: [baseDir] })
+
+  if (!originalPath) {
+    console.warn(`Original file does not exist`)
+    return false
+  }
+
+  const backupPath = `${originalPath}.original`
+
+  if (existsSync(backupPath)) {
+    console.log(`File has already been moved. Skipping.`)
+    return true
+  }
+
+  // This is getting the source file relative to the *compiled* version of this
+  const replacementFile = resolve(
+    __dirname,
+    '..',
+    '..',
+    'src',
+    'templates',
+    'inject',
+    input,
+  )
+
+  if (!existsSync(replacementFile)) {
+    console.warn(`Source file not found: ${replacementFile}`)
+  }
+
+  await move(originalPath, backupPath)
+
+  await copyFile(replacementFile, originalPath)
+
+  return true
 }
 
 /**
@@ -118,7 +194,7 @@ export async function checkPackageVersion(
  * This function ensures that the correct lmdb binaries are available.
  */
 
-// eslint-disable-next-line complexity, max-statements
+// eslint-disable-next-line max-statements
 export const relocateBinaries = async (baseDir: string): Promise<void> => {
   if (process.env.NETLIFY_LOCAL) {
     // We currently only handle CI builds
