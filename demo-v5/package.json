@@ -22,6 +22,9 @@
   "dependencies": {
     "@sindresorhus/slugify": "^1.1.2",
     "gatsby": "next",
+    "gatsby-plugin-image": "next",
+    "gatsby-plugin-sharp": "next",
+    "gatsby-transformer-sharp": "next",
     "gatsby-source-filesystem": "next",
     "gatsby-transformer-remark": "next",
     "react": "^18.0.0",
