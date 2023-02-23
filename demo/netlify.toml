@@ -1,7 +1,8 @@
 [build]
 command = "npm run build"
 publish = "public/"
-# ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ../plugin/"
+environment = { GATSBY_CLOUD_IMAGE_CDN = "true" }
+ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ../plugin/ || git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ../demo/"
 
 [[plugins]]
 package = "../plugin/src/index.ts"
