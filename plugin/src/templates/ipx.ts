@@ -15,6 +15,7 @@ export const handler: Handler = async (event, ...rest) => {
 
   const segments = pathname.split('/')
 
+  let finalEvent = event
   // newer version of Gatsby's IMAGE CDN are using query params and as-is are currently
   // not usable with ODB as it will cache solely based on path part of URL and ignore
   // query params. To workaround this we are using redirects to rewrite URL to custom
@@ -28,21 +29,23 @@ export const handler: Handler = async (event, ...rest) => {
     const args = decodeURIComponent(segments[5])
 
     // rewrite "request" path to old syntax that `@netlify/ipx` supports
-    event.path = `/_gatsby/image/${Buffer.from(url, 'utf8').toString(
-      'base64',
-    )}/${Buffer.from(args, 'utf8').toString('base64')}`
+    finalEvent = {
+      ...event,
+      path: `/_gatsby/image/${Buffer.from(url, 'utf8').toString(
+        'base64',
+      )}/${Buffer.from(args, 'utf8').toString('base64')}`,
+    }
   } else if (segments.length >= 5 && segments[4] === 'file_query_compat') {
     type = 'file'
     encodedUrl = Buffer.from(decodeURIComponent(segments[5]), 'utf8').toString(
       'base64',
     )
   } else {
-    type = segments[2]
-    encodedUrl = segments[3]
+    [, , type, encodedUrl] = segments
   }
 
   if (type === 'image') {
-    return ipxHandler(event, ...rest) as Promise<HandlerResponse>
+    return ipxHandler(finalEvent, ...rest) as Promise<HandlerResponse>
   }
 
   try {

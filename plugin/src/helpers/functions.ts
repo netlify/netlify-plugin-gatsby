@@ -95,12 +95,14 @@ export const setupImageCdn = async ({
   netlifyConfig.redirects.push(
     {
       from: `/_gatsby/image/*`,
+      // eslint-disable-next-line id-length
       query: { u: ':url', a: ':args' },
       to: `/.netlify/builders/_ipx/image_query_compat/:args/:url`,
       status: 301,
     },
     {
       from: `/_gatsby/file/*`,
+      // eslint-disable-next-line id-length
       query: { u: ':url' },
       to: `/.netlify/functions/_ipx/file_query_compat/:url`,
       status: 301,
