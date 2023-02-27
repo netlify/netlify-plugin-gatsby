@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.5.1...plugin-gatsby-v3.5.2) (2023-02-23)
+
+
+### Bug Fixes
+
+* prevent reach-router dep requirement for v2 ([#557](https://github.com/netlify/netlify-plugin-gatsby/issues/557)) ([6d541d1](https://github.com/netlify/netlify-plugin-gatsby/commit/6d541d1a55b671789e04fb2420264f2c84a293b0))
+
 ## [3.5.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.5.0...plugin-gatsby-v3.5.1) (2023-01-23)
 
 
