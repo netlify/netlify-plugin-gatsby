@@ -3,56 +3,106 @@ import { Buffer } from 'buffer'
 import { Handler, HandlerResponse } from '@netlify/functions'
 import { createIPXHandler } from '@netlify/ipx'
 
+type Event = Parameters<Handler>[0]
+
 const ipxHandler = createIPXHandler({
   propsEncoding: 'base64',
   basePath: '/_gatsby/image/',
   bypassDomainCheck: true,
 })
 
-// eslint-disable-next-line require-await
-export const handler: Handler = async (event, ...rest) => {
+const QUERY_PARAM_IMAGE_REDIRECT_URL =
+  /^\/\.netlify\/builders\/_ipx\/image_query_compat\/([^/]+?)\/([^/]+?)\/?$/i
+const QUERY_PARAM_FILE_REDIRECT_URL =
+  /^\/\.netlify\/builders\/_ipx\/file_query_compat\/([^/]+?)\/?$/i
+
+function matchRequestTypeAndArguments(event: Event):
+  | {
+      type: `file`
+      url: string
+      originalHost: string
+    }
+  | {
+      type: `image`
+      event: Event
+    }
+  | undefined {
   const { pathname, host } = new URL(event.rawUrl)
 
-  const segments = pathname.split('/')
+  const queryParamImageMatch = pathname.match(QUERY_PARAM_IMAGE_REDIRECT_URL)
+  if (queryParamImageMatch) {
+    const [, urlEncodedArgs, urlEncodedUrl] = queryParamImageMatch
+    const base64EncodedUrl = Buffer.from(
+      decodeURIComponent(urlEncodedUrl),
+      'utf8',
+    ).toString('base64')
+    const base64EncodedArgs = Buffer.from(
+      decodeURIComponent(urlEncodedArgs),
+      'utf8',
+    ).toString('base64')
 
-  let finalEvent = event
-  // newer version of Gatsby's IMAGE CDN are using query params and as-is are currently
-  // not usable with ODB as it will cache solely based on path part of URL and ignore
-  // query params. To workaround this we are using redirects to rewrite URL to custom
-  // format which we are massaging here to ensure old IMAGE CDN url structure and
-  // query params redirect are handled
-  let type, encodedUrl
-  if (segments.length >= 6 && segments[4] === 'image_query_compat') {
-    type = 'image'
-
-    const url = decodeURIComponent(segments[6])
-    const args = decodeURIComponent(segments[5])
-
-    // rewrite "request" path to old syntax that `@netlify/ipx` supports
-    finalEvent = {
-      ...event,
-      path: `/_gatsby/image/${Buffer.from(url, 'utf8').toString(
-        'base64',
-      )}/${Buffer.from(args, 'utf8').toString('base64')}`,
+    return {
+      type: `image`,
+      event: {
+        ...event,
+        path: `/_gatsby/image/${base64EncodedUrl}/${base64EncodedArgs}`,
+      },
     }
-  } else if (segments.length >= 5 && segments[4] === 'file_query_compat') {
-    type = 'file'
-    encodedUrl = Buffer.from(decodeURIComponent(segments[5]), 'utf8').toString(
-      'base64',
-    )
-  } else {
-    [, , type, encodedUrl] = segments
   }
 
-  if (type === 'image') {
-    return ipxHandler(finalEvent, ...rest) as Promise<HandlerResponse>
+  const queryParamFileMatch = pathname.match(QUERY_PARAM_FILE_REDIRECT_URL)
+  if (queryParamFileMatch) {
+    const [, encodedUrl] = queryParamFileMatch
+    const url = decodeURIComponent(encodedUrl)
+
+    return {
+      type: `file`,
+      url,
+      originalHost: host,
+    }
+  }
+
+  const [, , type, encodedUrl] = pathname.split('/')
+  if (type === `file`) {
+    return {
+      type: `file`,
+      url: Buffer.from(encodedUrl, 'base64').toString('utf8'),
+      originalHost: host,
+    }
+  }
+  if (type === `image`) {
+    return {
+      type: `image`,
+      event,
+    }
+  }
+
+  // no known matching
+  return undefined
+}
+
+// eslint-disable-next-line require-await
+export const handler: Handler = async (event, ...rest) => {
+  const requestTypeAndArgs = matchRequestTypeAndArguments(event)
+  if (!requestTypeAndArgs) {
+    return {
+      statusCode: 400,
+      body: 'Invalid request',
+    }
+  }
+
+  if (requestTypeAndArgs.type === `image`) {
+    return ipxHandler(
+      requestTypeAndArgs.event,
+      ...rest,
+    ) as Promise<HandlerResponse>
   }
 
   try {
-    const urlString = Buffer.from(encodedUrl, 'base64').toString('utf8')
+    const urlString = requestTypeAndArgs.url
     // Validate it by parsing it
     const url = new URL(urlString)
-    if (url.host === host) {
+    if (url.host === requestTypeAndArgs.originalHost) {
       return {
         statusCode: 400,
         body: 'File cannot be served from the same host as the original request',
