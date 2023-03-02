@@ -12,9 +12,9 @@ const ipxHandler = createIPXHandler({
 })
 
 const QUERY_PARAM_IMAGE_REDIRECT_URL =
-  /^\/\.netlify\/builders\/_ipx\/image_query_compat\/([^/]+?)\/([^/]+?)\/?$/i
+  /^\/\.netlify\/builders\/_ipx\/image_query_compat\/([^/]+?)\/([^/]+?)\/([^/]+?)\/?$/i
 const QUERY_PARAM_FILE_REDIRECT_URL =
-  /^\/\.netlify\/builders\/_ipx\/file_query_compat\/([^/]+?)\/?$/i
+  /^\/\.netlify\/functions\/_ipx\/file_query_compat\/([^/]+?)\/([^/]+?)\/?$/i
 
 function matchRequestTypeAndArguments(event: Event):
   | {
