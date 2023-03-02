@@ -20,7 +20,6 @@ module.exports = {
     'gatsby-plugin-netlify',
     `gatsby-plugin-image`,
     `gatsby-plugin-sharp`,
-    `gatsby-transformer-sharp`,
     'gatsby-plugin-image-cdn-test',
   ],
 }

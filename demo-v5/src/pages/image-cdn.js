@@ -30,18 +30,25 @@ const ImageCDNPage = ({ data }) => (
         </>
       ))}
     </ul>
-    <h2>Old syntax</h2>
+    <h2>Old url structure</h2>
     <figure>
       <img
-        src="/_gatsby/image/aHR0cHM6Ly9pbWFnZXMudW5zcGxhc2guY29tL3Bob3RvLTE1MTc4NDk4NDU1MzctNGQyNTc5MDI0NTRhP2l4bGliPXJiLTEuMi4xJml4aWQ9TW53eE1qQTNmREI4TUh4d2FHOTBieTF3WVdkbGZIeDhmR1Z1ZkRCOGZIeDgmYXV0bz1mb3JtYXQmZml0PWNyb3Amdz0yMDAwJnE9ODA=/dz0zMDAmaD00MDAmZm09YXZpZg==.avif"
-        alt="Gatsby"
+        src="/_gatsby/image/aHR0cHM6Ly9pbWFnZXMudW5zcGxhc2guY29tL3Bob3RvLTE1MTc4NDk4NDU1MzctNGQyNTc5MDI0NTRhP2l4bGliPXJiLTEuMi4xJml4aWQ9TW53eE1qQTNmREI4TUh4d2FHOTBieTF3WVdkbGZIeDhmR1Z1ZkRCOGZIeDgmYXV0bz1mb3JtYXQmZml0PWNyb3Amdz0yMDAwJnE9ODA=/dz0zMDAmaD00MDAmZm09YXZpZg==/name.avif"
+        alt="Gatsby Image"
       />
       <figcaption>
         /_gatsby/image/aHR0cHM6Ly9pbWFnZXMudW5zcGxhc2guY29tL3Bob3RvLTE1MTc4NDk4NDU1MzctNGQyNTc5MDI0NTRhP2l4bGliPXJiLTEuMi4xJml4aWQ9TW53eE1qQTNmREI4TUh4d2FHOTBieTF3WVdkbGZIeDhmR1Z1ZkRCOGZIeDgmYXV0bz1mb3JtYXQmZml0PWNyb3Amdz0yMDAwJnE9ODA=/dz0zMDAmaD00MDAmZm09YXZpZg==.avif
       </figcaption>
     </figure>
-    <h2>Query results</h2>
-    <pre>{JSON.stringify(data, null, 2)}</pre>
+    <figure>
+      <img
+        src="/_gatsby/file/aHR0cHM6Ly9pbWFnZXMudW5zcGxhc2guY29tL3Bob3RvLTE1MTc4NDk4NDU1MzctNGQyNTc5MDI0NTRhP2l4bGliPXJiLTEuMi4xJml4aWQ9TW53eE1qQTNmREI4TUh4d2FHOTBieTF3WVdkbGZIeDhmR1Z1ZkRCOGZIeDgmYXV0bz1mb3JtYXQmZml0PWNyb3Amdz0yMDAwJnE9ODA=/name.avif"
+        alt="Gatsby File"
+      />
+      <figcaption>
+        /_gatsby/file/aHR0cHM6Ly9pbWFnZXMudW5zcGxhc2guY29tL3Bob3RvLTE1MTc4NDk4NDU1MzctNGQyNTc5MDI0NTRhP2l4bGliPXJiLTEuMi4xJml4aWQ9TW53eE1qQTNmREI4TUh4d2FHOTBieTF3WVdkbGZIeDhmR1Z1ZkRCOGZIeDgmYXV0bz1mb3JtYXQmZml0PWNyb3Amdz0yMDAwJnE9ODA=/name.avif
+      </figcaption>
+    </figure>
   </Layout>
 )
 
