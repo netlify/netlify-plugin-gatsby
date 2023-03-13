@@ -113,6 +113,11 @@ const links = [
     url: 'api/users/123/hello world',
     description: 'Captures named path params',
   },
+  {
+    text: 'IMAGE CDN',
+    url: 'image-cdn',
+    description: 'Image CDN demo',
+  },
 ]
 
 // markup

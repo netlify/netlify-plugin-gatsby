@@ -1,9 +1,4 @@
-import type {
-  Handler,
-  HandlerContext,
-  HandlerEvent,
-  HandlerResponse,
-} from '@netlify/functions'
+import type { Handler, HandlerEvent } from '@netlify/functions'
 import { stripIndent as javascript } from 'common-tags'
 import type { GatsbyFunctionRequest } from 'gatsby'
 import type {
@@ -19,8 +14,6 @@ const { join } = require('path')
 
 const etag = require('etag')
 
-const { gatsbyFunction } = require('./api/gatsbyFunction')
-const { createRequestObject, createResponseObject } = require('./api/utils')
 const {
   getPagePathFromPageDataPath,
   getGraphQLEngine,
@@ -142,11 +135,11 @@ const getHandler = (renderMode: RenderMode, appDir: string): Handler => {
  * Generate an API handler
  */
 
-const getApiHandler = (appDir: string): Handler =>
+const apiHandler = javascript`(appDir) =>
   function handler(
-    event: HandlerEvent,
-    context: HandlerContext,
-  ): Promise<HandlerResponse> {
+    event,
+    context,
+  ) {
     // Create a fake Gatsby/Express Request object
     const req = createRequestObject({ event, context })
 
@@ -158,11 +151,11 @@ const getApiHandler = (appDir: string): Handler =>
         // Try to call the actual function
         gatsbyFunction(req, res, event, appDir)
       } catch (error) {
-        console.error(`Error executing ${event.path}`, error)
+        console.error(\`Error executing \${event.path}\`, error)
         resolve({ statusCode: 500 })
       }
     })
-  }
+  }`
 
 export const makeHandler = (appDir: string, renderMode: RenderMode): string =>
   // This is a string, but if you have the right editor plugin it should format as js
@@ -188,5 +181,5 @@ export const makeApiHandler = (appDir: string): string =>
     const { resolve } = require("path");
 
     const pageRoot = resolve(__dirname, "${appDir}");
-    exports.handler = ((${getApiHandler.toString()})(pageRoot))
+    exports.handler = ((${apiHandler})(pageRoot))
 `
