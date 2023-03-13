@@ -1,0 +1,30 @@
+{
+  "name": "esm-gatsby-config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "My Gatsby site",
+  "author": "Michal Piechowiak",
+  "keywords": [
+    "gatsby"
+  ],
+  "scripts": {
+    "develop": "cross-env NODE_OPTIONS=\"-r esm\" gatsby develop",
+    "start": "cross-env NODE_OPTIONS=\"-r esm\" gatsby develop",
+    "build": "cross-env NODE_OPTIONS=\"-r esm\" gatsby build",
+    "serve": "cross-env NODE_OPTIONS=\"-r esm\" gatsby serve",
+    "clean": "gatsby clean",
+    "jest": "jest",
+    "test": "npm run build && jest"
+  },
+  "license": "0BSD",
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "esm": "^3.2.25",
+    "gatsby": "^3.15.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  },
+  "devDependencies": {
+    "jest": "^27.0.4"
+  }
+}

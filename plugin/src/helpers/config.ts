@@ -60,19 +60,15 @@ export async function spliceConfig({
   return fs.writeFile(fileName, out)
 }
 
-function loadGatsbyConfig({ gatsbyRoot, utils }): GatsbyConfig | never {
+function loadGatsbyConfig({ gatsbyRoot }): GatsbyConfig {
   const gatsbyConfigFile = resolve(gatsbyRoot, 'gatsby-config.js')
 
   if (!existsSync(gatsbyConfigFile)) {
     return {}
   }
 
-  try {
-    // eslint-disable-next-line n/global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
-    return require(gatsbyConfigFile) as GatsbyConfig
-  } catch (error) {
-    utils.build.failBuild('Could not load gatsby-config.js', { error })
-  }
+  // eslint-disable-next-line n/global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
+  return require(gatsbyConfigFile) as GatsbyConfig
 }
 
 function hasPlugin(plugins: PluginRef[], pluginName: string): boolean {
@@ -85,15 +81,12 @@ function hasPlugin(plugins: PluginRef[], pluginName: string): boolean {
   )
 }
 
-export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
-  const gatsbyRoot = getGatsbyRoot(netlifyConfig.build.publish)
-
+async function checkGatsbyPluginsCompatibility({
+  utils,
+  gatsbyRoot,
+  gatsbyConfig,
+}): Promise<void> | never {
   // warn if gatsby-plugin-netlify is missing
-  const gatsbyConfig = loadGatsbyConfig({
-    utils,
-    gatsbyRoot,
-  })
-
   if (hasPlugin(gatsbyConfig.plugins, 'gatsby-plugin-netlify')) {
     if (
       !(await checkPackageVersion(
@@ -120,6 +113,29 @@ export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
       'Please uninstall gatsby-plugin-netlify-cache and remove it from your gatsby-config.js',
     )
     utils.build.failBuild('Incompatible Gatsby plugin installed')
+  }
+}
+
+export async function checkConfig({ utils, netlifyConfig }): Promise<void> {
+  const gatsbyRoot = getGatsbyRoot(netlifyConfig.build.publish)
+
+  let gatsbyConfig: GatsbyConfig | undefined
+  try {
+    gatsbyConfig = loadGatsbyConfig({
+      gatsbyRoot,
+    })
+  } catch (error) {
+    console.error(
+      `Could not load gatsby-config.js: ${error.message}\n\nUnable to validate if 'gatsby-plugin-netlify' is setup correctly.`,
+    )
+  }
+
+  if (gatsbyConfig) {
+    await checkGatsbyPluginsCompatibility({
+      utils,
+      gatsbyConfig,
+      gatsbyRoot,
+    })
   }
 
   if (
