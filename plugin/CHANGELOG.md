@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.6.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.5.2...plugin-gatsby-v3.6.0) (2023-03-13)
+
+
+### Features
+
+* add support for query param url syntax of IMAGE CDN ([#566](https://github.com/netlify/netlify-plugin-gatsby/issues/566)) ([5874f67](https://github.com/netlify/netlify-plugin-gatsby/commit/5874f67e63f04e597395c4fb0d4d0a0d70e25bc4))
+
+
+### Bug Fixes
+
+* don't fail entire build when gatsby-config fails to be imported ([#562](https://github.com/netlify/netlify-plugin-gatsby/issues/562)) ([007c823](https://github.com/netlify/netlify-plugin-gatsby/commit/007c823801c212de9bed56130e15114013208f7e))
+
 ## [3.5.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.5.1...plugin-gatsby-v3.5.2) (2023-02-23)
 
 
