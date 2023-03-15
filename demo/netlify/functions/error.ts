@@ -6,7 +6,7 @@ const withIntegrations = wrap(withSentry)
 
 const handler = 
 withIntegrations(async (event: HandlerEvent, context: HandlerContext & SentryContext) => {
-  throw Error('yet another error')
+  throw Error('testing testing 123')
 });
 
 export { handler };
