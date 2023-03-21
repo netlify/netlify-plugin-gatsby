@@ -4,6 +4,12 @@ publish = "public/"
 # ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ../plugin/"
 
 [[plugins]]
+package = "demo-integration"
+
+[[plugins]]
+package = "netlify-plugin-cloudinary"
+
+[[plugins]]
 package = "../plugin/src/index.ts"
 
 [[plugins]]
