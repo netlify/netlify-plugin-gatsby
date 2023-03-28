@@ -110,7 +110,7 @@ export const handler: Handler = async (event, ...rest) => {
       ),
     )
 
-    const result = await ipxHandler(requestTypeAndArgs.event, ...rest)
+    const result = ipxHandler(requestTypeAndArgs.event, ...rest)
 
     console.log(
       inspect(
@@ -124,6 +124,12 @@ export const handler: Handler = async (event, ...rest) => {
         { depth: Number.POSITIVE_INFINITY },
       ),
     )
+    if (!result) {
+      return {
+        statusCode: 500,
+        body: 'No result',
+      }
+    }
 
     return result
   }
