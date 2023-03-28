@@ -112,24 +112,28 @@ export const handler: Handler = async (event, ...rest) => {
 
     const result = ipxHandler(requestTypeAndArgs.event, ...rest)
 
-    console.log(
-      inspect(
-        {
-          step: `after`,
-          dir: myTMPDIR,
-          tree: directoryTree(myTMPDIR, {
-            attributes: ['size', 'birthtime'],
-          }),
-        },
-        { depth: Number.POSITIVE_INFINITY },
-      ),
-    )
     if (!result) {
       return {
         statusCode: 500,
         body: 'No result',
       }
     }
+
+    // eslint-disable-next-line promise/catch-or-return, promise/prefer-await-to-then, promise/always-return
+    result.then(() => {
+      console.log(
+        inspect(
+          {
+            step: `after`,
+            dir: myTMPDIR,
+            tree: directoryTree(myTMPDIR, {
+              attributes: ['size', 'birthtime'],
+            }),
+          },
+          { depth: Number.POSITIVE_INFINITY },
+        ),
+      )
+    })
 
     return result
   }
