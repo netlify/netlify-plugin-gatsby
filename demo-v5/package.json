@@ -34,6 +34,7 @@
     "@netlify/ipx": "latest",
     "co-body": "^6.1.0",
     "cookie": "^0.5.0",
+    "directory-tree": "^2.2.4",
     "download": "^8.0.0",
     "form-data": "^4.0.0",
     "fs-extra": "^10.0.0",
