@@ -1,11 +1,18 @@
 import { Buffer } from 'buffer'
+import { tmpdir } from 'os'
+import { join } from 'path'
+import { inspect } from 'util'
 
 import { Handler, HandlerResponse } from '@netlify/functions'
 import { createIPXHandler } from '@netlify/ipx'
+import directoryTree from 'directory-tree'
 
 type Event = Parameters<Handler>[0]
 
+const myTMPDIR = tmpdir()
+
 const ipxHandler = createIPXHandler({
+  cacheDir: join(myTMPDIR, 'ipx-cache'),
   propsEncoding: 'base64',
   basePath: '/_gatsby/image/',
   bypassDomainCheck: true,
@@ -92,10 +99,33 @@ export const handler: Handler = async (event, ...rest) => {
   }
 
   if (requestTypeAndArgs.type === `image`) {
-    return ipxHandler(
-      requestTypeAndArgs.event,
-      ...rest,
-    ) as Promise<HandlerResponse>
+    console.log(
+      inspect(
+        {
+          step: `before`,
+          dir: myTMPDIR,
+          tree: directoryTree(myTMPDIR, { attributes: ['size', 'birthtime'] }),
+        },
+        { depth: Number.POSITIVE_INFINITY },
+      ),
+    )
+
+    const result = await ipxHandler(requestTypeAndArgs.event, ...rest)
+
+    console.log(
+      inspect(
+        {
+          step: `after`,
+          dir: myTMPDIR,
+          tree: directoryTree(myTMPDIR, {
+            attributes: ['size', 'birthtime'],
+          }),
+        },
+        { depth: Number.POSITIVE_INFINITY },
+      ),
+    )
+
+    return result
   }
 
   try {
