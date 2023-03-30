@@ -11,6 +11,8 @@ type Event = Parameters<Handler>[0]
 
 const myTMPDIR = tmpdir()
 
+console.log(`init module`, { myTMPDIR })
+
 const ipxHandler = createIPXHandler({
   cacheDir: join(myTMPDIR, 'ipx-cache'),
   propsEncoding: 'base64',
