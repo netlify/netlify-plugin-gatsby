@@ -13,6 +13,8 @@ const myTMPDIR = tmpdir()
 
 console.log(`init module`, { myTMPDIR })
 
+const previouslyHandled = new Set()
+
 const ipxHandler = createIPXHandler({
   cacheDir: join(myTMPDIR, 'ipx-cache'),
   propsEncoding: 'base64',
@@ -99,6 +101,9 @@ export const handler: Handler = async (event, ...rest) => {
       body: 'Invalid request',
     }
   }
+
+  console.log(`handler`, previouslyHandled)
+  previouslyHandled.add(event.path)
 
   if (requestTypeAndArgs.type === `image`) {
     console.log(
