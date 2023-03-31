@@ -11,7 +11,7 @@ type Event = Parameters<Handler>[0]
 
 const myTMPDIR = tmpdir()
 
-console.log(`init module`, { myTMPDIR })
+console.log(`init module2`, { myTMPDIR })
 
 const previouslyHandled = new Set()
 
