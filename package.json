@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@netlify/build": "^27.17.1",
-    "@netlify/eslint-config-node": "7.0.0",
+    "@netlify/eslint-config-node": "7.0.1",
     "@types/jest": "^29.0.0",
     "ava": "^5.0.0",
     "cross-env": "^7.0.2",
