@@ -7,13 +7,18 @@ import { async as StreamZip } from 'node-stream-zip'
 import { relative } from 'pathe'
 import prettyBytes from 'pretty-bytes'
 
-// 50MB, which is the documented max, though the hard max seems to be higher
+// 50MB, which is the warning max
 // eslint-disable-next-line no-magic-numbers
-export const LAMBDA_MAX_SIZE = 1024 * 1024 * 50
+export const LAMBDA_WARNING_SIZE = 1024 * 1024 * 50
+
+// 250MB, which is the hard max
+// eslint-disable-next-line no-magic-numbers
+export const LAMBDA_MAX_SIZE = 1024 * 1024 * 250
 
 // eslint-disable-next-line max-statements
 export const checkZipSize = async (
   file: string,
+  warningSize: number = LAMBDA_WARNING_SIZE,
   maxSize: number = LAMBDA_MAX_SIZE,
 ): Promise<void> => {
   if (!existsSync(file)) {
@@ -21,19 +26,20 @@ export const checkZipSize = async (
     return
   }
   const fileSize = await promises.stat(file).then(({ size }) => size)
-  if (fileSize < maxSize) {
+  if (fileSize < warningSize) {
     return
   }
   // We don't fail the build, because the actual hard max size is larger so it might still succeed
   console.log(
-    redBright(stripIndent`
-      The function zip ${yellowBright(
+    yellowBright(stripIndent`
+      The function zip ${blueBright(
         relative(process.cwd(), file),
       )} size is ${prettyBytes(
       fileSize,
-    )}, which is larger than the maximum supported size of ${prettyBytes(
-      maxSize,
-    )}.
+    )}, which is larger than the recommended maximum size of ${prettyBytes(
+      warningSize,
+    )}. This will fail the build if the unzipped size is bigger than the maximum size of ${prettyBytes(
+      maxSize.
       There are a few reasons this could happen, such as accidentally bundling a large dependency or adding lots of files to "included_files".
     `),
   )
