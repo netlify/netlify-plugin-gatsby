@@ -1,6 +1,6 @@
 import process from 'process'
 
-import { yellowBright, redBright } from 'chalk'
+import { yellowBright, blueBright } from 'chalk'
 import { stripIndent } from 'common-tags'
 import { existsSync, promises } from 'fs-extra'
 import { async as StreamZip } from 'node-stream-zip'
@@ -39,7 +39,8 @@ export const checkZipSize = async (
     )}, which is larger than the recommended maximum size of ${prettyBytes(
       warningSize,
     )}. This will fail the build if the unzipped size is bigger than the maximum size of ${prettyBytes(
-      maxSize.
+      maxSize,
+    )}
       There are a few reasons this could happen, such as accidentally bundling a large dependency or adding lots of files to "included_files".
     `),
   )
