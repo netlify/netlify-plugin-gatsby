@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.6.1...plugin-gatsby-v3.6.2) (2023-04-20)
+
+
+### Bug Fixes
+
+* make large lambda warning message more informative ([#578](https://github.com/netlify/netlify-plugin-gatsby/issues/578)) ([d86fd9b](https://github.com/netlify/netlify-plugin-gatsby/commit/d86fd9b1dbde2988b9f51feaac6634d7b6830db4))
+
 ## [3.6.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.6.0...plugin-gatsby-v3.6.1) (2023-04-12)
 
 
