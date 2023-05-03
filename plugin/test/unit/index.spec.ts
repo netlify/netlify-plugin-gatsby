@@ -9,6 +9,7 @@ import Chance from 'chance'
 
 import { onBuild, onSuccess } from '../../src/index'
 import { enableGatsbyExcludeDatastoreFromBundle } from '../helpers'
+import type { NetlifyConfig } from '@netlify/build'
 
 jest.mock('node-fetch', () => ({
   __esModule: true,
@@ -58,7 +59,7 @@ const constants = {
   NETLIFY_BUILD_VERSION: '9000.0.0',
   SITE_ID: chance.guid(),
 }
-const netlifyConfig = {
+const netlifyConfig: NetlifyConfig = {
   build: {
     command: 'npm run build',
     publish: 'demo/public',
@@ -75,7 +76,7 @@ const netlifyConfig = {
   functions: { '*': {} },
   redirects: [],
   headers: [],
-  edge_handlers: [],
+  edge_functions: [],
   plugins: [],
 }
 
