@@ -1,6 +1,7 @@
 /* eslint-disable max-nested-callbacks, ava/no-import-test-files */
 import process from 'process'
 
+import type { NetlifyConfig } from '@netlify/build'
 import {
   NetlifyPluginRunUtilOptions,
   NetlifyPluginRunUtilResult,
@@ -9,7 +10,6 @@ import Chance from 'chance'
 
 import { onBuild, onSuccess } from '../../src/index'
 import { enableGatsbyExcludeDatastoreFromBundle } from '../helpers'
-import type { NetlifyConfig } from '@netlify/build'
 
 jest.mock('node-fetch', () => ({
   __esModule: true,
