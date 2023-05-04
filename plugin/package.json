@@ -58,7 +58,7 @@
     "semver": "^7.3.5",
     "statuses": "^2.0.1",
     "tempy": "^1.0.0",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@gatsbyjs/reach-router": "^2.0.0",
