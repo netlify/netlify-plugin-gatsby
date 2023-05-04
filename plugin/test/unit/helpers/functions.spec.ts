@@ -1,6 +1,7 @@
 import { join } from 'path'
 import process from 'process'
 
+import type { NetlifyConfig, NetlifyPluginOptions } from '@netlify/build'
 import Chance from 'chance'
 import { copy, existsSync } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
@@ -47,17 +48,17 @@ describe('setupImageCdn', () => {
     'successfully creates a functions-internal directory if it does not exist',
     async () => {
       await moveGatsbyDir()
-      const constants = {
+      const constants: NetlifyPluginOptions['constants'] = {
         INTERNAL_FUNCTIONS_SRC: 'demo/.netlify/functions-internal',
         PUBLISH_DIR: 'demo/public',
         FUNCTIONS_DIST: 'demo/.netlify/functions',
-        EDGE_HANDLERS_DIST: 'demo/.netlify/edge-functions-dist/',
+        EDGE_FUNCTIONS_DIST: 'demo/.netlify/edge-functions-dist/',
         IS_LOCAL: true,
         NETLIFY_BUILD_VERSION: '9000.0.0',
         SITE_ID: chance.guid(),
       }
 
-      const netlifyConfig = {
+      const netlifyConfig: NetlifyConfig = {
         build: {
           command: 'npm run build',
           publish: 'demo/public',
@@ -76,7 +77,7 @@ describe('setupImageCdn', () => {
         functions: { '*': {} },
         redirects: [],
         headers: [],
-        edge_handlers: [],
+        edge_functions: [],
         plugins: [],
       }
 

@@ -1,6 +1,7 @@
 /* eslint-disable max-nested-callbacks, ava/no-import-test-files */
 import process from 'process'
 
+import type { NetlifyConfig, NetlifyPluginOptions } from '@netlify/build'
 import {
   NetlifyPluginRunUtilOptions,
   NetlifyPluginRunUtilResult,
@@ -49,16 +50,16 @@ const chance = new Chance()
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockFetchMethod = (url) => Promise.resolve()
-const constants = {
+const constants: NetlifyPluginOptions['constants'] = {
   INTERNAL_FUNCTIONS_SRC: 'demo/.netlify/internal-functions',
   PUBLISH_DIR: 'demo/public',
   FUNCTIONS_DIST: 'demo/.netlify/functions',
-  EDGE_HANDLERS_DIST: 'demo/.netlify/edge-functions-dist/',
+  EDGE_FUNCTIONS_DIST: 'demo/.netlify/edge-functions-dist/',
   IS_LOCAL: true,
   NETLIFY_BUILD_VERSION: '9000.0.0',
   SITE_ID: chance.guid(),
 }
-const netlifyConfig = {
+const netlifyConfig: NetlifyConfig = {
   build: {
     command: 'npm run build',
     publish: 'demo/public',
@@ -75,7 +76,7 @@ const netlifyConfig = {
   functions: { '*': {} },
   redirects: [],
   headers: [],
-  edge_handlers: [],
+  edge_functions: [],
   plugins: [],
 }
 
@@ -87,7 +88,7 @@ const mockRun = (
   /* eslint-enable @typescript-eslint/no-unused-vars */
 ): Promise<NetlifyPluginRunUtilResult> =>
   // eslint-disable-next-line no-void
-  Promise.resolve(void 0)
+  Promise.resolve(void 0) as unknown as Promise<NetlifyPluginRunUtilResult>
 
 mockRun.command = (
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -96,7 +97,7 @@ mockRun.command = (
   /* eslint-enable @typescript-eslint/no-unused-vars */
 ): Promise<NetlifyPluginRunUtilResult> =>
   // eslint-disable-next-line no-void
-  Promise.resolve(void 0)
+  Promise.resolve(void 0) as unknown as Promise<NetlifyPluginRunUtilResult>
 
 const utils = {
   build: {
