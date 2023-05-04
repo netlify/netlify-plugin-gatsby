@@ -50,7 +50,7 @@ const chance = new Chance()
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockFetchMethod = (url) => Promise.resolve()
-const constants: NetlifyPluginOptions["constants"] = {
+const constants: NetlifyPluginOptions['constants'] = {
   INTERNAL_FUNCTIONS_SRC: 'demo/.netlify/internal-functions',
   PUBLISH_DIR: 'demo/public',
   FUNCTIONS_DIST: 'demo/.netlify/functions',
