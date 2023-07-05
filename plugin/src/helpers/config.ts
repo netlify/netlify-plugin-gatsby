@@ -60,15 +60,30 @@ export async function spliceConfig({
   return fs.writeFile(fileName, out)
 }
 
-function loadGatsbyConfig({ gatsbyRoot }): GatsbyConfig {
-  const gatsbyConfigFile = resolve(gatsbyRoot, 'gatsby-config.js')
+function loadGatsbyConfig({ gatsbyRoot }) {
+  const gatsbyConfigFileJS = resolve(gatsbyRoot, 'gatsby-config.js');
+  const gatsbyConfigFileTS = resolve(gatsbyRoot, 'gatsby-config.ts');
 
-  if (!existsSync(gatsbyConfigFile)) {
-    return {}
+  let gatsbyConfigFile = '';
+
+  if (existsSync(gatsbyConfigFileJS)) {
+    gatsbyConfigFile = gatsbyConfigFileJS;
+  } else if (existsSync(gatsbyConfigFileTS)) {
+    gatsbyConfigFile = gatsbyConfigFileTS;
+  } else {
+    return {};
+  }
+
+  const resolvedGatsbyConfigFile = resolveModule.sync(gatsbyConfigFile, {
+    extensions: ['.js', '.ts'],
+  });
+
+  if (!resolvedGatsbyConfigFile) {
+    return {};
   }
 
   // eslint-disable-next-line n/global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
-  return require(gatsbyConfigFile) as GatsbyConfig
+  return require(resolvedGatsbyConfigFile);
 }
 
 function hasPlugin(plugins: PluginRef[], pluginName: string): boolean {
