@@ -74,16 +74,8 @@ function loadGatsbyConfig({ gatsbyRoot }) {
     return {};
   }
 
-  const resolvedGatsbyConfigFile = resolveModule.sync(gatsbyConfigFile, {
-    extensions: ['.js', '.ts'],
-  });
-
-  if (!resolvedGatsbyConfigFile) {
-    return {};
-  }
-
-  // eslint-disable-next-line n/global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
-  return require(resolvedGatsbyConfigFile);
+   // eslint-disable-next-line n/global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
+  return require(gatsbyConfigFile) as GatsbyConfig;
 }
 
 function hasPlugin(plugins: PluginRef[], pluginName: string): boolean {
