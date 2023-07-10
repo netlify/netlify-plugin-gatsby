@@ -223,7 +223,7 @@ describe('plugin', () => {
     })
 
     it('makes requests to pre-warm the lambdas if GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is enabled', async () => {
-      await onSuccess()
+      await onSuccess(defaultArgs)
       const controller = new AbortController()
       expect(fetch).toHaveBeenNthCalledWith(
         1,
@@ -245,7 +245,7 @@ describe('plugin', () => {
     it('does not make requests to pre-warm the lambdas if GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is disabled', async () => {
       process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE = 'false'
 
-      await onSuccess()
+      await onSuccess(defaultArgs)
 
       expect(fetch).toBeCalledTimes(0)
     })
@@ -253,7 +253,7 @@ describe('plugin', () => {
     it('does not make requests to pre-warm the lambdas if process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE is not defined', async () => {
       delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
 
-      await onSuccess()
+      await onSuccess(defaultArgs)
 
       expect(fetch).toBeCalledTimes(0)
     })
@@ -261,7 +261,7 @@ describe('plugin', () => {
     it('does not make requests to pre-warm the lambdas if process.env.DEPLOY_PRIME_URL is not defined', async () => {
       delete process.env.DEPLOY_PRIME_URL
 
-      await onSuccess()
+      await onSuccess(defaultArgs)
 
       expect(fetch).toBeCalledTimes(0)
     })
