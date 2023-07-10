@@ -373,6 +373,13 @@ export function shouldSkip(publishDir: string): boolean {
   process.env.NETLIFY_SKIP_GATSBY_BUILD_PLUGIN = shouldSkipResult
     ? 'true'
     : 'false'
+
+  if (shouldSkipResult) {
+    console.log(
+      'Skipping @netlify/plugin-gatsby work, because used Gatsby version supports adapters.',
+    )
+  }
+
   return shouldSkipResult
 }
 /* eslint-enable max-lines */
