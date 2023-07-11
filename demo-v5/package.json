@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@sindresorhus/slugify": "^1.1.2",
-    "gatsby": "5.10.0-alpha-adapters.155",
+    "gatsby": "5.10.0-alpha-adapters.156",
     "gatsby-plugin-image": "next",
     "gatsby-plugin-sharp": "next",
     "gatsby-source-filesystem": "next",
