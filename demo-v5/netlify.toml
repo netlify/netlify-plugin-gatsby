@@ -9,3 +9,6 @@ package = "../plugin/src/index.ts"
 
 [[plugins]]
 package = "@netlify/plugin-local-install-core"
+
+[[plugins]]
+package = "netlify-plugin-debug-cache"
