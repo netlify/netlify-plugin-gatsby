@@ -11,7 +11,10 @@ import {
   createMetadataFileAndCopyDatastore,
   mutateConfig,
   shouldSkipBundlingDatastore,
+  shouldSkip,
 } from '../../../src/helpers/config'
+// eslint-disable-next-line import/no-namespace
+import * as filesModule from '../../../src/helpers/files'
 import { enableGatsbyExcludeDatastoreFromBundle } from '../../helpers'
 
 const chance = new Chance()
@@ -271,5 +274,62 @@ describe('createMetadataFileAndCopyDatastore', () => {
     },
     TEST_TIMEOUT,
   )
+})
+
+describe('shouldSkip', () => {
+  let findModuleFromBaseSpy
+  const publishDir = `/opt/repo/public`
+  const gatsbyPackageJsonPath = `/opt/public/node_modules/gatsby/package.json`
+  const gatsbyPluginUtilsPath = `/opt/public/node_modules/gatsby-plugin-utils/dist/index.js`
+  let mockHasAdaptersFeature
+  beforeAll(() => {
+    findModuleFromBaseSpy = jest
+      .spyOn(filesModule, 'findModuleFromBase')
+      // eslint-disable-next-line max-nested-callbacks
+      .mockImplementation(({ candidates }) => {
+        if (candidates.includes(`gatsby/package.json`)) {
+          return gatsbyPackageJsonPath
+        }
+
+        if (candidates.includes(`gatsby-plugin-utils`)) {
+          return gatsbyPluginUtilsPath
+        }
+
+        return null
+      })
+    jest.mock(
+      gatsbyPluginUtilsPath,
+      // eslint-disable-next-line max-nested-callbacks
+      () => ({
+        // eslint-disable-next-line max-nested-callbacks
+        hasFeature: (feat) => {
+          if (feat === `adapters`) {
+            return mockHasAdaptersFeature
+          }
+          return false
+        },
+      }),
+      {
+        virtual: true,
+      },
+    )
+  })
+  afterEach(() => {
+    findModuleFromBaseSpy.mockClear()
+    delete process.env.NETLIFY_SKIP_GATSBY_BUILD_PLUGIN
+  })
+  afterAll(() => {
+    findModuleFromBaseSpy.mockReset()
+  })
+
+  it(`doesn't skip when gatsby version supports adapters`, () => {
+    mockHasAdaptersFeature = false
+    expect(shouldSkip(publishDir)).toBe(false)
+  })
+
+  it(`does skip when gatsby version doesn't support adapters`, () => {
+    mockHasAdaptersFeature = true
+    expect(shouldSkip(publishDir)).toBe(true)
+  })
 })
 /* eslint-enable ava/no-import-test-files */
