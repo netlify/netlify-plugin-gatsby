@@ -1,8 +1,8 @@
 {
-  "name": "function-test",
+  "name": "with-adapters",
   "version": "1.0.0",
   "private": true,
-  "description": "Function test",
+  "description": "Function and adapters test",
   "author": "Matt Kane",
   "keywords": [
     "gatsby"
@@ -10,7 +10,7 @@
   "scripts": {
     "develop": "HOST=0.0.0.0 gatsby develop",
     "start": "HOST=0.0.0.0 gatsby develop",
-    "build": "gatsby build",
+    "build": "gatsby --version && gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "build:netlify": "jest build.test.js",
