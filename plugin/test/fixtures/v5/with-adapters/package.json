@@ -20,7 +20,7 @@
     "test:jest": "jest functions.test.js"
   },
   "dependencies": {
-    "gatsby": "5.10.0-alpha-adapters.164",
+    "gatsby": "5.10.0-alpha-adapters.165",
     "gatsby-plugin-netlify": "5.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
