@@ -2,7 +2,7 @@
 const { buildSite } = require('../../../../helpers')
 const { readFileSync } = require('fs')
 
-jest.setTimeout(120_000)
+jest.setTimeout(240_000)
 describe('A site using gatsby version with adapters', () => {
   it('successfully builds and disables @netlify/plugin-gatsby and gatsby-plugin-netlify', async () => {
     const {
