@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.6.3](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.6.2...plugin-gatsby-v3.6.3) (2023-07-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @netlify/functions to ^1.5.0 ([#584](https://github.com/netlify/netlify-plugin-gatsby/issues/584)) ([927f547](https://github.com/netlify/netlify-plugin-gatsby/commit/927f5478b013357d9b4f73a23521ec183f2572b1))
+* **deps:** update dependency @netlify/functions to ^1.6.0 ([#585](https://github.com/netlify/netlify-plugin-gatsby/issues/585)) ([3935018](https://github.com/netlify/netlify-plugin-gatsby/commit/393501836b2a20d0d7d39311ad9a59e219844380))
+* **deps:** update dependency @netlify/ipx to ^1.4.1 ([#621](https://github.com/netlify/netlify-plugin-gatsby/issues/621)) ([db5fe0f](https://github.com/netlify/netlify-plugin-gatsby/commit/db5fe0f100d38e155273c11094a42e81d5829a06))
+* **deps:** update dependency node-fetch to v2.6.11 ([#591](https://github.com/netlify/netlify-plugin-gatsby/issues/591)) ([11c20ab](https://github.com/netlify/netlify-plugin-gatsby/commit/11c20abdf483e5e156a02bc678b1a2fe0c904844))
+* **deps:** update dependency node-fetch to v2.6.12 ([#642](https://github.com/netlify/netlify-plugin-gatsby/issues/642)) ([26c3c63](https://github.com/netlify/netlify-plugin-gatsby/commit/26c3c63cecca355dd1edfeb0bdc6bb627d550c14))
+* **deps:** update dependency semver to v7.5.1 ([#609](https://github.com/netlify/netlify-plugin-gatsby/issues/609)) ([62976af](https://github.com/netlify/netlify-plugin-gatsby/commit/62976afb02aae533de7c5f0e3f4e051b5393212c))
+* **deps:** update dependency semver to v7.5.2 ([#624](https://github.com/netlify/netlify-plugin-gatsby/issues/624)) ([536c195](https://github.com/netlify/netlify-plugin-gatsby/commit/536c1953b8b9d0cccc413e900d66e0401e3721fd))
+* **deps:** update dependency semver to v7.5.3 ([#631](https://github.com/netlify/netlify-plugin-gatsby/issues/631)) ([44acc4a](https://github.com/netlify/netlify-plugin-gatsby/commit/44acc4a04503df7c03cc6fea1c865560631d5edc))
+* **deps:** update dependency semver to v7.5.4 ([#650](https://github.com/netlify/netlify-plugin-gatsby/issues/650)) ([54b2627](https://github.com/netlify/netlify-plugin-gatsby/commit/54b26279b92b2b6ece9cf69952c5cd242d23316b))
+* **deps:** update dependency uuid to v9 ([#517](https://github.com/netlify/netlify-plugin-gatsby/issues/517)) ([4e06ce5](https://github.com/netlify/netlify-plugin-gatsby/commit/4e06ce581b9c6ed58c0e01d8cb6bf7246009f0ab))
+
 ## [3.6.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.6.1...plugin-gatsby-v3.6.2) (2023-04-20)
 
 
