@@ -1,0 +1,39 @@
+{
+  "name": "with-adapters",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Function and adapters test",
+  "author": "Matt Kane",
+  "keywords": [
+    "gatsby"
+  ],
+  "scripts": {
+    "develop": "HOST=0.0.0.0 gatsby develop",
+    "start": "HOST=0.0.0.0 gatsby develop",
+    "build": "gatsby --version && gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean",
+    "build:netlify": "jest build.test.js",
+    "preview": "netlify serve",
+    "test": "run-s build:netlify test:e2e",
+    "test:e2e": "start-server-and-test preview 8888 test:jest",
+    "test:jest": "jest functions.test.js"
+  },
+  "dependencies": {
+    "gatsby": "5.10.0-alpha-adapters.165",
+    "gatsby-plugin-netlify": "5.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "form-data": "^4.0.0",
+    "jest": "^26.6.3",
+    "node-fetch": "^2.6.1",
+    "npm-run-all": "^4.1.5",
+    "start-server-and-test": "^1.12.2"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.17.0"
+  }
+}

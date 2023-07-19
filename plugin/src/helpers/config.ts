@@ -15,7 +15,7 @@ import fs, {
 import type { GatsbyConfig, PluginRef } from 'gatsby'
 import { v4 as uuidv4 } from 'uuid'
 
-import { checkPackageVersion } from './files'
+import { checkPackageVersion, findModuleFromBase } from './files'
 import type { FunctionList } from './functions'
 
 /**
@@ -337,5 +337,49 @@ function isEnvSet(envVar: string) {
 
 export function getGatsbyRoot(publish: string): string {
   return resolve(dirname(publish))
+}
+
+export function shouldSkip(publishDir: string): boolean {
+  if (typeof process.env.NETLIFY_SKIP_GATSBY_BUILD_PLUGIN !== 'undefined') {
+    return isEnvSet('NETLIFY_SKIP_GATSBY_BUILD_PLUGIN')
+  }
+
+  const siteRoot = getGatsbyRoot(publishDir)
+
+  let shouldSkipResult = false
+
+  try {
+    const gatsbyPath = findModuleFromBase({
+      paths: [siteRoot],
+      candidates: ['gatsby/package.json'],
+    })
+    if (gatsbyPath) {
+      const gatsbyPluginUtilsPath = findModuleFromBase({
+        paths: [gatsbyPath, siteRoot],
+        candidates: ['gatsby-plugin-utils'],
+      })
+
+      // eslint-disable-next-line import/no-dynamic-require, n/global-require, @typescript-eslint/no-var-requires
+      const { hasFeature } = require(gatsbyPluginUtilsPath)
+
+      if (hasFeature(`adapters`)) {
+        shouldSkipResult = true
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  process.env.NETLIFY_SKIP_GATSBY_BUILD_PLUGIN = shouldSkipResult
+    ? 'true'
+    : 'false'
+
+  if (shouldSkipResult) {
+    console.log(
+      'Skipping @netlify/plugin-gatsby work, because used Gatsby version supports adapters.',
+    )
+  }
+
+  return shouldSkipResult
 }
 /* eslint-enable max-lines */

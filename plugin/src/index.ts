@@ -14,6 +14,7 @@ import {
   getNeededFunctions,
   modifyConfig,
   shouldSkipBundlingDatastore,
+  shouldSkip,
 } from './helpers/config'
 import { modifyFiles } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
@@ -33,6 +34,11 @@ export async function onPreBuild({
       `Gatsby sites must publish the "public" directory, but your site’s publish directory is set to “${PUBLISH_DIR}”. Please set your publish directory to your Gatsby site’s "public" directory.`,
     )
   }
+
+  if (shouldSkip(PUBLISH_DIR)) {
+    return
+  }
+
   await restoreCache({ utils, publish: PUBLISH_DIR })
 
   await checkConfig({ utils, netlifyConfig })
@@ -47,6 +53,11 @@ export async function onBuild({
     FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC,
     INTERNAL_FUNCTIONS_SRC,
   } = constants
+
+  if (shouldSkip(PUBLISH_DIR)) {
+    return
+  }
+
   const cacheDir = normalizedCacheDir(PUBLISH_DIR)
 
   if (
@@ -81,6 +92,10 @@ export async function onPostBuild({
   constants: { PUBLISH_DIR, FUNCTIONS_DIST },
   utils,
 }): Promise<void> {
+  if (shouldSkip(PUBLISH_DIR)) {
+    return
+  }
+
   await saveCache({ publish: PUBLISH_DIR, utils })
 
   const cacheDir = normalizedCacheDir(PUBLISH_DIR)
@@ -92,7 +107,11 @@ export async function onPostBuild({
   }
 }
 
-export async function onSuccess() {
+export async function onSuccess({ constants: { PUBLISH_DIR } }) {
+  if (shouldSkip(PUBLISH_DIR)) {
+    return
+  }
+
   // Pre-warm the lambdas as downloading the datastore file can take a while
   if (shouldSkipBundlingDatastore()) {
     const FETCH_TIMEOUT = 5000
