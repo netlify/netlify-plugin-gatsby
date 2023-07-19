@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.6.3...plugin-gatsby-v3.7.0) (2023-07-19)
+
+
+### Features
+
+* skip work when gatsby version supports adapters ([#639](https://github.com/netlify/netlify-plugin-gatsby/issues/639)) ([1e9ba48](https://github.com/netlify/netlify-plugin-gatsby/commit/1e9ba483f05870708d2f10c89002f75cd6ce966e))
+
 ## [3.6.3](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.6.2...plugin-gatsby-v3.6.3) (2023-07-17)
 
 
