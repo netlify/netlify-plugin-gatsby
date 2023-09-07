@@ -9,3 +9,8 @@ package = "../plugin/src/index.ts"
 
 [[plugins]]
 package = "@netlify/plugin-local-install-core"
+
+[[redirects]]
+from = "/wat"
+to = "/"
+status = 200
