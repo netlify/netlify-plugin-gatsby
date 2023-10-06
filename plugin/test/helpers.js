@@ -6,7 +6,7 @@ const chance = new Chance()
 module.exports.buildSite = async () => {
   const { exitCode, stdout, stderr } = await execa(
     'netlify',
-    ['build', '--offline'],
+    ['build', '--offline', '--cwd', '.'],
     { reject: false },
   )
   return {
