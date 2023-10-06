@@ -13,7 +13,7 @@
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "build:netlify": "netlify build --offline",
+    "build:netlify": "netlify build --offline --cwd .",
     "preview": "netlify dev --offline",
     "test": "run-s build:netlify test:e2e",
     "test:e2e": "start-server-and-test preview 8888 test:jest",
