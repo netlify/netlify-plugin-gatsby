@@ -14,13 +14,13 @@
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "build:netlify": "jest build.test.js",
-    "preview": "netlify serve",
+    "preview": "netlify serve --cwd .",
     "test": "run-s build:netlify test:e2e",
     "test:e2e": "start-server-and-test preview 8888 test:jest",
     "test:jest": "jest functions.test.js"
   },
   "dependencies": {
-    "gatsby": "5.10.0-alpha-adapters.165",
+    "gatsby": "5.12.5",
     "gatsby-plugin-netlify": "5.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

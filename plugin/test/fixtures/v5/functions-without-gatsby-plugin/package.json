@@ -13,14 +13,14 @@
     "build": "gatsby build",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "build:netlify": "netlify build --offline",
-    "preview": "netlify dev --offline",
+    "build:netlify": "netlify build --offline --cwd .",
+    "preview": "netlify dev --offline --cwd .",
     "test": "run-s build:netlify test:e2e",
     "test:e2e": "start-server-and-test preview 8888 test:jest",
     "test:jest": "jest"
   },
   "dependencies": {
-    "gatsby": "^5.2.0",
+    "gatsby": "5.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
