@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.7.1...plugin-gatsby-v3.7.2) (2023-10-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @netlify/ipx to ^1.4.5 ([#676](https://github.com/netlify/netlify-plugin-gatsby/issues/676)) ([1d956c2](https://github.com/netlify/netlify-plugin-gatsby/commit/1d956c2d87555fb46fa891a176aa9f0355417b19))
+
 ## [3.7.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.7.0...plugin-gatsby-v3.7.1) (2023-08-07)
 
 
