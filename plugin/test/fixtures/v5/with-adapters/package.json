@@ -14,7 +14,7 @@
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "build:netlify": "jest build.test.js",
-    "preview": "netlify serve",
+    "preview": "netlify serve --cwd .",
     "test": "run-s build:netlify test:e2e",
     "test:e2e": "start-server-and-test preview 8888 test:jest",
     "test:jest": "jest functions.test.js"
