@@ -79,9 +79,14 @@ export const setupImageCdn = async ({
   constants: NetlifyPluginConstants
   netlifyConfig: NetlifyConfig
 }) => {
-  const { GATSBY_CLOUD_IMAGE_CDN } = netlifyConfig.build.environment
+  const { GATSBY_CLOUD_IMAGE_CDN, NETLIFY_IMAGE_CDN } =
+    netlifyConfig.build.environment
 
-  if (GATSBY_CLOUD_IMAGE_CDN !== '1' && GATSBY_CLOUD_IMAGE_CDN !== 'true') {
+  if (
+    NETLIFY_IMAGE_CDN !== `true` &&
+    GATSBY_CLOUD_IMAGE_CDN !== '1' &&
+    GATSBY_CLOUD_IMAGE_CDN !== 'true'
+  ) {
     return
   }
 
@@ -94,13 +99,6 @@ export const setupImageCdn = async ({
 
   netlifyConfig.redirects.push(
     {
-      from: `/_gatsby/image/:unused/:unused2/:filename`,
-      // eslint-disable-next-line id-length
-      query: { u: ':url', a: ':args' },
-      to: `/.netlify/builders/_ipx/image_query_compat/:args/:url/:filename`,
-      status: 301,
-    },
-    {
       from: `/_gatsby/file/:unused/:filename`,
       // eslint-disable-next-line id-length
       query: { u: ':url' },
@@ -108,16 +106,47 @@ export const setupImageCdn = async ({
       status: 301,
     },
     {
-      from: '/_gatsby/image/*',
-      to: '/.netlify/builders/_ipx',
-      status: 200,
-    },
-    {
       from: '/_gatsby/file/*',
       to: '/.netlify/functions/_ipx',
       status: 200,
     },
   )
+
+  if (NETLIFY_IMAGE_CDN === `true`) {
+    await copyFile(
+      join(__dirname, '..', '..', 'src', 'templates', 'image_cdn_redirect.ts'),
+      join(constants.INTERNAL_FUNCTIONS_SRC, 'image_cdn_redirect.ts'),
+    )
+
+    netlifyConfig.redirects.push(
+      {
+        from: '/_gatsby/image/:unused/:unused2/:filename',
+        query: { u: ':url', a: ':args', cd: ':cd' },
+        to: '/.netlify/builders/image_cdn_redirect?url=:url&args=:args&cd=:cd',
+        status: 301,
+      },
+      {
+        from: '/_gatsby/image/*',
+        to: '/.netlify/builders/_ipx',
+        status: 200,
+      },
+    )
+  } else {
+    netlifyConfig.redirects.push(
+      {
+        from: `/_gatsby/image/:unused/:unused2/:filename`,
+        // eslint-disable-next-line id-length
+        query: { u: ':url', a: ':args' },
+        to: `/.netlify/builders/_ipx/image_query_compat/:args/:url/:filename`,
+        status: 301,
+      },
+      {
+        from: '/_gatsby/image/*',
+        to: '/.netlify/builders/_ipx',
+        status: 200,
+      },
+    )
+  }
 }
 
 export const deleteFunctions = async ({
