@@ -97,6 +97,11 @@ export const setupImageCdn = async ({
     join(constants.INTERNAL_FUNCTIONS_SRC, '_ipx.ts'),
   )
 
+  await copyFile(
+    join(__dirname, '..', '..', 'src', 'templates', 'image_cdn_redirect.ts'),
+    join(constants.INTERNAL_FUNCTIONS_SRC, '__image_cdn_redirect.ts'),
+  )
+
   netlifyConfig.redirects.push(
     {
       from: `/_gatsby/file/:unused/:filename`,
@@ -113,22 +118,17 @@ export const setupImageCdn = async ({
   )
 
   if (NETLIFY_IMAGE_CDN === `true`) {
-    await copyFile(
-      join(__dirname, '..', '..', 'src', 'templates', 'image_cdn_redirect.ts'),
-      join(constants.INTERNAL_FUNCTIONS_SRC, 'image_cdn_redirect.ts'),
-    )
-
     netlifyConfig.redirects.push(
       {
         from: '/_gatsby/image/:unused/:unused2/:filename',
         // eslint-disable-next-line id-length
         query: { u: ':url', a: ':args', cd: ':cd' },
-        to: '/.netlify/builders/image_cdn_redirect?url=:url&args=:args&cd=:cd',
+        to: '/.netlify/functions/__image_cdn_redirect?url=:url&args=:args&cd=:cd',
         status: 301,
       },
       {
         from: '/_gatsby/image/*',
-        to: '/.netlify/builders/_ipx',
+        to: '/.netlify/functions/_ipx',
         status: 200,
       },
     )
