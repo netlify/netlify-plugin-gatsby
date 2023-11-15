@@ -103,33 +103,45 @@ export const setupImageCdn = async ({
   )
 
   if (NETLIFY_IMAGE_CDN === `true`) {
-    netlifyConfig.redirects.push(
-      {
-        from: '/_gatsby/image/:unused/:unused2/:filename',
-        // eslint-disable-next-line id-length
-        query: { u: ':url', a: ':args', cd: ':cd' },
-        to: '/.netlify/functions/__image?url=:url&args=:args&cd=:cd',
-        status: 301,
-      },
-      {
-        from: '/_gatsby/image/*',
-        to: '/.netlify/functions/_ipx',
-        status: 200,
-      },
-      {
-        from: `/_gatsby/file/:unused/:filename`,
-        // eslint-disable-next-line id-length
-        query: { u: ':url' },
-        to: `/.netlify/functions/_ipx/file_query_compat/:url/:filename`,
-        status: 301,
-      },
-      {
-        from: '/_gatsby/file/*',
-        to: '/.netlify/functions/_ipx',
-        status: 200,
-      },
-    )
+    netlifyConfig.redirects.push({
+      from: '/_gatsby/image/:unused/:unused2/:filename',
+      // eslint-disable-next-line id-length
+      query: { u: ':url', a: ':args', cd: ':cd' },
+      to: '/.netlify/builders/__image?url=:url&args=:args&cd=:cd',
+      status: 301,
+    })
+  } else if (
+    GATSBY_CLOUD_IMAGE_CDN === '1' ||
+    GATSBY_CLOUD_IMAGE_CDN === 'true'
+  ) {
+    netlifyConfig.redirects.push({
+      from: `/_gatsby/image/:unused/:unused2/:filename`,
+      // eslint-disable-next-line id-length
+      query: { u: ':url', a: ':args' },
+      to: `/.netlify/builders/_ipx/image_query_compat/:args/:url/:filename`,
+      status: 301,
+    })
   }
+
+  netlifyConfig.redirects.push(
+    {
+      from: '/_gatsby/image/*',
+      to: '/.netlify/builders/_ipx',
+      status: 200,
+    },
+    {
+      from: `/_gatsby/file/:unused/:filename`,
+      // eslint-disable-next-line id-length
+      query: { u: ':url' },
+      to: `/.netlify/functions/_ipx/file_query_compat/:url/:filename`,
+      status: 301,
+    },
+    {
+      from: '/_gatsby/file/*',
+      to: '/.netlify/functions/_ipx',
+      status: 200,
+    },
+  )
 }
 
 export const deleteFunctions = async ({
