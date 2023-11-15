@@ -98,23 +98,8 @@ export const setupImageCdn = async ({
   )
 
   await copyFile(
-    join(__dirname, '..', '..', 'src', 'templates', 'image_cdn_redirect.ts'),
-    join(constants.INTERNAL_FUNCTIONS_SRC, '__image_cdn_redirect.ts'),
-  )
-
-  netlifyConfig.redirects.push(
-    {
-      from: `/_gatsby/file/:unused/:filename`,
-      // eslint-disable-next-line id-length
-      query: { u: ':url' },
-      to: `/.netlify/functions/_ipx/file_query_compat/:url/:filename`,
-      status: 301,
-    },
-    {
-      from: '/_gatsby/file/*',
-      to: '/.netlify/functions/_ipx',
-      status: 200,
-    },
+    join(__dirname, '..', '..', 'src', 'templates', 'image.ts'),
+    join(constants.INTERNAL_FUNCTIONS_SRC, '__image.ts'),
   )
 
   if (NETLIFY_IMAGE_CDN === `true`) {
@@ -123,7 +108,7 @@ export const setupImageCdn = async ({
         from: '/_gatsby/image/:unused/:unused2/:filename',
         // eslint-disable-next-line id-length
         query: { u: ':url', a: ':args', cd: ':cd' },
-        to: '/.netlify/functions/__image_cdn_redirect?url=:url&args=:args&cd=:cd',
+        to: '/.netlify/functions/__image?url=:url&args=:args&cd=:cd',
         status: 301,
       },
       {
@@ -131,19 +116,16 @@ export const setupImageCdn = async ({
         to: '/.netlify/functions/_ipx',
         status: 200,
       },
-    )
-  } else {
-    netlifyConfig.redirects.push(
       {
-        from: `/_gatsby/image/:unused/:unused2/:filename`,
+        from: `/_gatsby/file/:unused/:filename`,
         // eslint-disable-next-line id-length
-        query: { u: ':url', a: ':args' },
-        to: `/.netlify/builders/_ipx/image_query_compat/:args/:url/:filename`,
+        query: { u: ':url' },
+        to: `/.netlify/functions/_ipx/file_query_compat/:url/:filename`,
         status: 301,
       },
       {
-        from: '/_gatsby/image/*',
-        to: '/.netlify/builders/_ipx',
+        from: '/_gatsby/file/*',
+        to: '/.netlify/functions/_ipx',
         status: 200,
       },
     )
