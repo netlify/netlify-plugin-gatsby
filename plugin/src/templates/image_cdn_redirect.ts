@@ -15,7 +15,7 @@ function rewriteToNetlifyImageCdnPath(uParam, cdParam, argsParam) {
   return newURL.pathname + newURL.search
 }
 
-export const handler: Handler = async (event) => {
+export const handler: Handler = async (event: Event) => {
   // Extract the query parameters
   const {
     url: uParam,

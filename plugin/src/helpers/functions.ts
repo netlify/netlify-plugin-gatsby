@@ -121,6 +121,7 @@ export const setupImageCdn = async ({
     netlifyConfig.redirects.push(
       {
         from: '/_gatsby/image/:unused/:unused2/:filename',
+        // eslint-disable-next-line id-length
         query: { u: ':url', a: ':args', cd: ':cd' },
         to: '/.netlify/builders/image_cdn_redirect?url=:url&args=:args&cd=:cd',
         status: 301,
