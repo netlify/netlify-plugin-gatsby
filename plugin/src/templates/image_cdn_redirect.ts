@@ -1,4 +1,5 @@
 import { Handler } from '@netlify/functions'
+
 type Event = Parameters<Handler>[0]
 
 function rewriteToNetlifyImageCdnPath(uParam, cdParam, argsParam) {
@@ -24,7 +25,7 @@ export const handler: Handler = async (event: Event) => {
   } = event.queryStringParameters
 
   // Construct the new URL
-  const newURL = rewriteToNetlifyImageCdnPath(uParam, cdParam, argsParam)
+  const newURL = await rewriteToNetlifyImageCdnPath(uParam, cdParam, argsParam)
 
   // Redirect to the new URL
   return {
