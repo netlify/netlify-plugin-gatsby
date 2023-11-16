@@ -41,6 +41,9 @@ function generateURLFromBase64EncodedPath(path) {
     newURL.searchParams.append(key, value)
   })
 
+  const urlParam = sourceURL.origin + sourceURL.pathname
+  newURL.searchParams.set('url', urlParam)
+
   return newURL.pathname + newURL.search
 }
 
