@@ -48,6 +48,7 @@ export const handler: Handler = async (event: Event) => {
     /^\/\.netlify\/builders\/__image\/image_query_compat\/([^/]+?)\/([^/]+?)\/([^/]+?)\/?$/i
 
   const match = event.path.match(QUERY_PARAM_PATTERN)
+  console.log({ path: event.path, match })
 
   let newURL
 
