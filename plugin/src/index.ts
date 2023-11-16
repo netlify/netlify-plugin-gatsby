@@ -15,6 +15,7 @@ import {
   modifyConfig,
   shouldSkipBundlingDatastore,
   shouldSkip,
+  checkNetlifyImageCdn,
 } from './helpers/config'
 import { modifyFiles } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
@@ -42,6 +43,8 @@ export async function onPreBuild({
   await restoreCache({ utils, publish: PUBLISH_DIR })
 
   await checkConfig({ utils, netlifyConfig })
+
+  await checkNetlifyImageCdn({ netlifyConfig })
 }
 
 export async function onBuild({
