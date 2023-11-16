@@ -23,7 +23,7 @@ function generateURLFromQueryParamsPath(uParam, cdParam, argsParam) {
 }
 
 function generateURLFromBase64EncodedPath(path) {
-  const [, , , , encodedUrl] = path.split('/')
+  const [, , , encodedUrl] = path.split('/')
 
   const decodedString = Buffer.from(encodedUrl, 'base64').toString('utf8')
   console.log({ encodedUrl, decodedString })
