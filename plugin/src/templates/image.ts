@@ -5,39 +5,49 @@ import { Handler } from '@netlify/functions'
 type Event = Parameters<Handler>[0]
 
 function generateURLFromQueryParamsPath(uParam, cdParam, argsParam) {
-  const newURL = new URL('.netlify/images', 'https://example.com')
-  newURL.searchParams.set('url', uParam)
-  newURL.searchParams.set('cd', cdParam)
+  try {
+    const newURL = new URL('.netlify/images', 'https://example.com')
+    newURL.searchParams.set('url', uParam)
+    newURL.searchParams.set('cd', cdParam)
 
-  // Parse the args parameter and add them to the new URL
-  const aParams = new URLSearchParams(argsParam)
-  aParams.forEach((value, key) => {
-    newURL.searchParams.set(key, value)
-  })
+    const aParams = new URLSearchParams(argsParam)
+    aParams.forEach((value, key) => {
+      newURL.searchParams.set(key, value)
+    })
 
-  return newURL.pathname + newURL.search
+    return newURL.pathname + newURL.search
+  } catch (error) {
+    console.error('Error constructing URL:', error)
+    return null
+  }
 }
 
 function generateURLFromBase64EncodedPath(path) {
   const [, , , , encodedUrl] = path.split('/')
-  const sourceURL = new URL(Buffer.from(encodedUrl, 'base64').toString('utf8'))
+
+  const decodedString = Buffer.from(encodedUrl, 'base64').toString('utf8')
+
+  let sourceURL
+  try {
+    sourceURL = new URL(decodedString)
+  } catch (error) {
+    console.error('Decoded string is not a valid URL:', error)
+    return
+  }
 
   const newURL = new URL('.netlify/images', 'https://example.com')
   sourceURL.searchParams.forEach((value, key) => {
     newURL.searchParams.append(key, value)
   })
 
-  const urlParam = sourceURL.origin + sourceURL.pathname
-  newURL.searchParams.set('url', urlParam)
-
   return newURL.pathname + newURL.search
 }
 
 export const handler: Handler = async (event: Event) => {
-  const queryParamPattern =
-    /^\/\.netlify\/builders\/__image\/image_query_compat\?(.*)$/
+  const QUERY_PARAM_PATTERN =
+    /^\/\.netlify\/builders\/__image\/image_query_compat\/([^/]+?)\/([^/]+?)\/([^/]+?)\/?$/i
 
-  const match = event.path.match(queryParamPattern)
+  const match = event.path.match(QUERY_PARAM_PATTERN)
 
   let newURL
 
@@ -53,11 +63,8 @@ export const handler: Handler = async (event: Event) => {
   } else {
     newURL = await generateURLFromBase64EncodedPath(event.path)
   }
-  // Redirect to the new URL
-  return {
-    statusCode: 301,
-    headers: {
-      Location: newURL,
-    },
-  }
+
+  return newURL
+    ? { statusCode: 301, headers: { Location: newURL } }
+    : { statusCode: 400, body: 'Invalid request' }
 }
