@@ -26,6 +26,7 @@ function generateURLFromBase64EncodedPath(path) {
   const [, , , , encodedUrl] = path.split('/')
 
   const decodedString = Buffer.from(encodedUrl, 'base64').toString('utf8')
+  console.log({ encodedUrl, decodedString })
 
   let sourceURL
   try {
@@ -45,7 +46,7 @@ function generateURLFromBase64EncodedPath(path) {
 
 export const handler: Handler = async (event: Event) => {
   const QUERY_PARAM_PATTERN =
-    /^\/\.netlify\/builders\/__image\/image_query_compat\/([^/]+?)\/([^/]+?)\/([^/]+?)\/?$/i
+    /^\/\.netlify\/builders\/__image\/image_query_compat\/?$/i
 
   const { pathname } = new URL(event.rawUrl)
   const match = pathname.match(QUERY_PARAM_PATTERN)
@@ -63,7 +64,7 @@ export const handler: Handler = async (event: Event) => {
 
     newURL = await generateURLFromQueryParamsPath(uParam, cdParam, argsParam)
   } else {
-    newURL = await generateURLFromBase64EncodedPath(event.path)
+    newURL = await generateURLFromBase64EncodedPath(pathname)
   }
 
   return newURL
