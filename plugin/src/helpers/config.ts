@@ -388,6 +388,7 @@ export function checkNetlifyImageCdn({
 }: {
   netlifyConfig: NetlifyConfig
 }): void {
+  /* eslint-disable no-param-reassign */
   const { NETLIFY_IMAGE_CDN } = netlifyConfig.build.environment
 
   if (NETLIFY_IMAGE_CDN === 'true') {
