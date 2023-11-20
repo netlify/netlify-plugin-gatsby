@@ -49,7 +49,7 @@ function generateURLFromBase64EncodedPath(path) {
 
 export const handler: Handler = async (event: Event) => {
   const QUERY_PARAM_PATTERN =
-    /^\/\.netlify\/builders\/__image\/image_query_compat\/?$/i
+    /^\/\.netlify\/functions\/__image\/image_query_compat\/?$/i
 
   const { pathname } = new URL(event.rawUrl)
   const match = pathname.match(QUERY_PARAM_PATTERN)
