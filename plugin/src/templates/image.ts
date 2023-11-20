@@ -23,26 +23,27 @@ function generateURLFromQueryParamsPath(uParam, cdParam, argsParam) {
 }
 
 function generateURLFromBase64EncodedPath(path) {
-  const [, , , encodedUrl] = path.split('/')
+  const [, , , encodedUrl, encodedArgs] = path.split('/')
 
-  const decodedString = Buffer.from(encodedUrl, 'base64').toString('utf8')
-  console.log({ encodedUrl, decodedString })
+  const decodedUrl = Buffer.from(encodedUrl, 'base64').toString('utf8')
+  const decodedArgs = Buffer.from(encodedArgs, 'base64').toString('utf8')
+  console.log({ encodedUrl, encodedArgs, decodedUrl, decodedArgs })
 
   let sourceURL
   try {
-    sourceURL = new URL(decodedString)
+    sourceURL = new URL(decodedUrl)
   } catch (error) {
     console.error('Decoded string is not a valid URL:', error)
     return
   }
 
   const newURL = new URL('.netlify/images', 'https://example.com')
-  sourceURL.searchParams.forEach((value, key) => {
-    newURL.searchParams.append(key, value)
-  })
+  newURL.searchParams.set('url', sourceURL.href)
 
-  const urlParam = sourceURL.origin + sourceURL.pathname
-  newURL.searchParams.set('url', urlParam)
+  const aParams = new URLSearchParams(decodedArgs)
+  aParams.forEach((value, key) => {
+    newURL.searchParams.set(key, value)
+  })
 
   return newURL.pathname + newURL.search
 }
