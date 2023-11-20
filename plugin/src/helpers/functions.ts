@@ -108,12 +108,12 @@ export const setupImageCdn = async ({
         from: '/_gatsby/image/:unused/:unused2/:filename',
         // eslint-disable-next-line id-length
         query: { u: ':url', a: ':args', cd: ':cd' },
-        to: '/.netlify/builders/__image/image_query_compat?url=:url&args=:args&cd=:cd',
+        to: '/.netlify/functions/__image/image_query_compat?url=:url&args=:args&cd=:cd',
         status: 301,
       },
       {
         from: '/_gatsby/image/*',
-        to: '/.netlify/builders/__image',
+        to: '/.netlify/functions/__image',
         status: 200,
       },
     )
