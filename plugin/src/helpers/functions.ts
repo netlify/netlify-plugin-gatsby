@@ -110,11 +110,13 @@ export const setupImageCdn = async ({
         query: { u: ':url', a: ':args', cd: ':cd' },
         to: '/.netlify/functions/__image/image_query_compat?url=:url&args=:args&cd=:cd',
         status: 301,
+        force: true,
       },
       {
         from: '/_gatsby/image/*',
         to: '/.netlify/functions/__image',
         status: 200,
+        force: true,
       },
     )
   } else if (
