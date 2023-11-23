@@ -5,7 +5,6 @@ import type { NetlifyConfig, NetlifyPluginOptions } from '@netlify/build'
 import {
   NetlifyPluginRunUtilOptions,
   NetlifyPluginRunUtilResult,
-  // eslint-disable-next-line import/no-unresolved
 } from '@netlify/build/types/options/netlify_plugin_run_util'
 import Chance from 'chance'
 
