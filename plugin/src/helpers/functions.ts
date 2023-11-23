@@ -97,12 +97,12 @@ export const setupImageCdn = async ({
     join(constants.INTERNAL_FUNCTIONS_SRC, '_ipx.ts'),
   )
 
-  await copyFile(
-    join(__dirname, '..', '..', 'src', 'templates', 'image.ts'),
-    join(constants.INTERNAL_FUNCTIONS_SRC, '__image.ts'),
-  )
-
   if (NETLIFY_IMAGE_CDN === `true`) {
+    await copyFile(
+      join(__dirname, '..', '..', 'src', 'templates', 'image.ts'),
+      join(constants.INTERNAL_FUNCTIONS_SRC, '__image.ts'),
+    )
+
     netlifyConfig.redirects.push(
       {
         from: '/_gatsby/image/:unused/:unused2/:filename',
