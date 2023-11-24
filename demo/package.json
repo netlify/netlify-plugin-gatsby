@@ -33,7 +33,7 @@
     "@netlify/functions": "latest",
     "@netlify/ipx": "latest",
     "co-body": "^6.1.0",
-    "cookie": "^0.5.0",
+    "cookie": "^0.6.0",
     "download": "^8.0.0",
     "form-data": "^4.0.0",
     "fs-extra": "^10.0.0",
