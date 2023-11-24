@@ -1,7 +1,7 @@
 [build]
 command = "npm run build"
 publish = "public/"
-environment = { GATSBY_CLOUD_IMAGE_CDN = "true" }
+environment = { NETLIFY_IMAGE_CDN = "true" }
 ignore = "if [ $CACHED_COMMIT_REF == $COMMIT_REF ]; then (exit 1); else git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ..; fi;"
 
 [[plugins]]
@@ -9,3 +9,6 @@ package = "../plugin/src/index.ts"
 
 [[plugins]]
 package = "@netlify/plugin-local-install-core"
+
+[images]
+remote_images = ['https://images.unsplash.com/*']
