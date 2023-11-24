@@ -70,7 +70,18 @@ export const handler: Handler = async (event: Event) => {
     newURL = generateURLFromBase64EncodedPath(pathname)
   }
 
+  const cachingHeaders = {
+    'Netlify-CDN-Cache-Control': 'public,max-age=31536000,immutable',
+    'Netlify-Vary': 'query',
+  }
+
   return newURL
-    ? { statusCode: 301, headers: { Location: newURL } }
-    : { statusCode: 400, body: 'Invalid request' }
+    ? {
+        statusCode: 301,
+        headers: {
+          Location: newURL,
+          ...cachingHeaders,
+        },
+      }
+    : { statusCode: 400, body: 'Invalid request', headers: cachingHeaders }
 }
