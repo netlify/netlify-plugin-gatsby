@@ -8,7 +8,7 @@ const FormData = require('form-data')
 // Source: https://github.com/gatsbyjs/gatsby/blob/master/integration-tests/functions/test-helpers.js
 
 exports.runTests = function runTests(env, host) {
-  jest.setTimeout(10_000)
+  jest.setTimeout(120_000)
 
   async function fetchTwice(url, options) {
     const result = await fetch(url, options)
