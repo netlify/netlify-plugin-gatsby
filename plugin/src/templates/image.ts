@@ -71,6 +71,7 @@ export const handler: Handler = async (event: Event) => {
   }
 
   const cachingHeaders = {
+    'Cache-Control': 'public,max-age=31536000,immutable',
     'Netlify-CDN-Cache-Control': 'public,max-age=31536000,immutable',
     'Netlify-Vary': 'query',
   }
