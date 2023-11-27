@@ -130,11 +130,13 @@ export const setupImageCdn = async ({
         query: { u: ':url', a: ':args' },
         to: `/.netlify/builders/_ipx/image_query_compat/:args/:url/:filename`,
         status: 301,
+        force: true,
       },
       {
         from: '/_gatsby/image/*',
         to: '/.netlify/builders/_ipx',
         status: 200,
+        force: true,
       },
     )
   }
@@ -146,11 +148,13 @@ export const setupImageCdn = async ({
       query: { u: ':url' },
       to: `/.netlify/functions/_ipx/file_query_compat/:url/:filename`,
       status: 301,
+      force: true,
     },
     {
       from: '/_gatsby/file/*',
       to: '/.netlify/functions/_ipx',
       status: 200,
+      force: true,
     },
   )
 }
