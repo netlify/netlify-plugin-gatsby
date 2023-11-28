@@ -13,6 +13,9 @@ To enable the Image CDN, you should set the environment variable
 patterns in `netlify.toml`:
 
 ```toml
+[build.environment]
+NETLIFY_IMAGE_CDN = "true"
+
 [images]
 remote_images = [
   'https://example1.com/*',
@@ -50,10 +53,10 @@ configuration of it.
   ```toml
   [images]
   remote_images = [
-    # <your-wordpress-url> will be specified via `url`
-    # gatsby-source-wordpress plugin option in gatsby-config
-    # with "/graphql" endpoint part being omitted
-    "<your-wordpress-url>/wp-content/uploads/*"
+    # <your-wordpress-url> is specified in the `url` option for the
+    # gatsby-source-wordpress plugin in your gatsby-config file.
+    # There is no need to include `/graphql in the path here`
+    "<your-wordpress-url>/*"
   ]
   ```
 
@@ -65,4 +68,4 @@ the patterns accordingly.
 
 When using the Image CDN, Gatsby generates URLs of the form
 `/_gatsby/image/...`. On Netlify, these are served by a function that translates
-Gatsby Image CDN URLs into Netlify Image CDN compatible URL.
+Gatsby Image CDN URLs into Netlify Image CDN compatible URL of the form `/.netlify/images/...`. For more information about Netlify Image CDN, documentation can be found [here](https://docs.netlify.com/image-cdn).
