@@ -31,8 +31,8 @@ configuration of it.
   ```toml
   [images]
   remote_images = [
-    # <your-contentful-space-id> will be specified via `spaceId`
-    # gatsby-source-contentful option in gatsby-config
+    # <your-contentful-space-id> is specified in the `spaceId` option for the
+    # gatsby-source-contentful plugin in your gatsby-config file.
     "https://images.ctfassets.net/<your-contentful-space-id>/*"
   ]
   ```
@@ -42,8 +42,8 @@ configuration of it.
   ```toml
   [images]
   remote_images = [
-    # <your-drupal-base-url> will be speciafied via `baseUrl`
-    # gatsby-source-drupal plugin option in gatsby-config
+    # <your-drupal-base-url> is speciafied in the `baseUrl` option for the
+    # gatsby-source-drupal plugin in your gatsby-config file.
     "<your-drupal-base-url>/*"
   ]
   ```
@@ -68,4 +68,6 @@ the patterns accordingly.
 
 When using the Image CDN, Gatsby generates URLs of the form
 `/_gatsby/image/...`. On Netlify, these are served by a function that translates
-Gatsby Image CDN URLs into Netlify Image CDN compatible URL of the form `/.netlify/images/...`. For more information about Netlify Image CDN, documentation can be found [here](https://docs.netlify.com/image-cdn).
+Gatsby Image CDN URLs into Netlify Image CDN compatible URL of the form
+`/.netlify/images/...`. For more information about Netlify Image CDN,
+documentation can be found [here](https://docs.netlify.com/image-cdn).
