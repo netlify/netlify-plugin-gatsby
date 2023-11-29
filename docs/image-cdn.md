@@ -70,4 +70,4 @@ When using the Image CDN, Gatsby generates URLs of the form
 `/_gatsby/image/...`. On Netlify, these are served by a function that translates
 Gatsby Image CDN URLs into Netlify Image CDN compatible URL of the form
 `/.netlify/images/...`. For more information about Netlify Image CDN,
-documentation can be found [here](https://docs.netlify.com/image-cdn).
+documentation can be found [here](https://docs.netlify.com/image-cdn/overview).
