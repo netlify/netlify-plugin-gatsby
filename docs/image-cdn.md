@@ -1,51 +1,73 @@
 # Gatsby Image CDN on Netlify
 
-Gatsby Image CDN is a new feature available in the prerelease version of Gatsby.
-Instead of downloading and processing images at build time, it defers processing
-until request time. This can greatly improve build times for sites with remote
-images, such as those that use a CMS. Netlify includes full support for Image
-CDN, on all plans.
-
-When using the image CDN, Gatsby generates URLs of the form
-`/_gatsby/image/...`. On Netlify, these are served by a
-[builder function](https://docs.netlify.com/configure-builds/on-demand-builders/),
-powered by [sharp](https://sharp.pixelplumbing.com/) and Nuxt's
-[ipx image server](https://github.com/unjs/ipx/). It supports all image formats
-supported by Gatsby, including AVIF and WebP.
-
-On first load there will be a one-time delay while the image is resized, but
-subsequent requests will be super-fast as they are served from the edge cache.
+Gatsby Image CDN is a feature available since Gatsby v4.10.0. Instead of
+downloading and processing images at build time, it defers processing until
+request time. This can greatly improve build times for sites with remote images,
+such as those that use a CMS. Netlify includes full support for Image CDN, on
+all plans.
 
 ## Enabling the Image CDN
 
-To enable the Image CDN during the beta period, you should set the environment
-variable `GATSBY_CLOUD_IMAGE_CDN` to `true`.
+To enable the Image CDN, you should set the environment variable
+`NETLIFY_IMAGE_CDN` to `true`. You will also need to declare allowed image URL
+patterns in `netlify.toml`:
 
-Image CDN currently requires the beta version of Gatsby. This can be installed
-using the `next` tag:
+```toml
+[build.environment]
+NETLIFY_IMAGE_CDN = "true"
 
-```shell
-npm install gatsby@next gatsby-plugin-image@next gatsby-plugin-sharp@next gatsby-transformer-sharp@next
+[images]
+remote_images = [
+  'https://example1.com/*',
+  'https://example2.com/*'
+]
 ```
 
-Currently Image CDN supports Contentful and WordPress, and these source plugins
-should also be installed using the `next` tag:
+Exact URL patterns to use will depend on CMS you use and possibly your
+configuration of it.
 
-```shell
-npm install gatsby-source-wordpress@next
-```
+- `gatsby-source-contentful`:
 
-or
+  ```toml
+  [images]
+  remote_images = [
+    # <your-contentful-space-id> is specified in the `spaceId` option for the
+    # gatsby-source-contentful plugin in your gatsby-config file.
+    "https://images.ctfassets.net/<your-contentful-space-id>/*"
+  ]
+  ```
 
-```shell
-npm install gatsby-source-contentful@next
-```
+- `gatsby-source-drupal`:
 
-Gatsby will be adding support to more source plugins during the beta period.
-These should work automatically as soon as they are added.
+  ```toml
+  [images]
+  remote_images = [
+    # <your-drupal-base-url> is speciafied in the `baseUrl` option for the
+    # gatsby-source-drupal plugin in your gatsby-config file.
+    "<your-drupal-base-url>/*"
+  ]
+  ```
 
-## Using the Image CDN
+- `gatsby-source-wordpress`:
 
-Your GraphQL queries will need updating to use the image CDN. The details vary
-depending on the source plugin. For more details see
-[the Gatsby docs](https://support.gatsbyjs.com/hc/en-us/articles/4522338898579)
+  ```toml
+  [images]
+  remote_images = [
+    # <your-wordpress-url> is specified in the `url` option for the
+    # gatsby-source-wordpress plugin in your gatsby-config file.
+    # There is no need to include `/graphql in the path here`
+    "<your-wordpress-url>/*"
+  ]
+  ```
+
+Above examples are the most likely ones to be needed. However if you configure
+your CMS to host assets on different domain or path, you might need to adjust
+the patterns accordingly.
+
+## How it works
+
+When using the Image CDN, Gatsby generates URLs of the form
+`/_gatsby/image/...`. On Netlify, these are served by a function that translates
+Gatsby Image CDN URLs into Netlify Image CDN compatible URL of the form
+`/.netlify/images/...`. For more information about Netlify Image CDN,
+documentation can be found [here](https://docs.netlify.com/image-cdn/overview).

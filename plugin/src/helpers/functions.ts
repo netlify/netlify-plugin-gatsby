@@ -79,9 +79,14 @@ export const setupImageCdn = async ({
   constants: NetlifyPluginConstants
   netlifyConfig: NetlifyConfig
 }) => {
-  const { GATSBY_CLOUD_IMAGE_CDN } = netlifyConfig.build.environment
+  const { GATSBY_CLOUD_IMAGE_CDN, NETLIFY_IMAGE_CDN } =
+    netlifyConfig.build.environment
 
-  if (GATSBY_CLOUD_IMAGE_CDN !== '1' && GATSBY_CLOUD_IMAGE_CDN !== 'true') {
+  if (
+    NETLIFY_IMAGE_CDN !== `true` &&
+    GATSBY_CLOUD_IMAGE_CDN !== '1' &&
+    GATSBY_CLOUD_IMAGE_CDN !== 'true'
+  ) {
     return
   }
 
@@ -92,30 +97,64 @@ export const setupImageCdn = async ({
     join(constants.INTERNAL_FUNCTIONS_SRC, '_ipx.ts'),
   )
 
+  if (NETLIFY_IMAGE_CDN === `true`) {
+    await copyFile(
+      join(__dirname, '..', '..', 'src', 'templates', 'image.ts'),
+      join(constants.INTERNAL_FUNCTIONS_SRC, '__image.ts'),
+    )
+
+    netlifyConfig.redirects.push(
+      {
+        from: '/_gatsby/image/:unused/:unused2/:filename',
+        // eslint-disable-next-line id-length
+        query: { u: ':url', a: ':args', cd: ':cd' },
+        to: '/.netlify/functions/__image/image_query_compat?url=:url&args=:args&cd=:cd',
+        status: 301,
+        force: true,
+      },
+      {
+        from: '/_gatsby/image/*',
+        to: '/.netlify/functions/__image',
+        status: 200,
+        force: true,
+      },
+    )
+  } else if (
+    GATSBY_CLOUD_IMAGE_CDN === '1' ||
+    GATSBY_CLOUD_IMAGE_CDN === 'true'
+  ) {
+    netlifyConfig.redirects.push(
+      {
+        from: `/_gatsby/image/:unused/:unused2/:filename`,
+        // eslint-disable-next-line id-length
+        query: { u: ':url', a: ':args' },
+        to: `/.netlify/builders/_ipx/image_query_compat/:args/:url/:filename`,
+        status: 301,
+        force: true,
+      },
+      {
+        from: '/_gatsby/image/*',
+        to: '/.netlify/builders/_ipx',
+        status: 200,
+        force: true,
+      },
+    )
+  }
+
   netlifyConfig.redirects.push(
-    {
-      from: `/_gatsby/image/:unused/:unused2/:filename`,
-      // eslint-disable-next-line id-length
-      query: { u: ':url', a: ':args' },
-      to: `/.netlify/builders/_ipx/image_query_compat/:args/:url/:filename`,
-      status: 301,
-    },
     {
       from: `/_gatsby/file/:unused/:filename`,
       // eslint-disable-next-line id-length
       query: { u: ':url' },
       to: `/.netlify/functions/_ipx/file_query_compat/:url/:filename`,
       status: 301,
-    },
-    {
-      from: '/_gatsby/image/*',
-      to: '/.netlify/builders/_ipx',
-      status: 200,
+      force: true,
     },
     {
       from: '/_gatsby/file/*',
       to: '/.netlify/functions/_ipx',
       status: 200,
+      force: true,
     },
   )
 }
