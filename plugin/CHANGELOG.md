@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.8.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.7.2...plugin-gatsby-v3.8.0) (2023-12-04)
+
+
+### Features
+
+* netlify Image cdn support ([#710](https://github.com/netlify/netlify-plugin-gatsby/issues/710)) ([6b3baa4](https://github.com/netlify/netlify-plugin-gatsby/commit/6b3baa43e119c5445609fedfeef1d7a92caa2469))
+
+
+### Bug Fixes
+
+* **deps:** update dependency @netlify/ipx to ^1.4.6 ([#707](https://github.com/netlify/netlify-plugin-gatsby/issues/707)) ([2600a7b](https://github.com/netlify/netlify-plugin-gatsby/commit/2600a7b648f48d6caef23070f66b507f0017e517))
+* **deps:** update dependency cookie to ^0.6.0 ([#714](https://github.com/netlify/netlify-plugin-gatsby/issues/714)) ([ce92bd8](https://github.com/netlify/netlify-plugin-gatsby/commit/ce92bd8494070c30c3e003e335d2360fa6827ccf))
+* **deps:** update dependency node-fetch to v2.7.0 ([#715](https://github.com/netlify/netlify-plugin-gatsby/issues/715)) ([c4eb5ff](https://github.com/netlify/netlify-plugin-gatsby/commit/c4eb5ff64db7e0e26f074997b171b4b04be339e4))
+* **deps:** update dependency uuid to v9.0.1 ([#712](https://github.com/netlify/netlify-plugin-gatsby/issues/712)) ([b48a621](https://github.com/netlify/netlify-plugin-gatsby/commit/b48a62123c4cf687b9919c7ceecfe8a741478e4c))
+
 ## [3.7.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.7.1...plugin-gatsby-v3.7.2) (2023-10-09)
 
 
