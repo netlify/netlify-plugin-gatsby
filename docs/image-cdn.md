@@ -9,8 +9,8 @@ all plans.
 ## Enabling the Image CDN
 
 To enable the Image CDN, you should set the environment variable
-`NETLIFY_IMAGE_CDN` to `true`. You will also need to declare allowed image URL
-patterns in `netlify.toml`:
+`NETLIFY_IMAGE_CDN` to `true`. You will also need to declare allowed remote
+image regular expression patterns in `netlify.toml`:
 
 ```toml
 [build.environment]
@@ -18,12 +18,12 @@ NETLIFY_IMAGE_CDN = "true"
 
 [images]
 remote_images = [
-  'https://example1.com/*',
-  'https://example2.com/*'
+  '^https:\\/\\/example1\\.com\\/.*',
+  '^https:\\/\\/example2\\.com\\/.*'
 ]
 ```
 
-Exact URL patterns to use will depend on CMS you use and possibly your
+Exact remote image pattern to use will depend on CMS you use and possibly your
 configuration of it.
 
 - `gatsby-source-contentful`:
@@ -33,7 +33,7 @@ configuration of it.
   remote_images = [
     # <your-contentful-space-id> is specified in the `spaceId` option for the
     # gatsby-source-contentful plugin in your gatsby-config file.
-    "https://images.ctfassets.net/<your-contentful-space-id>/*"
+    "^https:\\/\\/images\\.ctfassets\\.net\\/<your-contentful-space-id>\\/.*"
   ]
   ```
 
@@ -44,7 +44,7 @@ configuration of it.
   remote_images = [
     # <your-drupal-base-url> is speciafied in the `baseUrl` option for the
     # gatsby-source-drupal plugin in your gatsby-config file.
-    "<your-drupal-base-url>/*"
+    "^<your-drupal-base-url>\\/.*"
   ]
   ```
 
@@ -56,13 +56,20 @@ configuration of it.
     # <your-wordpress-url> is specified in the `url` option for the
     # gatsby-source-wordpress plugin in your gatsby-config file.
     # There is no need to include `/graphql in the path here`
-    "<your-wordpress-url>/*"
+    "^<your-wordpress-url>\\/.*"
   ]
   ```
 
 Above examples are the most likely ones to be needed. However if you configure
 your CMS to host assets on different domain or path, you might need to adjust
 the patterns accordingly.
+
+Keep in mind that you will need to escape special regular expression symbols to
+avoid creating too permisible patterns:
+
+- `.` should be escaped as `\\.` (dot)
+- `/` should be escaped as `\\/` (slash)
+- your rule should start with `^` so domain matching is exact
 
 ## How it works
 
