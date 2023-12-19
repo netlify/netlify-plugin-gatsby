@@ -39,7 +39,6 @@ const adjustRequiresToRelative = async (filesToAdjustRequires: Set<string>) => {
     const newContent = content.replace(
       /require\(["'`]([^"'`]+)["'`]\)/g,
       (match, request) => {
-        console.log({ match, request })
         if (request.startsWith('.')) {
           return match
         }
@@ -49,8 +48,9 @@ const adjustRequiresToRelative = async (filesToAdjustRequires: Set<string>) => {
           // for builtins path will be the same as request
           return match
         }
-        const relativePath = relative(dirname(file), absolutePath)
-        return `require('./${relativePath}')`
+        const relativePath = `./${relative(dirname(file), absolutePath)}`
+        console.log({ file, request, match, relativePath })
+        return `require('${relativePath}')`
       },
     )
 

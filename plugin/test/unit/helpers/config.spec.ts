@@ -107,6 +107,7 @@ describe('mutateConfig', () => {
     expect(netlifyConfig.functions.__api).toStrictEqual({
       included_files: [`${cacheDir}/functions/**`],
       external_node_modules: ['msgpackr-extract'],
+      node_bundler: 'esbuild',
     })
     expect(netlifyConfig.functions.__ssr).toStrictEqual(
       netlifyConfig.functions.__dsg,
@@ -133,6 +134,7 @@ describe('mutateConfig', () => {
     expect(netlifyConfig.functions.__api).toStrictEqual({
       included_files: [`${cacheDir}/functions/**`],
       external_node_modules: ['msgpackr-extract'],
+      node_bundler: 'esbuild',
     })
     expect(netlifyConfig.functions.__ssr).toStrictEqual(
       netlifyConfig.functions.__dsg,
@@ -157,6 +159,7 @@ describe('mutateConfig', () => {
     expect(netlifyConfig.functions.__api).toStrictEqual({
       included_files: [`${cacheDir}/functions/**`],
       external_node_modules: ['msgpackr-extract'],
+      node_bundler: 'esbuild',
     })
     expect(netlifyConfig.functions.__ssr).toStrictEqual(
       netlifyConfig.functions.__dsg,
