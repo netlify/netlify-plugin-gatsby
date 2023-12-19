@@ -232,7 +232,7 @@ export function mutateConfig({
     netlifyConfig.functions.__api = {
       included_files: [posix.join(cacheDir, 'functions', '**')],
       external_node_modules: ['msgpackr-extract'],
-      node_bundler: 'esbuild',
+      node_bundler: 'nft',
     }
   }
 

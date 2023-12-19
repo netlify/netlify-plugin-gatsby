@@ -98,52 +98,38 @@ describe('setupImageCdn', () => {
 })
 
 describe('adjustRequiresToRelative', () => {
-  const mockLocation = join(
-    process.cwd(),
-    'demo',
-    '.netlify',
-    'functions-internal',
-    '__fn',
-    '__fn.js',
-  )
-
   it('skips node builtins', () => {
-    expect(adjustRequiresToRelative('require("fs")', mockLocation)).toBe(
+    expect(adjustRequiresToRelative('require("fs")', __filename)).toBe(
       'require("fs")',
     )
-    expect(adjustRequiresToRelative('require("node:fs")', mockLocation)).toBe(
+    expect(adjustRequiresToRelative('require("node:fs")', __filename)).toBe(
       'require("node:fs")',
     )
   })
 
   it('skips already relative', () => {
-    expect(adjustRequiresToRelative('require("./sibling")', mockLocation)).toBe(
+    expect(adjustRequiresToRelative('require("./sibling")', __filename)).toBe(
       'require("./sibling")',
     )
     expect(
-      adjustRequiresToRelative('require("./nested/foo")', mockLocation),
+      adjustRequiresToRelative('require("./nested/foo")', __filename),
     ).toBe('require("./nested/foo")')
-    expect(adjustRequiresToRelative('require("../parent")', mockLocation)).toBe(
+    expect(adjustRequiresToRelative('require("../parent")', __filename)).toBe(
       'require("../parent")',
     )
   })
 
   it('handles packages', () => {
-    expect(
-      adjustRequiresToRelative('require("node-fetch")', mockLocation),
-    ).toBe(
-      `require('./../../../../plugin/node_modules/node-fetch/lib/index.js')`,
+    expect(adjustRequiresToRelative('require("node-fetch")', __filename)).toBe(
+      `require('./../../../node_modules/node-fetch/lib/index.js')`,
     )
-    expect(adjustRequiresToRelative(`require('multer')`, mockLocation)).toBe(
-      `require('./../../../../plugin/node_modules/multer/index.js')`,
+    expect(adjustRequiresToRelative(`require('multer')`, __filename)).toBe(
+      `require('./../../../node_modules/multer/index.js')`,
     )
     expect(
-      adjustRequiresToRelative(
-        'require(`@gatsbyjs/reach-router`)',
-        mockLocation,
-      ),
+      adjustRequiresToRelative('require(`@gatsbyjs/reach-router`)', __filename),
     ).toBe(
-      `require('./../../../../plugin/node_modules/@gatsbyjs/reach-router/dist/index.js')`,
+      `require('./../../../node_modules/@gatsbyjs/reach-router/dist/index.js')`,
     )
   })
 })

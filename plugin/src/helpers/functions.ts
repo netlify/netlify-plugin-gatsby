@@ -9,6 +9,11 @@ import { getGatsbyRoot } from './config'
 
 export type FunctionList = Array<'API' | 'SSR' | 'DSG'>
 
+/**
+ * Adjust package imports in functions we produce to be relative. Those imported packages should always be dependencies
+ * of `@netlify/plugin-gatsby` and we can't rely on those imports being resolvable by accident (i.e. npm hoisting deps
+ * of this plugin in root node_modules)
+ */
 export const adjustRequiresToRelative = (
   template: string,
   outputLocation: string,
@@ -25,7 +30,6 @@ export const adjustRequiresToRelative = (
       return match
     }
     const relativePath = `./${relative(dirname(outputLocation), absolutePath)}`
-    console.log({ outputLocation, request, match, relativePath })
     return `require('${relativePath}')`
   })
 
