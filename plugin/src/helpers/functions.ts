@@ -1,6 +1,15 @@
+/* eslint-disable max-lines */
 import { NetlifyConfig, NetlifyPluginConstants } from '@netlify/build'
-import { copy, copyFile, ensureDir, existsSync, rm, writeFile } from 'fs-extra'
-import { resolve, join, relative } from 'pathe'
+import {
+  copy,
+  copyFile,
+  ensureDir,
+  existsSync,
+  rm,
+  writeFile,
+  readFile,
+} from 'fs-extra'
+import { resolve, join, relative, dirname } from 'pathe'
 
 import { makeApiHandler, makeHandler } from '../templates/handlers'
 
@@ -23,14 +32,56 @@ const writeFunction = async ({
   )
 }
 
+const adjustRequiresToRelative = async (filesToAdjustRequires: Set<string>) => {
+  for (const file of filesToAdjustRequires) {
+    const content = await readFile(file, 'utf8')
+
+    const newContent = content.replace(
+      /require\(["'`]([^"'`]+)["'`]\)/g,
+      (match, request) => {
+        console.log({ match, request })
+        if (request.startsWith('.')) {
+          return match
+        }
+
+        const absolutePath = require.resolve(request)
+        if (absolutePath === request) {
+          // for builtins path will be the same as request
+          return match
+        }
+        const relativePath = relative(dirname(file), absolutePath)
+        return `require('./${relativePath}')`
+      },
+    )
+
+    await writeFile(file, newContent)
+  }
+}
+
 const writeApiFunction = async ({ appDir, functionDir }) => {
   const source = makeApiHandler(appDir)
+  const filesToAdjustRequires = new Set<string>()
   // This is to ensure we're copying from the compiled js, not ts source
   await copy(
     join(__dirname, '..', '..', 'lib', 'templates', 'api'),
     functionDir,
+    {
+      // this is not actually filtering the files, just collecting copied files
+      filter: (_src, dest) => {
+        if (/\.[cm]?js$/.test(dest)) {
+          filesToAdjustRequires.add(dest)
+        }
+        return true
+      },
+    },
   )
-  await writeFile(join(functionDir, '__api.js'), source)
+
+  const entryFilePath = join(functionDir, '__api.js')
+  filesToAdjustRequires.add(entryFilePath)
+  await writeFile(entryFilePath, source)
+
+  await adjustRequiresToRelative(filesToAdjustRequires)
+  console.log({ filesToAdjustRequires })
 }
 
 export const writeFunctions = async ({
@@ -169,3 +220,4 @@ export const deleteFunctions = async ({
     }
   }
 }
+/* eslint-enable max-lines */
