@@ -24,7 +24,15 @@ export const adjustRequiresToRelative = (
       return match
     }
 
-    const absolutePath = require.resolve(request)
+    let absolutePath
+    try {
+      absolutePath = dirname(require.resolve(`${request}/package.json`))
+    } catch {}
+
+    if (!absolutePath) {
+      absolutePath = require.resolve(request)
+    }
+
     if (absolutePath === request) {
       // for builtins path will be the same as request
       return match

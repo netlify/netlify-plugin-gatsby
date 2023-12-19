@@ -106,7 +106,7 @@ describe('mutateConfig', () => {
 
     expect(netlifyConfig.functions.__api).toStrictEqual({
       included_files: [`${cacheDir}/functions/**`],
-      node_bundler: 'nft',
+      external_node_modules: ['msgpackr-extract'],
     })
     expect(netlifyConfig.functions.__ssr).toStrictEqual(
       netlifyConfig.functions.__dsg,
@@ -132,7 +132,7 @@ describe('mutateConfig', () => {
 
     expect(netlifyConfig.functions.__api).toStrictEqual({
       included_files: [`${cacheDir}/functions/**`],
-      node_bundler: 'nft',
+      external_node_modules: ['msgpackr-extract'],
     })
     expect(netlifyConfig.functions.__ssr).toStrictEqual(
       netlifyConfig.functions.__dsg,
@@ -156,7 +156,7 @@ describe('mutateConfig', () => {
 
     expect(netlifyConfig.functions.__api).toStrictEqual({
       included_files: [`${cacheDir}/functions/**`],
-      node_bundler: 'nft',
+      external_node_modules: ['msgpackr-extract'],
     })
     expect(netlifyConfig.functions.__ssr).toStrictEqual(
       netlifyConfig.functions.__dsg,

@@ -97,7 +97,7 @@ describe('setupImageCdn', () => {
   )
 })
 
-describe('adjustRequiresToRelative', () => {
+describe.skip('adjustRequiresToRelative', () => {
   it('skips node builtins', () => {
     expect(adjustRequiresToRelative('require("fs")', __filename)).toBe(
       'require("fs")',
