@@ -6,7 +6,10 @@ import Chance from 'chance'
 import { copy, existsSync } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
 
-import { setupImageCdn } from '../../../src/helpers/functions'
+import {
+  adjustRequiresToRelative,
+  setupImageCdn,
+} from '../../../src/helpers/functions'
 
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
 const TEST_TIMEOUT = 60_000
@@ -92,4 +95,55 @@ describe('setupImageCdn', () => {
     },
     TEST_TIMEOUT,
   )
+})
+
+describe('adjustRequiresToRelative', () => {
+  const mockLocation = join(
+    process.cwd(),
+    'demo',
+    '.netlify',
+    'functions-internal',
+    '__fn',
+    '__fn.js',
+  )
+
+  it('skips node builtins', () => {
+    expect(adjustRequiresToRelative('require("fs")', mockLocation)).toBe(
+      'require("fs")',
+    )
+    expect(adjustRequiresToRelative('require("node:fs")', mockLocation)).toBe(
+      'require("node:fs")',
+    )
+  })
+
+  it('skips already relative', () => {
+    expect(adjustRequiresToRelative('require("./sibling")', mockLocation)).toBe(
+      'require("./sibling")',
+    )
+    expect(
+      adjustRequiresToRelative('require("./nested/foo")', mockLocation),
+    ).toBe('require("./nested/foo")')
+    expect(adjustRequiresToRelative('require("../parent")', mockLocation)).toBe(
+      'require("../parent")',
+    )
+  })
+
+  it('handles packages', () => {
+    expect(
+      adjustRequiresToRelative('require("node-fetch")', mockLocation),
+    ).toBe(
+      `require('./../../../../plugin/node_modules/node-fetch/lib/index.js')`,
+    )
+    expect(adjustRequiresToRelative(`require('multer')`, mockLocation)).toBe(
+      `require('./../../../../plugin/node_modules/multer/index.js')`,
+    )
+    expect(
+      adjustRequiresToRelative(
+        'require(`@gatsbyjs/reach-router`)',
+        mockLocation,
+      ),
+    ).toBe(
+      `require('./../../../../plugin/node_modules/@gatsbyjs/reach-router/dist/index.js')`,
+    )
+  })
 })
