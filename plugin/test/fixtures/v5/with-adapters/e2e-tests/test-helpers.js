@@ -117,9 +117,7 @@ exports.runTests = function runTests(env, host) {
         expect(result).toEqual({
           amIJSON: true,
         })
-        expect(res.headers.get('content-type')).toEqual(
-          'application/json; charset=utf-8',
-        )
+        expect(res.headers.get('content-type')).toEqual('application/json')
       })
       test(`returns json correctly via send`, async () => {
         const res = await fetchTwice(`${host}/api/i-am-json-too`)
@@ -128,18 +126,14 @@ exports.runTests = function runTests(env, host) {
         expect(result).toEqual({
           amIJSON: true,
         })
-        expect(res.headers.get('content-type')).toEqual(
-          'application/json; charset=utf-8',
-        )
+        expect(res.headers.get('content-type')).toEqual('application/json')
       })
       test(`returns boolean correctly via send`, async () => {
         const res = await fetchTwice(`${host}/api/i-am-false`)
         const result = await res.json()
 
         expect(result).toEqual(false)
-        expect(res.headers.get('content-type')).toEqual(
-          'application/json; charset=utf-8',
-        )
+        expect(res.headers.get('content-type')).toEqual('application/json')
       })
       test(`returns status correctly via send`, async () => {
         const res = await fetchTwice(`${host}/api/i-am-status`)
