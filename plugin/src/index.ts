@@ -13,7 +13,6 @@ import {
   checkConfig,
   getNeededFunctions,
   modifyConfig,
-  modifyConfigDev,
   shouldSkipBundlingDatastore,
   shouldSkip,
   checkNetlifyImageCdn,
@@ -48,8 +47,26 @@ export async function onPreBuild({
   await checkNetlifyImageCdn({ netlifyConfig })
 }
 
-export async function onDev({ netlifyConfig }): Promise<void> {
-  await modifyConfigDev({ netlifyConfig })
+export async function onDev({
+  netlifyConfig,
+  constants,
+}: NetlifyPluginOptions): Promise<void> {
+  // eslint-disable-next-line no-param-reassign
+  netlifyConfig.build.environment.GATSBY_PRECOMPILE_DEVELOP_FUNCTIONS = `true`
+
+  const { PUBLISH_DIR } = constants
+
+  const cacheDir = normalizedCacheDir(PUBLISH_DIR)
+
+  const neededFunctionsForBuild = await getNeededFunctions(cacheDir)
+  // DSG/SSR engine is not produced for dev so we are filtering them out
+  const neededFunctions = neededFunctionsForBuild.filter(
+    (neededFunction) => neededFunction !== 'DSG' && neededFunction !== 'SSR',
+  )
+
+  await writeFunctions({ constants, netlifyConfig, neededFunctions })
+
+  await modifyConfig({ netlifyConfig, cacheDir, neededFunctions, isDev: true })
 }
 
 export async function onBuild({
@@ -91,7 +108,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
   await writeFunctions({ constants, netlifyConfig, neededFunctions })
 
-  await modifyConfig({ netlifyConfig, cacheDir, neededFunctions })
+  await modifyConfig({ netlifyConfig, cacheDir, neededFunctions, isDev: false })
 
   await modifyFiles({ netlifyConfig, neededFunctions })
 }
