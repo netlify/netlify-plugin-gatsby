@@ -196,6 +196,40 @@ export async function createMetadataFileAndCopyDatastore(
   await writeJSON(`${cacheDir}/dataMetadata.json`, payload)
 }
 
+export async function modifyConfigDev({
+  netlifyConfig,
+}: {
+  netlifyConfig: NetlifyConfig
+}): Promise<void> {
+  const redirectsFileName = join(netlifyConfig.build.publish, '_redirects')
+  // removing redirects that possibly were added for builds previously
+  // DSG/SSR and API is fully handled by gatsby dev server
+  await spliceConfig({
+    startMarker: '# @netlify/plugin-gatsby redirects start',
+    endMarker: '# @netlify/plugin-gatsby redirects end',
+    contents: '',
+    fileName: redirectsFileName,
+  })
+  // this is a bit of a hack - gatsby-plugin-netlify appends redirects before @netlify/plugin-gatsby
+  // so we use gatsby-plugin-netlify marker as start and @netlify/plugin-gatsby start marker as end
+  await spliceConfig({
+    startMarker: '## Created with gatsby-plugin-netlify',
+    endMarker: '# @netlify/plugin-gatsby redirects start',
+    contents: '',
+    fileName: redirectsFileName,
+  })
+  // this removes redirects produced by adapters in newer gatsby versions
+  // while build plugin doesn't do any work during builds when adapters are used
+  // adapters don't have hooks for `develop` so they can't clean their redirects
+  // so build plugin is handling that as it still runs (just skips most of the work)
+  await spliceConfig({
+    startMarker: '# gatsby-adapter-netlify start',
+    endMarker: '# gatsby-adapter-netlify end',
+    contents: '',
+    fileName: redirectsFileName,
+  })
+}
+
 export async function modifyConfig({
   netlifyConfig,
   cacheDir,
@@ -208,7 +242,6 @@ export async function modifyConfig({
   mutateConfig({ netlifyConfig, cacheDir, neededFunctions })
 
   if (neededFunctions.includes('API')) {
-    // Editing _redirects so it works with ntl dev
     await spliceConfig({
       startMarker: '# @netlify/plugin-gatsby redirects start',
       endMarker: '# @netlify/plugin-gatsby redirects end',

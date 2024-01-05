@@ -13,6 +13,7 @@ import {
   checkConfig,
   getNeededFunctions,
   modifyConfig,
+  modifyConfigDev,
   shouldSkipBundlingDatastore,
   shouldSkip,
   checkNetlifyImageCdn,
@@ -45,6 +46,10 @@ export async function onPreBuild({
   await checkConfig({ utils, netlifyConfig })
 
   await checkNetlifyImageCdn({ netlifyConfig })
+}
+
+export async function onDev({ netlifyConfig }): Promise<void> {
+  await modifyConfigDev({ netlifyConfig })
 }
 
 export async function onBuild({
