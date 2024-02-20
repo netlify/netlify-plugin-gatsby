@@ -2,10 +2,6 @@
 import process from 'process'
 
 import type { NetlifyConfig, NetlifyPluginOptions } from '@netlify/build'
-import {
-  NetlifyPluginRunUtilOptions,
-  NetlifyPluginRunUtilResult,
-} from '@netlify/build/types/options/netlify_plugin_run_util'
 import Chance from 'chance'
 
 import { onBuild, onSuccess } from '../../src/index'
@@ -58,6 +54,7 @@ const constants: NetlifyPluginOptions['constants'] = {
   IS_LOCAL: true,
   NETLIFY_BUILD_VERSION: '9000.0.0',
   SITE_ID: chance.guid(),
+  CACHE_DIR: 'demo/.netlify/cache',
 }
 const netlifyConfig: NetlifyConfig = {
   build: {
@@ -78,26 +75,28 @@ const netlifyConfig: NetlifyConfig = {
   headers: [],
   edge_functions: [],
   plugins: [],
+  images: {
+    remote_images: [],
+  },
 }
 
 const mockRun = (
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  file: string,
-  args?: readonly string[],
-  options?: NetlifyPluginRunUtilOptions,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-): Promise<NetlifyPluginRunUtilResult> =>
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  ...args: Parameters<NetlifyPluginOptions['utils']['run']>
+): ReturnType<NetlifyPluginOptions['utils']['run']> =>
   // eslint-disable-next-line no-void
-  Promise.resolve(void 0) as unknown as Promise<NetlifyPluginRunUtilResult>
+  Promise.resolve(void 0) as unknown as ReturnType<
+    NetlifyPluginOptions['utils']['run']
+  >
 
 mockRun.command = (
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  command: string,
-  options?: NetlifyPluginRunUtilOptions,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-): Promise<NetlifyPluginRunUtilResult> =>
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  ...args: Parameters<NetlifyPluginOptions['utils']['run']['command']>
+): ReturnType<NetlifyPluginOptions['utils']['run']['command']> =>
   // eslint-disable-next-line no-void
-  Promise.resolve(void 0) as unknown as Promise<NetlifyPluginRunUtilResult>
+  Promise.resolve(void 0) as unknown as ReturnType<
+    NetlifyPluginOptions['utils']['run']['command']
+  >
 
 const utils = {
   build: {
