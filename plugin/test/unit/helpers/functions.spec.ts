@@ -56,6 +56,7 @@ describe('setupImageCdn', () => {
         IS_LOCAL: true,
         NETLIFY_BUILD_VERSION: '9000.0.0',
         SITE_ID: chance.guid(),
+        CACHE_DIR: 'demo/.netlify/cache',
       }
 
       const netlifyConfig: NetlifyConfig = {
@@ -79,6 +80,9 @@ describe('setupImageCdn', () => {
         headers: [],
         edge_functions: [],
         plugins: [],
+        images: {
+          remote_images: [],
+        },
       }
 
       await setupImageCdn({ constants, netlifyConfig })
