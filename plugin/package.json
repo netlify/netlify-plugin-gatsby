@@ -53,7 +53,7 @@
     "multer": "^1.4.2",
     "node-fetch": "^2.6.1",
     "node-stream-zip": "^1.15.0",
-    "pathe": "^0.3.0",
+    "pathe": "^1.0.0",
     "pretty-bytes": "^5.6.0",
     "semver": "^7.3.5",
     "statuses": "^2.0.1",
