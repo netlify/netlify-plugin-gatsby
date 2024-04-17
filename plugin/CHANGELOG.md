@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.8.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.0...plugin-gatsby-v3.8.1) (2024-04-17)
+
+
+### Bug Fixes
+
+* clear redirects/rewrites produced by previous builds and generate functions in ntl dev ([#738](https://github.com/netlify/netlify-plugin-gatsby/issues/738)) ([e66731c](https://github.com/netlify/netlify-plugin-gatsby/commit/e66731c8129f029813bc1a37df390dcb3385efb4))
+* **deps:** update dependency semver to v7.6.0 ([#747](https://github.com/netlify/netlify-plugin-gatsby/issues/747)) ([024e3f1](https://github.com/netlify/netlify-plugin-gatsby/commit/024e3f1ba6f67198e1522839e9a1c54e9a62d0bf))
+
 ## [3.8.0](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.7.2...plugin-gatsby-v3.8.0) (2023-12-04)
 
 
