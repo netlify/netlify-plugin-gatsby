@@ -128,7 +128,7 @@ const IndexPage = () => {
   return (
     <main style={pageStyles}>
       <title>Home Page</title>
-      <h1>Gatsby Functions demo (make sure cache has this)</h1>
+      <h1>Gatsby Functions demo</h1>
       <ul style={listStyles}>
         {links.map((link) => (
           <li key={link.url} style={{ ...listItemStyles, color: link.color }}>
