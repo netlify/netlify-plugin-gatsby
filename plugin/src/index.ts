@@ -116,7 +116,6 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 export async function onPostBuild({
   constants: { PUBLISH_DIR, FUNCTIONS_DIST },
 }: NetlifyPluginOptions): Promise<void> {
-  console.log('onPostBuild')
   if (shouldSkip(PUBLISH_DIR)) {
     return
   }
@@ -134,8 +133,6 @@ export async function onSuccess({
   constants: { PUBLISH_DIR },
   utils,
 }: NetlifyPluginOptions) {
-  console.log('onSuccess')
-
   if (shouldSkip(PUBLISH_DIR)) {
     return
   }
