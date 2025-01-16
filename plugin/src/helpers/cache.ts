@@ -33,7 +33,13 @@ export async function saveCache({
   }
 }
 
-export async function restoreCache({ publish, utils }): Promise<void> {
+export async function restoreCache({
+  publish,
+  utils,
+}: {
+  publish: string
+  utils: NetlifyPluginOptions['utils']
+}): Promise<void> {
   if (process.env.NETLIFY_LOCAL) {
     return
   }
