@@ -1,4 +1,5 @@
 import path from 'path'
+import process from 'process'
 
 import type { NetlifyPluginOptions } from '@netlify/build'
 
@@ -15,6 +16,10 @@ export async function saveCache({
   publish: string
   utils: NetlifyPluginOptions['utils']
 }): Promise<void> {
+  if (process.env.NETLIFY_LOCAL) {
+    return
+  }
+
   const cacheDirs = getCacheDirs(publish)
 
   // @ts-expect-error - `move` is not in the types, but should be passed through to @netlify/cache-utils that support this option
@@ -29,6 +34,10 @@ export async function saveCache({
 }
 
 export async function restoreCache({ publish, utils }): Promise<void> {
+  if (process.env.NETLIFY_LOCAL) {
+    return
+  }
+
   const cacheDirs = getCacheDirs(publish)
 
   if (await utils.cache.restore(cacheDirs)) {
