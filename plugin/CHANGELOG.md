@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.8.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.1...plugin-gatsby-v3.8.2) (2025-01-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency cookie to ^0.7.0 [security] ([#756](https://github.com/netlify/netlify-plugin-gatsby/issues/756)) ([919fb9b](https://github.com/netlify/netlify-plugin-gatsby/commit/919fb9b5f8e1a2381e8786847a1db7a1bab10081))
+* move files to build cache after files are uploaded instead of copying them before uploads ([#753](https://github.com/netlify/netlify-plugin-gatsby/issues/753)) ([cd5bbd6](https://github.com/netlify/netlify-plugin-gatsby/commit/cd5bbd6e38da792c00a089c4afe1946bf379cbf9))
+
 ## [3.8.1](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.0...plugin-gatsby-v3.8.1) (2024-04-17)
 
 
