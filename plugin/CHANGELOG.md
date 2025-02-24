@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.3](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.2...plugin-gatsby-v3.8.3) (2025-02-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency abortcontroller-polyfill to v1.7.8 ([#770](https://github.com/netlify/netlify-plugin-gatsby/issues/770)) ([63c5775](https://github.com/netlify/netlify-plugin-gatsby/commit/63c5775e54d2e04f16f96b521d38d13a1d75aed8))
+
 ## [3.8.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.1...plugin-gatsby-v3.8.2) (2025-01-20)
 
 
