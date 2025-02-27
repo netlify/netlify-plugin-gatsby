@@ -5,7 +5,7 @@ import type { NetlifyPluginOptions } from '@netlify/build'
 
 import { getGatsbyRoot } from './config'
 
-function getCacheDirs(publish) {
+export function getCacheDirs(publish) {
   return [publish, normalizedCacheDir(publish)]
 }
 

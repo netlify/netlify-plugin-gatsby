@@ -409,18 +409,4 @@ export function shouldSkip(publishDir: string): boolean {
 
   return shouldSkipResult
 }
-
-export function checkNetlifyImageCdn({
-  netlifyConfig,
-}: {
-  netlifyConfig: NetlifyConfig
-}): void {
-  /* eslint-disable no-param-reassign */
-  const { NETLIFY_IMAGE_CDN } = netlifyConfig.build.environment
-
-  if (NETLIFY_IMAGE_CDN === 'true') {
-    netlifyConfig.build.environment.GATSBY_CLOUD_IMAGE_CDN = 'true'
-  }
-  /* eslint-enable no-param-reassign */
-}
 /* eslint-enable max-lines */

@@ -15,13 +15,15 @@ import {
   modifyConfig,
   shouldSkipBundlingDatastore,
   shouldSkip,
-  checkNetlifyImageCdn,
 } from './helpers/config'
 import { modifyFiles } from './helpers/files'
 import { deleteFunctions, writeFunctions } from './helpers/functions'
+import { prepareImageCdn, PrepareImageCdnResult } from './helpers/image_cdn'
 import { checkZipSize } from './helpers/verification'
 
 const DEFAULT_FUNCTIONS_SRC = 'netlify/functions'
+
+let prepareImageCdnResult: PrepareImageCdnResult | undefined
 
 export async function onPreBuild({
   constants,
@@ -44,7 +46,10 @@ export async function onPreBuild({
 
   await checkConfig({ utils, netlifyConfig })
 
-  await checkNetlifyImageCdn({ netlifyConfig })
+  prepareImageCdnResult = await prepareImageCdn({
+    netlifyConfig,
+    publish: PUBLISH_DIR,
+  })
 }
 
 export async function onDev({
@@ -69,6 +74,7 @@ export async function onDev({
   await modifyConfig({ netlifyConfig, cacheDir, neededFunctions, isDev: true })
 }
 
+// eslint-disable-next-line max-statements
 export async function onBuild({
   constants,
   netlifyConfig,
@@ -97,6 +103,10 @@ export async function onBuild({
 The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
   }
 
+  if (prepareImageCdnResult?.postBuildCallback) {
+    await prepareImageCdnResult.postBuildCallback()
+  }
+
   const neededFunctions = await getNeededFunctions(cacheDir)
 
   await deleteFunctions(constants)
@@ -106,7 +116,12 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
     await createMetadataFileAndCopyDatastore(PUBLISH_DIR, cacheDir)
   }
 
-  await writeFunctions({ constants, netlifyConfig, neededFunctions })
+  await writeFunctions({
+    constants,
+    netlifyConfig,
+    neededFunctions,
+    prepareImageCdnResult,
+  })
 
   await modifyConfig({ netlifyConfig, cacheDir, neededFunctions, isDev: false })
 
