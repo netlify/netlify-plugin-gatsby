@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.8.3](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.2...plugin-gatsby-v3.8.3) (2025-03-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency abortcontroller-polyfill to v1.7.8 ([#770](https://github.com/netlify/netlify-plugin-gatsby/issues/770)) ([63c5775](https://github.com/netlify/netlify-plugin-gatsby/commit/63c5775e54d2e04f16f96b521d38d13a1d75aed8))
+* **deps:** update dependency co-body to v6.2.0 ([#776](https://github.com/netlify/netlify-plugin-gatsby/issues/776)) ([c8d8f24](https://github.com/netlify/netlify-plugin-gatsby/commit/c8d8f24cb836edc4fea237f0d619099427fd8e16))
+* **deps:** update dependency semver to v7.7.1 ([#777](https://github.com/netlify/netlify-plugin-gatsby/issues/777)) ([ab74b70](https://github.com/netlify/netlify-plugin-gatsby/commit/ab74b70e858e51dbd7c8898ee1cff07efe590891))
+* **deps:** update gatsby monorepo ([#778](https://github.com/netlify/netlify-plugin-gatsby/issues/778)) ([fd94f83](https://github.com/netlify/netlify-plugin-gatsby/commit/fd94f8396dcf6b6f12a44a38b353eba5a37ad51a))
+* **deps:** update react monorepo to v18.3.1 ([#779](https://github.com/netlify/netlify-plugin-gatsby/issues/779)) ([9d5d1a2](https://github.com/netlify/netlify-plugin-gatsby/commit/9d5d1a21b71103c5f4d270176aec9868e1319fa7))
+* use encrypted image cdn if possible for ipx and/or use allowed remote url list ([#781](https://github.com/netlify/netlify-plugin-gatsby/issues/781)) ([5ef8c9e](https://github.com/netlify/netlify-plugin-gatsby/commit/5ef8c9e835166c95e2d1ee0ca212da1b090fe167))
+
 ## [3.8.2](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.1...plugin-gatsby-v3.8.2) (2025-01-20)
 
 
