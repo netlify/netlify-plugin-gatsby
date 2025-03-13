@@ -6,7 +6,7 @@ import Chance from 'chance'
 import { copy, existsSync } from 'fs-extra'
 import { dir as getTmpDir } from 'tmp-promise'
 
-import { setupImageCdn } from '../../../src/helpers/functions'
+import { writeFunctions } from '../../../src/helpers/functions'
 
 const SAMPLE_PROJECT_DIR = `${__dirname}/../../../../demo`
 const TEST_TIMEOUT = 60_000
@@ -26,7 +26,7 @@ const moveGatsbyDir = async () => {
 
 const chance = new Chance()
 
-describe('setupImageCdn', () => {
+describe('writeFunctions', () => {
   let cleanup
   let restoreCwd
 
@@ -85,7 +85,11 @@ describe('setupImageCdn', () => {
         },
       }
 
-      await setupImageCdn({ constants, netlifyConfig })
+      await writeFunctions({
+        constants,
+        netlifyConfig,
+        neededFunctions: [],
+      })
 
       const doesDirectoryExist = existsSync(
         join(process.cwd(), 'demo', '.netlify', 'functions-internal'),
