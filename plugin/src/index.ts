@@ -27,9 +27,12 @@ let prepareImageCdnResult: PrepareImageCdnResult | undefined
 
 export async function onPreBuild({
   constants,
-  utils,
   netlifyConfig,
-}: NetlifyPluginOptions): Promise<void> {
+  utils,
+}: Pick<
+  NetlifyPluginOptions,
+  'constants' | 'netlifyConfig' | 'utils'
+>): Promise<void> {
   const { PUBLISH_DIR } = constants
   // Print a helpful message if the publish dir is misconfigured
   if (!PUBLISH_DIR || process.cwd() === path.resolve(PUBLISH_DIR)) {
@@ -53,9 +56,9 @@ export async function onPreBuild({
 }
 
 export async function onDev({
-  netlifyConfig,
   constants,
-}: NetlifyPluginOptions): Promise<void> {
+  netlifyConfig,
+}: Pick<NetlifyPluginOptions, 'constants' | 'netlifyConfig'>): Promise<void> {
   // eslint-disable-next-line no-param-reassign
   netlifyConfig.build.environment.GATSBY_PRECOMPILE_DEVELOP_FUNCTIONS = `true`
 
@@ -78,7 +81,7 @@ export async function onDev({
 export async function onBuild({
   constants,
   netlifyConfig,
-}: NetlifyPluginOptions): Promise<void> {
+}: Pick<NetlifyPluginOptions, 'constants' | 'netlifyConfig'>): Promise<void> {
   const {
     PUBLISH_DIR,
     FUNCTIONS_SRC = DEFAULT_FUNCTIONS_SRC,
@@ -130,7 +133,7 @@ The plugin no longer uses this and it should be deleted to avoid conflicts.\n`)
 
 export async function onPostBuild({
   constants: { PUBLISH_DIR, FUNCTIONS_DIST },
-}: NetlifyPluginOptions): Promise<void> {
+}: Pick<NetlifyPluginOptions, 'constants'>): Promise<void> {
   if (shouldSkip(PUBLISH_DIR)) {
     return
   }
@@ -147,7 +150,7 @@ export async function onPostBuild({
 export async function onSuccess({
   constants: { PUBLISH_DIR },
   utils,
-}: NetlifyPluginOptions) {
+}: Pick<NetlifyPluginOptions, 'constants' | 'utils'>): Promise<void> {
   if (shouldSkip(PUBLISH_DIR)) {
     return
   }
