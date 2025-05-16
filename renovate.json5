@@ -1,21 +1,18 @@
 {
-  extends: ['github>netlify/renovate-config:default'],
-  ignorePresets: [':prHourlyLimit2'],
-  semanticCommits: true,
+  extends: ["github>netlify/renovate-config:default"],
+  ignorePresets: [":prHourlyLimit2"],
+  semanticCommits: "enabled",
   dependencyDashboard: true,
   automerge: true,
   packageRules: [
     {
-      matchPackagePrefixes: ['@sindresorhus/'],
       major: {
         enabled: false,
       },
+      matchPackageNames: ["@sindresorhus/{/,}**"],
     },
     {
-      packageNames: [
-        // Those cannot be upgraded to requiring ES modules
-        'strip-ansi',
-      ],
+      matchPackageNames: ["strip-ansi"],
       major: {
         enabled: false,
       },
