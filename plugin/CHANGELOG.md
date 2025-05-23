@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.4](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.3...plugin-gatsby-v3.8.4) (2025-05-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency semver to v7.7.2 ([#787](https://github.com/netlify/netlify-plugin-gatsby/issues/787)) ([a85d1c7](https://github.com/netlify/netlify-plugin-gatsby/commit/a85d1c70de653fa6cd99d9be0ff91dccff7acc37))
+
 ## [3.8.3](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.2...plugin-gatsby-v3.8.3) (2025-03-13)
 
 
