@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.8.4](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.3...plugin-gatsby-v3.8.4) (2025-06-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency multer to v1.4.5-lts.2 ([#801](https://github.com/netlify/netlify-plugin-gatsby/issues/801)) ([de91e92](https://github.com/netlify/netlify-plugin-gatsby/commit/de91e92752ad01134af2464297215e481c8dc58b))
+* **deps:** update dependency multer to v2 ([#812](https://github.com/netlify/netlify-plugin-gatsby/issues/812)) ([aa373d9](https://github.com/netlify/netlify-plugin-gatsby/commit/aa373d91c3d653cb7a1aaf6da98b9367e723e1b0))
+* **deps:** update dependency semver to v7.7.2 ([#787](https://github.com/netlify/netlify-plugin-gatsby/issues/787)) ([a85d1c7](https://github.com/netlify/netlify-plugin-gatsby/commit/a85d1c70de653fa6cd99d9be0ff91dccff7acc37))
+* **deps:** update gatsby monorepo ([#807](https://github.com/netlify/netlify-plugin-gatsby/issues/807)) ([da610bd](https://github.com/netlify/netlify-plugin-gatsby/commit/da610bd44bbdb35857166dc70b5dc53fa5f69bf5))
+
 ## [3.8.3](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.2...plugin-gatsby-v3.8.3) (2025-03-13)
 
 
