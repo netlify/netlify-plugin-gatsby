@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.8.5](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.4...plugin-gatsby-v3.8.5) (2025-07-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency gatsby to v5.14.5 ([#821](https://github.com/netlify/netlify-plugin-gatsby/issues/821)) ([d54e6f6](https://github.com/netlify/netlify-plugin-gatsby/commit/d54e6f6dee8de987c6c7b2970bc9b6759366aa95))
+
 ## [3.8.4](https://github.com/netlify/netlify-plugin-gatsby/compare/plugin-gatsby-v3.8.3...plugin-gatsby-v3.8.4) (2025-06-06)
 
 
