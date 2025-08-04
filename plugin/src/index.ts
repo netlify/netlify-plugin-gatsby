@@ -1,11 +1,9 @@
 import path from 'path'
 import process from 'process'
-import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
 
 import { NetlifyPluginOptions } from '@netlify/build'
 import { stripIndent } from 'common-tags'
 import { existsSync } from 'fs-extra'
-import fetch from 'node-fetch'
 
 import { normalizedCacheDir, restoreCache, saveCache } from './helpers/cache'
 import {

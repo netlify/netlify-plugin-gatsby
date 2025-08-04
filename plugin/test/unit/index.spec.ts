@@ -7,11 +7,6 @@ import Chance from 'chance'
 import { onBuild, onSuccess } from '../../src/index'
 import { enableGatsbyExcludeDatastoreFromBundle } from '../helpers'
 
-jest.mock('node-fetch', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}))
-
 jest.mock('../../src/helpers/config', () => {
   const configObj = jest.requireActual('../../src/helpers/config')
 
@@ -209,14 +204,18 @@ describe('plugin', () => {
   })
 
   describe('onSuccess', () => {
-    const fetch = require('node-fetch').default
+    const mockFetch = jest.fn()
+    const originalFetch = globalThis.fetch
 
     beforeEach(() => {
-      fetch.mockImplementation(mockFetchMethod)
+      globalThis.fetch = mockFetch
+      mockFetch.mockImplementation(mockFetchMethod)
       enableGatsbyExcludeDatastoreFromBundle()
     })
 
     afterEach(() => {
+      globalThis.fetch = originalFetch
+      jest.clearAllMocks()
       delete process.env.GATSBY_EXCLUDE_DATASTORE_FROM_BUNDLE
       delete process.env.DEPLOY_PRIME_URL
     })

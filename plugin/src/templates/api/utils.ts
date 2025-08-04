@@ -12,7 +12,6 @@ import {
 import cookie from 'cookie'
 import type { GatsbyFunctionResponse } from 'gatsby'
 import { GatsbyFunctionRequest } from 'gatsby'
-import fetch, { Headers } from 'node-fetch'
 import statuses from 'statuses'
 
 interface NetlifyFunctionParams {
@@ -311,6 +310,6 @@ export const proxyRequest = async (event: HandlerEvent, res) => {
     }
   }
 
-  res.write(await response.buffer())
+  res.write(Buffer.from(await response.arrayBuffer()))
   res.send()
 }
