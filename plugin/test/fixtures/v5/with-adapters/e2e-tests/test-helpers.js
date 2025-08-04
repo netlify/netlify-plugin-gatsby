@@ -1,9 +1,7 @@
 /* eslint-disable no-unused-vars */
-const fetch = require(`node-fetch`)
 const { readFileSync } = require('fs')
 const path = require('path')
 
-const FormData = require('form-data')
 // Based on Gatsby Functions integration tests
 // Source: https://github.com/gatsbyjs/gatsby/blob/master/integration-tests/functions/test-helpers.js
 

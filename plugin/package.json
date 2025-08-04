@@ -42,7 +42,6 @@
   "dependencies": {
     "@netlify/functions": "^1.6.0",
     "@netlify/ipx": "^1.4.6",
-    "abortcontroller-polyfill": "^1.7.3",
     "chalk": "^4.1.2",
     "co-body": "^6.1.0",
     "cookie": "^0.7.0",
@@ -50,13 +49,12 @@
     "fs-extra": "^10.0.0",
     "linkfs": "^2.1.0",
     "multer": "^2.0.0",
-    "node-fetch": "^2.6.1",
     "node-stream-zip": "^1.15.0",
     "pathe": "^0.3.0",
     "pretty-bytes": "^5.6.0",
     "semver": "^7.3.5",
     "statuses": "^2.0.1",
-    "uuid": "^9.0.0"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@gatsbyjs/reach-router": "^2.0.0",
